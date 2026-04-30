@@ -263,11 +263,15 @@
     <div class="desktop-header-title">⚙️ Painel do Responsável</div>
     <div class="desktop-header-actions">
       <button class="btn btn-primary" onclick="abrirModalTarefas()" style="width:auto;padding:10px 20px;font-size:14px;">➕ Nova Tarefa</button>
+      <button onclick="resetTarefasRotina()" style="width:auto;padding:10px 20px;font-size:14px;border-radius:14px;border:2px solid var(--border);background:#1a1650;color:var(--sky);font-family:Nunito,sans-serif;font-weight:800;cursor:pointer;">🔄 Reset Rotina</button>
       <button class="header-action" onclick="openFeedback()" style="background:#1a1650;color:var(--sky);">💬</button>
     </div>
   </div>
   <div class="scroll-content">
     <div class="dashboard-wrap">
+      <div style="margin-bottom:16px;">
+        <button onclick="resetTarefasRotina()" class="btn btn-secondary" style="width:auto;display:inline-flex;align-items:center;gap:8px;padding:12px 20px;">🔄 Reset Rotina do Dia</button>
+      </div>
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">✅</div>
@@ -579,6 +583,24 @@
           <div class="star-option" onclick="selectStarsFab(this,5)">🌟 5</div>
         </div>
       </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="fab-recorrente" onchange="toggleDiasSemana()" style="width:20px;height:20px;accent-color:var(--blue);">
+          Tarefa recorrente (rotina diária)
+        </label>
+      </div>
+      <div id="dias-semana-wrap" style="display:none;margin-bottom:16px;">
+        <label style="font-size:13px;font-weight:700;color:var(--sky);display:block;margin-bottom:8px;">Dias da semana</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="dia-btn selected" data-dia="seg" onclick="toggleDia(this)">Seg</button>
+          <button class="dia-btn selected" data-dia="ter" onclick="toggleDia(this)">Ter</button>
+          <button class="dia-btn selected" data-dia="qua" onclick="toggleDia(this)">Qua</button>
+          <button class="dia-btn selected" data-dia="qui" onclick="toggleDia(this)">Qui</button>
+          <button class="dia-btn selected" data-dia="sex" onclick="toggleDia(this)">Sex</button>
+          <button class="dia-btn" data-dia="sab" onclick="toggleDia(this)">Sáb</button>
+          <button class="dia-btn" data-dia="dom" onclick="toggleDia(this)">Dom</button>
+        </div>
+      </div>
       <button class="btn btn-primary" onclick="addTaskFab()">Criar tarefa</button>
     </div>
 
@@ -625,7 +647,7 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-<script src="js/supabase.js?v=7"></script>
-<script src="js/app.js?v=7"></script>
+<script src="js/supabase.js?v=8"></script>
+<script src="js/app.js?v=8"></script>
 </body>
 </html>

@@ -970,3 +970,40 @@
   /* Sidebar hidden on mobile by default */
   .sidebar { display: none; }
   .desktop-header { display: none; }
+
+  /* ─── DIAS DA SEMANA ─── */
+  .dia-btn {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: #12103a;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .dia-btn.selected {
+    border-color: var(--sky);
+    background: #0d0b2b;
+    color: var(--sky);
+  }
+
+  /* ─── SEÇÕES DE TAREFAS ─── */
+  .tasks-section-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 0 20px;
+    margin: 16px 0 8px;
+  }
+  .tasks-section-title span {
+    color: var(--sky);
+  }
+
+  @media (min-width: 768px) {
+    .tasks-section-title { padding: 0; }
+  }

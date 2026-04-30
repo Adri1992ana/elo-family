@@ -1,5 +1,62 @@
 
 // ══════════════════════════════════════════
+// RECORRÊNCIA DE TAREFAS
+// ══════════════════════════════════════════
+
+function toggleDiasSemana() {
+  const chk = document.getElementById('fab-recorrente');
+  const wrap = document.getElementById('dias-semana-wrap');
+  wrap.style.display = chk.checked ? 'block' : 'none';
+}
+
+function toggleDia(btn) {
+  btn.classList.toggle('selected');
+}
+
+function getDiasSelecionados() {
+  const btns = document.querySelectorAll('.dia-btn.selected');
+  return Array.from(btns).map(b => b.dataset.dia);
+}
+
+function getDiaAtual() {
+  const dias = ['dom','seg','ter','qua','qui','sex','sab'];
+  return dias[new Date().getDay()];
+}
+
+function tarefaAtivaHoje(task) {
+  if (!task.recorrente) return true; // tarefas únicas sempre aparecem
+  if (!task.dias_semana || task.dias_semana.length === 0) return true;
+  return task.dias_semana.includes(getDiaAtual());
+}
+
+function tarefaDoneHoje(task) {
+  if (!task.done) return false;
+  if (!task.done_date) return task.done;
+  const hoje = new Date().toISOString().split('T')[0];
+  return task.done_date === hoje;
+}
+
+async function resetTarefasRotina() {
+  if (!confirm('Resetar todas as tarefas de rotina para "não feitas" hoje?')) return;
+  showToast('Resetando rotina... ⏳');
+
+  for (let ci = 0; ci < state.profiles.length; ci++) {
+    const tasks = state.tasks[ci] || [];
+    for (const task of tasks) {
+      if (task.recorrente && task.done) {
+        await db.from('tasks').update({ done: false, done_date: null }).eq('id', task.id);
+        task.done = false;
+        task.done_date = null;
+      }
+    }
+  }
+
+  showToast('Rotina resetada! ✅');
+  renderParentDashboard();
+}
+
+
+// ══════════════════════════════════════════
 // BIBLIOTECA DE TAREFAS
 // ══════════════════════════════════════════
 const BIBLIOTECA = [
@@ -161,27 +218,41 @@ function selectStarsLote(el, val) {
 }
 
 async function addTaskFab() {
-  const name     = document.getElementById('fab-task-name').value.trim();
-  const childIdx = parseInt(document.getElementById('fab-task-child').value);
-  const time     = document.getElementById('fab-task-time').value;
+  const name      = document.getElementById('fab-task-name').value.trim();
+  const childIdx  = parseInt(document.getElementById('fab-task-child').value);
+  const time      = document.getElementById('fab-task-time').value;
+  const recorrente = document.getElementById('fab-recorrente').checked;
+  const dias_semana = recorrente ? getDiasSelecionados() : [];
+
   if (!name) { showToast('Digite o nome da tarefa!'); return; }
   const icons = ['📌','🎯','✨','🌟','🔥','💡','🎨','🧩'];
   const icon  = icons[Math.floor(Math.random() * icons.length)];
   const child = state.profiles[childIdx];
   if (!child) { showToast('Selecione uma criança!'); return; }
   showToast('Criando tarefa... ⏳');
+
   const { data, error } = await db.from('tasks').insert({
     child_id: child.id, parent_id: state.currentUserId,
-    name, time, stars: selectedStarsFabVal, icon, done: false
+    name, time, stars: selectedStarsFabVal, icon, done: false,
+    recorrente, dias_semana
   }).select().single();
-  if (error) { showToast('Erro ao criar. Tente novamente.'); return; }
-  state.tasks[childIdx].push({ id: data.id, name: data.name, time: data.time, stars: data.stars, icon: data.icon, done: false });
+
+  if (error) { showToast('Erro ao criar. Tente novamente.'); console.error(error); return; }
+
+  state.tasks[childIdx].push({
+    id: data.id, name: data.name, time: data.time,
+    stars: data.stars, icon: data.icon, done: false,
+    recorrente: data.recorrente, dias_semana: data.dias_semana || [],
+    done_date: null
+  });
   state.metrics.tasksCreated++;
   updateMetrics();
   document.getElementById('fab-task-name').value = '';
+  document.getElementById('fab-recorrente').checked = false;
+  document.getElementById('dias-semana-wrap').style.display = 'none';
   fecharModalTarefas();
   renderParentDashboard();
-  showToast(`Tarefa "${name}" criada! ✅`);
+  showToast(`Tarefa "${name}" criada! ${recorrente ? '🔄' : '✅'}`);
 }
 
 // Update selectEmoji to handle selected class on emoji-pick spans
@@ -487,12 +558,15 @@ async function carregarTarefas(childId, childIndex) {
   }
 
   state.tasks[childIndex] = (data || []).map(t => ({
-    id:    t.id,
-    name:  t.name,
-    time:  t.time,
-    stars: t.stars,
-    icon:  t.icon,
-    done:  t.done
+    id:          t.id,
+    name:        t.name,
+    time:        t.time,
+    stars:       t.stars,
+    icon:        t.icon,
+    done:        t.done,
+    recorrente:  t.recorrente || false,
+    dias_semana: t.dias_semana || [],
+    done_date:   t.done_date || null
   }));
 }
 
@@ -520,32 +594,56 @@ function renderChildHome() {
   document.getElementById('child-stars').textContent = child.stars;
   document.getElementById('reward-stars').textContent = child.stars;
 
-  const done = tasks.filter(t => t.done).length;
-  document.getElementById('tasks-progress').textContent = `${done}/${tasks.length} feitas`;
+  const ativas = tasks.filter(t => tarefaAtivaHoje(t));
+  const done = ativas.filter(t => tarefaDoneHoje(t)).length;
+  document.getElementById('tasks-progress').textContent = `${done}/${ativas.length} feitas`;
 
   const list = document.getElementById('child-tasks-list');
   list.innerHTML = '';
 
-  if (tasks.length === 0) {
+  // Filter tasks active today
+  const rotina = tasks.filter(t => t.recorrente && tarefaAtivaHoje(t));
+  const unicas = tasks.filter(t => !t.recorrente);
+
+  if (rotina.length === 0 && unicas.length === 0) {
     list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma tarefa por hoje!</p></div>';
     return;
   }
 
-  tasks.forEach(task => {
+  function renderTaskCard(task) {
+    const doneHoje = tarefaDoneHoje(task);
     const card = document.createElement('div');
-    card.className = 'task-card' + (task.done ? ' done' : '');
+    card.className = 'task-card' + (doneHoje ? ' done' : '');
     card.innerHTML = `
       <div class="task-icon">${task.icon}</div>
       <div class="task-info">
-        <div class="task-name">${task.name}</div>
+        <div class="task-name">${task.name}${task.recorrente ? ' <span style="font-size:10px;color:var(--sky);background:#1a1650;padding:2px 6px;border-radius:6px;">🔄</span>' : ''}</div>
         <div class="task-time">⏰ ${task.time}</div>
       </div>
       <div class="task-stars">⭐ ${task.stars}</div>
-      <div class="task-check">${task.done ? '✓' : ''}</div>
+      <div class="task-check">${doneHoje ? '✓' : ''}</div>
     `;
-    if (!task.done) card.onclick = () => completeTask(task);
-    list.appendChild(card);
-  });
+    if (!doneHoje) card.onclick = () => completeTask(task);
+    return card;
+  }
+
+  if (rotina.length > 0) {
+    const label = document.createElement('div');
+    label.className = 'tasks-section-title';
+    const doneCnt = rotina.filter(t => tarefaDoneHoje(t)).length;
+    label.innerHTML = `🔄 Rotina diária <span>${doneCnt}/${rotina.length}</span>`;
+    list.appendChild(label);
+    rotina.forEach(t => list.appendChild(renderTaskCard(t)));
+  }
+
+  if (unicas.length > 0) {
+    const label = document.createElement('div');
+    label.className = 'tasks-section-title';
+    const doneCnt = unicas.filter(t => tarefaDoneHoje(t)).length;
+    label.innerHTML = `📋 Tarefas de hoje <span>${doneCnt}/${unicas.length}</span>`;
+    list.appendChild(label);
+    unicas.forEach(t => list.appendChild(renderTaskCard(t)));
+  }
 }
 
 async function completeTask(task) {
