@@ -733,3 +733,240 @@
   .metric-val { font-weight: 800; font-size: 14px; color: var(--sky); }
   .progress-bar { background: #0d0b2b; border-radius: 6px; height: 8px; overflow: hidden; margin-top: 4px; }
   .progress-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #7c3aed, #00e5ff); transition: width 1s ease; }
+  /* ─── FAB NOVA TAREFA ─── */
+  .task-fab {
+    position: fixed;
+    bottom: 160px;
+    right: 16px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(124,58,237,0.5);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .task-fab:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,58,237,0.6); }
+
+  /* ─── EMOJI PICKER ─── */
+  .emoji-pick {
+    font-size: 32px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    transition: all .15s;
+    display: inline-block;
+  }
+  .emoji-pick:hover { border-color: var(--sky); background: #1a0e4f; }
+  .emoji-pick.selected { border-color: var(--sky); background: #1a0e4f; }
+
+  /* ─── TABS ─── */
+  .tab-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: #12103a;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .tab-btn.active { border-color: var(--sky); color: var(--sky); background: #0d2b24; }
+
+  /* ─── CATEGORIA BIBLIOTECA ─── */
+  .cat-btn {
+    padding: 8px 14px;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    background: #12103a;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .cat-btn.active { border-color: var(--sky); color: var(--sky); background: #0d2b24; }
+
+  /* ─── BIBLIOTECA CARD ─── */
+  .bib-card {
+    background: #12103a;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+  }
+  .bib-card.selected { border-color: var(--sky); background: #0d2b24; }
+  .bib-card .bib-icon { font-size: 24px; margin-bottom: 6px; }
+  .bib-card .bib-name { font-size: 12px; font-weight: 700; color: var(--text); }
+  .bib-card .bib-stars { font-size: 11px; color: var(--gold-dark); margin-top: 4px; }
+
+  /* ═══════════════════════════════════════
+     DESKTOP LAYOUT — sidebar + content
+  ═══════════════════════════════════════ */
+  @media (min-width: 768px) {
+
+    /* Auth screens — centralizar card */
+    .auth-wrap {
+      padding: 40px;
+    }
+    .auth-card {
+      max-width: 480px;
+      padding: 48px 44px;
+    }
+
+    /* Profiles screen */
+    .profiles-wrap {
+      padding: 60px 40px;
+    }
+    .profiles-grid {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      max-width: 700px;
+      gap: 20px;
+    }
+    .profile-card { padding: 32px 20px; }
+    .profile-avatar { width: 80px; height: 80px; font-size: 40px; }
+
+    /* App layout with sidebar */
+    .screen.with-sidebar {
+      flex-direction: row;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      display: flex !important;
+      flex-direction: column;
+      width: 220px;
+      min-width: 220px;
+      background: #0a0920;
+      border-right: 1px solid #2e2a7a;
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar-logo {
+      font-family: 'Baloo 2', cursive;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--sky);
+      padding-bottom: 16px;
+      border-bottom: 1px solid #2e2a7a;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .sidebar-item {
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s;
+      border: none;
+      background: none;
+      text-align: left;
+      font-family: 'Nunito', sans-serif;
+      width: 100%;
+    }
+    .sidebar-item:hover { background: #1a1650; color: var(--text); }
+    .sidebar-item.active { background: #1a1650; color: var(--sky); }
+    .sidebar-footer {
+      padding-top: 16px;
+      border-top: 1px solid #2e2a7a;
+      margin-top: 16px;
+    }
+
+    /* Main content area */
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 100vh;
+    }
+
+    /* Hide mobile bottom nav on desktop */
+    .bottom-nav { display: none !important; }
+
+    /* Hide mobile header on desktop */
+    .app-header { display: none !important; }
+
+    /* Desktop header bar */
+    .desktop-header {
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      border-bottom: 1px solid #2e2a7a;
+      background: #0d0b2b;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .desktop-header-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--sky);
+    }
+    .desktop-header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* Content padding */
+    .scroll-content {
+      padding: 24px 32px 40px;
+    }
+    .dashboard-wrap { padding: 0; }
+    .stats-grid { grid-template-columns: repeat(4, 1fr); }
+    .tasks-list { padding: 0; }
+    .section-header { padding: 0; }
+    .rewards-grid {
+      padding: 0;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .form-card { margin: 0; }
+
+    /* Stars banner wider */
+    .stars-banner { margin: 0 0 24px; }
+
+    /* FAB position on desktop */
+    .task-fab { bottom: 32px; right: 32px; }
+    .feedback-fab { bottom: 96px; right: 32px; }
+
+    /* Modal wider on desktop */
+    .modal-sheet { max-width: 600px; border-radius: 20px; margin: auto; }
+    .modal-overlay { align-items: center; }
+
+    /* Profiles section wider */
+    .child-hero { padding: 0 0 16px; }
+  }
+
+  /* Sidebar hidden on mobile by default */
+  .sidebar { display: none; }
+  .desktop-header { display: none; }

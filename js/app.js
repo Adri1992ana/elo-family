@@ -1,5 +1,192 @@
 
 // ══════════════════════════════════════════
+// BIBLIOTECA DE TAREFAS
+// ══════════════════════════════════════════
+const BIBLIOTECA = [
+  { nome: 'Escovar os dentes',    icon: '🪥', stars: 1, cat: 'higiene', time: '07:30' },
+  { nome: 'Tomar banho',          icon: '🚿', stars: 2, cat: 'higiene', time: '18:00' },
+  { nome: 'Lavar as mãos',        icon: '🧼', stars: 1, cat: 'higiene', time: '12:00' },
+  { nome: 'Pentear o cabelo',     icon: '💇', stars: 1, cat: 'higiene', time: '07:45' },
+  { nome: 'Fazer a lição',        icon: '📝', stars: 3, cat: 'escola',  time: '15:00' },
+  { nome: 'Arrumar a mochila',    icon: '🎒', stars: 2, cat: 'escola',  time: '21:00' },
+  { nome: 'Ler por 20 minutos',   icon: '📚', stars: 3, cat: 'escola',  time: '16:00' },
+  { nome: 'Estudar para a prova', icon: '📖', stars: 5, cat: 'escola',  time: '15:30' },
+  { nome: 'Arrumar o quarto',     icon: '🛏️', stars: 2, cat: 'casa',    time: '08:00' },
+  { nome: 'Guardar brinquedos',   icon: '🧸', stars: 1, cat: 'casa',    time: '19:00' },
+  { nome: 'Ajudar a mesa',        icon: '🍽️', stars: 2, cat: 'casa',    time: '12:00' },
+  { nome: 'Varrer o quarto',      icon: '🧹', stars: 2, cat: 'casa',    time: '09:00' },
+  { nome: 'Beber água',           icon: '💧', stars: 1, cat: 'saude',   time: '10:00' },
+  { nome: 'Fazer exercício',      icon: '🏃', stars: 3, cat: 'saude',   time: '17:00' },
+  { nome: 'Dormir cedo',          icon: '😴', stars: 2, cat: 'saude',   time: '21:00' },
+  { nome: 'Comer frutas',         icon: '🍎', stars: 1, cat: 'saude',   time: '14:00' },
+];
+
+let selectedBibCards = [];
+let selectedStarsFabVal = 2;
+let selectedStarsLoteVal = 1;
+let catAtual = 'todos';
+
+function abrirModalTarefas() {
+  // Populate selects with real children
+  ['fab-task-child','fab-bib-child','fab-lote-child'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '';
+    state.profiles.forEach((filho, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = filho.emoji + ' ' + filho.name;
+      sel.appendChild(opt);
+    });
+  });
+  renderBiblioteca('todos');
+  document.getElementById('modal-tarefas').classList.add('show');
+}
+
+function fecharModalTarefas() {
+  document.getElementById('modal-tarefas').classList.remove('show');
+  selectedBibCards = [];
+  document.getElementById('fab-task-name').value = '';
+  document.getElementById('lote-text').value = '';
+}
+
+function switchTab(tab) {
+  ['manual','biblioteca','lote'].forEach(t => {
+    document.getElementById('tab-content-' + t).style.display = t === tab ? 'block' : 'none';
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+}
+
+function filterCat(el, cat) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  catAtual = cat;
+  renderBiblioteca(cat);
+}
+
+function renderBiblioteca(cat) {
+  const grid = document.getElementById('biblioteca-grid');
+  grid.innerHTML = '';
+  const filtered = cat === 'todos' ? BIBLIOTECA : BIBLIOTECA.filter(t => t.cat === cat);
+  filtered.forEach((t, i) => {
+    const card = document.createElement('div');
+    card.className = 'bib-card' + (selectedBibCards.includes(t.nome) ? ' selected' : '');
+    card.innerHTML = `<div class="bib-icon">${t.icon}</div><div class="bib-name">${t.nome}</div><div class="bib-stars">${'⭐'.repeat(Math.min(t.stars,3))} ${t.stars}★</div>`;
+    card.onclick = () => toggleBibCard(card, t);
+    grid.appendChild(card);
+  });
+}
+
+function toggleBibCard(card, t) {
+  const idx = selectedBibCards.indexOf(t.nome);
+  if (idx >= 0) {
+    selectedBibCards.splice(idx, 1);
+    card.classList.remove('selected');
+  } else {
+    selectedBibCards.push(t.nome);
+    card.classList.add('selected');
+  }
+}
+
+async function adicionarSelecionadas() {
+  const childIdx = parseInt(document.getElementById('fab-bib-child').value);
+  const child = state.profiles[childIdx];
+  if (!child) { showToast('Selecione uma criança!'); return; }
+  if (selectedBibCards.length === 0) { showToast('Selecione ao menos uma tarefa!'); return; }
+
+  showToast(`Criando ${selectedBibCards.length} tarefas... ⏳`);
+  let criadas = 0;
+
+  for (const nome of selectedBibCards) {
+    const t = BIBLIOTECA.find(b => b.nome === nome);
+    if (!t) continue;
+    const { data, error } = await db.from('tasks').insert({
+      child_id: child.id, parent_id: state.currentUserId,
+      name: t.nome, time: t.time, stars: t.stars, icon: t.icon, done: false
+    }).select().single();
+    if (!error && data) {
+      state.tasks[childIdx].push({ id: data.id, name: data.name, time: data.time, stars: data.stars, icon: data.icon, done: false });
+      criadas++;
+    }
+  }
+
+  state.metrics.tasksCreated += criadas;
+  updateMetrics();
+  fecharModalTarefas();
+  renderParentDashboard();
+  showToast(`${criadas} tarefa(s) criada(s)! ✅`);
+}
+
+async function criarEmLote() {
+  const childIdx = parseInt(document.getElementById('fab-lote-child').value);
+  const child = state.profiles[childIdx];
+  const texto = document.getElementById('lote-text').value.trim();
+  if (!child) { showToast('Selecione uma criança!'); return; }
+  if (!texto) { showToast('Digite ao menos uma tarefa!'); return; }
+
+  const linhas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  showToast(`Criando ${linhas.length} tarefas... ⏳`);
+  const icons = ['📌','🎯','✨','🌟','🔥','💡','🎨','🧩'];
+  let criadas = 0;
+
+  for (const nome of linhas) {
+    const icon = icons[Math.floor(Math.random() * icons.length)];
+    const { data, error } = await db.from('tasks').insert({
+      child_id: child.id, parent_id: state.currentUserId,
+      name: nome, time: '08:00', stars: selectedStarsLoteVal, icon, done: false
+    }).select().single();
+    if (!error && data) {
+      state.tasks[childIdx].push({ id: data.id, name: data.name, time: data.time, stars: data.stars, icon: data.icon, done: false });
+      criadas++;
+    }
+  }
+
+  state.metrics.tasksCreated += criadas;
+  updateMetrics();
+  fecharModalTarefas();
+  renderParentDashboard();
+  showToast(`${criadas} tarefa(s) criada(s)! ✅`);
+}
+
+function selectStarsFab(el, val) {
+  el.closest('.star-select').querySelectorAll('.star-option').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedStarsFabVal = val;
+}
+
+function selectStarsLote(el, val) {
+  el.closest('.star-select').querySelectorAll('.star-option').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedStarsLoteVal = val;
+}
+
+async function addTaskFab() {
+  const name     = document.getElementById('fab-task-name').value.trim();
+  const childIdx = parseInt(document.getElementById('fab-task-child').value);
+  const time     = document.getElementById('fab-task-time').value;
+  if (!name) { showToast('Digite o nome da tarefa!'); return; }
+  const icons = ['📌','🎯','✨','🌟','🔥','💡','🎨','🧩'];
+  const icon  = icons[Math.floor(Math.random() * icons.length)];
+  const child = state.profiles[childIdx];
+  if (!child) { showToast('Selecione uma criança!'); return; }
+  showToast('Criando tarefa... ⏳');
+  const { data, error } = await db.from('tasks').insert({
+    child_id: child.id, parent_id: state.currentUserId,
+    name, time, stars: selectedStarsFabVal, icon, done: false
+  }).select().single();
+  if (error) { showToast('Erro ao criar. Tente novamente.'); return; }
+  state.tasks[childIdx].push({ id: data.id, name: data.name, time: data.time, stars: data.stars, icon: data.icon, done: false });
+  state.metrics.tasksCreated++;
+  updateMetrics();
+  document.getElementById('fab-task-name').value = '';
+  fecharModalTarefas();
+  renderParentDashboard();
+  showToast(`Tarefa "${name}" criada! ✅`);
+}
+
+// Update selectEmoji to handle selected class on emoji-pick spans
+
+// ══════════════════════════════════════════
 // TOGGLE SENHA
 // ══════════════════════════════════════════
 function toggleSenha(inputId, btn) {
@@ -202,6 +389,8 @@ let emojiSelecionado = '👧';
 function selectEmoji(el, emoji) {
   emojiSelecionado = emoji;
   document.getElementById('selected-emoji').textContent = 'Emoji selecionado: ' + emoji;
+  document.querySelectorAll('.emoji-pick').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
 }
 
 function abrirModalFilho() {
@@ -326,6 +515,8 @@ function renderChildHome() {
   const tasks = state.tasks[state.currentChild] || [];
 
   document.getElementById('child-greeting').textContent = child.name + '! ' + child.emoji;
+  const dh = document.getElementById('desktop-child-greeting');
+  if (dh) dh.textContent = 'Olá, ' + child.name + '! ' + child.emoji;
   document.getElementById('child-stars').textContent = child.stars;
   document.getElementById('reward-stars').textContent = child.stars;
 
@@ -399,7 +590,9 @@ function switchChildTab(tab) {
     renderChildHome();
     navTo('screen-child-home');
   } else {
-    document.getElementById('reward-stars').textContent = state.profiles[state.currentChild].stars;
+    if (state.currentChild !== null && state.profiles[state.currentChild]) {
+      document.getElementById('reward-stars').textContent = state.profiles[state.currentChild].stars;
+    }
     renderRewards();
     navTo('screen-child-rewards');
   }

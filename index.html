@@ -143,12 +143,32 @@
 <!-- ═══════════════════════════════════════════
      SCREEN: CHILD HOME
 ═══════════════════════════════════════════ -->
-<div id="screen-child-home" class="screen" style="background:var(--bg);">
+<div id="screen-child-home" class="screen with-sidebar" style="background:var(--bg);">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">🔗 ELO Family</div>
+    <div class="sidebar-nav">
+      <button class="sidebar-item active" onclick="switchChildTab('home')">🏠 Início</button>
+      <button class="sidebar-item" onclick="switchChildTab('rewards')">🎁 Recompensas</button>
+    </div>
+    <div class="sidebar-footer">
+      <button class="sidebar-item" onclick="navTo('screen-profiles')">← Trocar perfil</button>
+    </div>
+  </div>
+  <!-- CONTENT -->
+  <div class="sidebar-content">
   <div class="app-header">
     <div class="header-row">
       <button class="header-back" onclick="navTo('screen-profiles')">←</button>
       <div class="header-logo">🔗 ELO Family</div>
       <button class="header-action" onclick="openFeedback()">💬</button>
+    </div>
+  </div>
+  <div class="desktop-header">
+    <div class="desktop-header-title" id="desktop-child-greeting">Olá! 👋</div>
+    <div class="desktop-header-actions">
+      <button class="header-action" onclick="openFeedback()" style="background:#1a1650;color:var(--sky);">💬</button>
+      <button class="header-action" onclick="navTo('screen-profiles')" style="background:#1a1650;color:var(--muted);">←</button>
     </div>
   </div>
   <div class="scroll-content">
@@ -177,6 +197,7 @@
     <button class="nav-btn" onclick="switchChildTab('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">Recompensas</span></button>
   </div>
   <button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
+  </div><!-- end sidebar-content -->
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -215,12 +236,34 @@
 <!-- ═══════════════════════════════════════════
      SCREEN: PARENT DASHBOARD
 ═══════════════════════════════════════════ -->
-<div id="screen-parent" class="screen" style="background:var(--bg);">
+<div id="screen-parent" class="screen with-sidebar" style="background:var(--bg);">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">🔗 ELO Family</div>
+    <div class="sidebar-nav">
+      <button class="sidebar-item active" onclick="navParent()">⚙️ Painel</button>
+      <button class="sidebar-item" onclick="navTo('screen-metrics')">📊 Métricas</button>
+      <button class="sidebar-item" onclick="abrirModalTarefas()">➕ Nova Tarefa</button>
+    </div>
+    <div class="sidebar-footer">
+      <button class="sidebar-item" onclick="navTo('screen-profiles')">← Perfis</button>
+      <button class="sidebar-item" onclick="doLogout()">↪ Sair</button>
+    </div>
+  </div>
+  <!-- CONTENT -->
+  <div class="sidebar-content">
   <div class="app-header">
     <div class="header-row">
       <button class="header-back" onclick="navTo('screen-profiles')">←</button>
       <div class="header-logo">⚙️ Painel</div>
       <button class="header-action" onclick="openFeedback()">💬</button>
+    </div>
+  </div>
+  <div class="desktop-header">
+    <div class="desktop-header-title">⚙️ Painel do Responsável</div>
+    <div class="desktop-header-actions">
+      <button class="btn btn-primary" onclick="abrirModalTarefas()" style="width:auto;padding:10px 20px;font-size:14px;">➕ Nova Tarefa</button>
+      <button class="header-action" onclick="openFeedback()" style="background:#1a1650;color:var(--sky);">💬</button>
     </div>
   </div>
   <div class="scroll-content">
@@ -304,18 +347,36 @@
     <button class="nav-btn" onclick="navTo('screen-metrics')"><span class="nav-icon">📊</span><span class="nav-label">Métricas</span></button>
   </div>
   <button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
+  <button class="task-fab" onclick="abrirModalTarefas()">➕ Nova Tarefa</button>
+  </div><!-- end sidebar-content -->
 </div>
 
 <!-- ═══════════════════════════════════════════
      SCREEN: METRICS / ANALYTICS
 ═══════════════════════════════════════════ -->
-<div id="screen-metrics" class="screen" style="background:var(--bg);">
+<div id="screen-metrics" class="screen with-sidebar" style="background:var(--bg);">
+  <div class="sidebar">
+    <div class="sidebar-logo">🔗 ELO Family</div>
+    <div class="sidebar-nav">
+      <button class="sidebar-item" onclick="navParent()">⚙️ Painel</button>
+      <button class="sidebar-item active" onclick="navTo('screen-metrics')">📊 Métricas</button>
+      <button class="sidebar-item" onclick="abrirModalTarefas()">➕ Nova Tarefa</button>
+    </div>
+    <div class="sidebar-footer">
+      <button class="sidebar-item" onclick="navTo('screen-profiles')">← Perfis</button>
+      <button class="sidebar-item" onclick="doLogout()">↪ Sair</button>
+    </div>
+  </div>
+  <div class="sidebar-content">
   <div class="app-header">
     <div class="header-row">
       <button class="header-back" onclick="navTo('screen-parent')">←</button>
       <div class="header-logo">📊 Métricas Beta</div>
       <div style="width:40px;"></div>
     </div>
+  </div>
+  <div class="desktop-header">
+    <div class="desktop-header-title">📊 Métricas Beta</div>
   </div>
   <div class="scroll-content" style="padding:16px 20px;">
     <div class="metrics-card">
@@ -459,11 +520,19 @@
     </div>
     <div class="form-group">
       <label>Avatar</label>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;">
-        <span onclick="selectEmoji(this,'👧')" style="font-size:36px;cursor:pointer;">👧</span>
-        <span onclick="selectEmoji(this,'👦')" style="font-size:36px;cursor:pointer;">👦</span>
-        <span onclick="selectEmoji(this,'🧒')" style="font-size:36px;cursor:pointer;">🧒</span>
-        <span onclick="selectEmoji(this,'👼')" style="font-size:36px;cursor:pointer;">👼</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+        <span onclick="selectEmoji(this,'👧')" class="emoji-pick selected">👧</span>
+        <span onclick="selectEmoji(this,'👦')" class="emoji-pick">👦</span>
+        <span onclick="selectEmoji(this,'👩')" class="emoji-pick">👩</span>
+        <span onclick="selectEmoji(this,'👨')" class="emoji-pick">👨</span>
+        <span onclick="selectEmoji(this,'👧🏽')" class="emoji-pick">👧🏽</span>
+        <span onclick="selectEmoji(this,'👦🏽')" class="emoji-pick">👦🏽</span>
+        <span onclick="selectEmoji(this,'👩🏽')" class="emoji-pick">👩🏽</span>
+        <span onclick="selectEmoji(this,'👨🏽')" class="emoji-pick">👨🏽</span>
+        <span onclick="selectEmoji(this,'👧🏿')" class="emoji-pick">👧🏿</span>
+        <span onclick="selectEmoji(this,'👦🏿')" class="emoji-pick">👦🏿</span>
+        <span onclick="selectEmoji(this,'👩🏿')" class="emoji-pick">👩🏿</span>
+        <span onclick="selectEmoji(this,'👨🏿')" class="emoji-pick">👨🏿</span>
       </div>
       <div id="selected-emoji" style="font-size:13px;color:var(--muted);">Emoji selecionado: 👧</div>
     </div>
@@ -472,9 +541,91 @@
   </div>
 </div>
 
+
+<!-- MODAL: Nova Tarefa (com biblioteca em lote) -->
+<div class="modal-overlay" id="modal-tarefas" onclick="fecharModalTarefas()">
+  <div class="modal-sheet" style="max-height:90vh;overflow-y:auto;" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">➕ Nova Tarefa</div>
+    <div class="modal-sub">Crie manualmente ou escolha da biblioteca</div>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
+      <button class="tab-btn active" id="tab-manual" onclick="switchTab('manual')">✏️ Manual</button>
+      <button class="tab-btn" id="tab-biblioteca" onclick="switchTab('biblioteca')">📚 Biblioteca</button>
+      <button class="tab-btn" id="tab-lote" onclick="switchTab('lote')">📋 Em lote</button>
+    </div>
+
+    <!-- TAB: MANUAL -->
+    <div id="tab-content-manual">
+      <div class="form-group">
+        <label>Nome da tarefa</label>
+        <input type="text" id="fab-task-name" placeholder="Ex: Escovar os dentes">
+      </div>
+      <div class="form-group">
+        <label>Para qual criança?</label>
+        <select id="fab-task-child"></select>
+      </div>
+      <div class="form-group">
+        <label>Horário</label>
+        <input type="time" id="fab-task-time" value="08:00">
+      </div>
+      <div class="form-group">
+        <label>Estrelas 🌟</label>
+        <div class="star-select">
+          <div class="star-option" onclick="selectStarsFab(this,1)">⭐ 1</div>
+          <div class="star-option selected" onclick="selectStarsFab(this,2)">⭐⭐ 2</div>
+          <div class="star-option" onclick="selectStarsFab(this,3)">⭐⭐⭐ 3</div>
+          <div class="star-option" onclick="selectStarsFab(this,5)">🌟 5</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addTaskFab()">Criar tarefa</button>
+    </div>
+
+    <!-- TAB: BIBLIOTECA -->
+    <div id="tab-content-biblioteca" style="display:none;">
+      <div class="form-group">
+        <label>Para qual criança?</label>
+        <select id="fab-bib-child"></select>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <button class="cat-btn active" onclick="filterCat(this,'todos')">Todos</button>
+        <button class="cat-btn" onclick="filterCat(this,'higiene')">🪥 Higiene</button>
+        <button class="cat-btn" onclick="filterCat(this,'escola')">📚 Escola</button>
+        <button class="cat-btn" onclick="filterCat(this,'casa')">🏠 Casa</button>
+        <button class="cat-btn" onclick="filterCat(this,'saude')">💪 Saúde</button>
+      </div>
+      <div id="biblioteca-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:300px;overflow-y:auto;"></div>
+      <button class="btn btn-primary" style="margin-top:16px;" onclick="adicionarSelecionadas()">Adicionar selecionadas</button>
+    </div>
+
+    <!-- TAB: EM LOTE -->
+    <div id="tab-content-lote" style="display:none;">
+      <div class="form-group">
+        <label>Para qual criança?</label>
+        <select id="fab-lote-child"></select>
+      </div>
+      <div class="form-group">
+        <label>Cole uma tarefa por linha</label>
+        <textarea id="lote-text" rows="6" placeholder="Escovar os dentes&#10;Arrumar a mochila&#10;Ler por 20 minutos&#10;Guardar brinquedos"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Estrelas para todas 🌟</label>
+        <div class="star-select">
+          <div class="star-option selected" onclick="selectStarsLote(this,1)">⭐ 1</div>
+          <div class="star-option" onclick="selectStarsLote(this,2)">⭐⭐ 2</div>
+          <div class="star-option" onclick="selectStarsLote(this,3)">⭐⭐⭐ 3</div>
+          <div class="star-option" onclick="selectStarsLote(this,5)">🌟 5</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="criarEmLote()">Criar todas as tarefas</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-<script src="js/supabase.js?v=5"></script>
-<script src="js/app.js?v=5"></script>
+<script src="js/supabase.js?v=7"></script>
+<script src="js/app.js?v=7"></script>
 </body>
 </html>
