@@ -36,7 +36,10 @@
       </div>
       <div class="form-group">
         <label>Senha</label>
-        <input type="password" id="login-pass" placeholder="Sua senha" value="Senha123">
+        <div style="position:relative;">
+          <input type="password" id="login-pass" placeholder="Sua senha" style="padding-right:48px;">
+          <button type="button" onclick="toggleSenha('login-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);">👁️</button>
+        </div>
       </div>
       <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
       <div class="auth-link"><a onclick="navTo('screen-forgot')">Esqueci minha senha</a></div>
@@ -71,11 +74,17 @@
       </div>
       <div class="form-group">
         <label>Senha <span style="color:var(--muted);font-weight:400">(mín. 8 chars, 1 número, 1 maiúscula)</span></label>
-        <input type="password" id="reg-pass" placeholder="Criar senha">
+        <div style="position:relative;">
+          <input type="password" id="reg-pass" placeholder="Criar senha" style="padding-right:48px;">
+          <button type="button" onclick="toggleSenha('reg-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);">👁️</button>
+        </div>
       </div>
       <div class="form-group">
         <label>Confirmar senha</label>
-        <input type="password" id="reg-pass2" placeholder="Repita a senha">
+        <div style="position:relative;">
+          <input type="password" id="reg-pass2" placeholder="Repita a senha" style="padding-right:48px;">
+          <button type="button" onclick="toggleSenha('reg-pass2',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);">👁️</button>
+        </div>
       </div>
       <div class="error-msg" id="reg-error">Preencha todos os campos corretamente.</div>
       <div class="checkbox-row">
@@ -465,7 +474,7 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-<script src="js/supabase.js?v=4"></script>
-<script src="js/app.js?v=4"></script>
+<script src="js/supabase.js?v=5"></script>
+<script src="js/app.js?v=5"></script>
 </body>
 </html>
