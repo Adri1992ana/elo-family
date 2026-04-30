@@ -3,7 +3,7 @@
 // Substitua os valores abaixo com os seus dados reais
 // ====================================================
 
-var SUPABASE_URL = 'https://fnavwrzfgblvowzmzpi.supabase.co';
+var SUPABASE_URL = 'https://fnavwvrzfgblvowzmzpi.supabase.co';
 // ↑ Substitua pelo seu Project URL (Supabase > Settings > API)
 
 var SUPABASE_KEY = 'sb_publishable_BCfsak7_Wq8mvFSJ4MFnuA_lSpPqxwL';
