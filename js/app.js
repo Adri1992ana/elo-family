@@ -53,7 +53,7 @@ async function doLogin() {
   err.classList.remove('show');
   showToast('Entrando... ⏳');
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await db.auth.signInWithPassword({
     email: email,
     password: pass
   });
@@ -102,7 +102,7 @@ async function doRegister() {
   err.classList.remove('show');
   showToast('Criando conta... ⏳');
 
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await db.auth.signUp({
     email: email,
     password: pass
   });
@@ -113,7 +113,7 @@ async function doRegister() {
   }
 
   // Salva o perfil do responsável
-  const { error: profileError } = await supabase
+  const { error: profileError } = await db
     .from('profiles')
     .insert({
       id: data.user.id,
@@ -132,13 +132,13 @@ async function doRegister() {
 function doForgot() {
   const email = document.getElementById('forgot-email').value.trim();
   if (!email) return;
-  supabase.auth.resetPasswordForEmail(email);
+  db.auth.resetPasswordForEmail(email);
   showToast('E-mail de recuperação enviado! 📧');
   setTimeout(() => navTo('screen-login'), 1500);
 }
 
 async function doLogout() {
-  await supabase.auth.signOut();
+  await db.auth.signOut();
   state.profiles = [];
   state.tasks = [];
   state.currentUserId = null;
@@ -152,7 +152,7 @@ async function doLogout() {
 async function carregarFilhos(userId) {
   state.currentUserId = userId;
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('children')
     .select('*')
     .eq('parent_id', userId)
@@ -212,7 +212,7 @@ async function salvarFilho() {
 
   showToast('Salvando... ⏳');
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('children')
     .insert({
       parent_id: state.currentUserId,
@@ -271,7 +271,7 @@ function renderProfiles() {
 // TAREFAS — carregar do banco
 // ══════════════════════════════════════════
 async function carregarTarefas(childId, childIndex) {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('tasks')
     .select('*')
     .eq('child_id', childId)
@@ -349,13 +349,13 @@ async function completeTask(task) {
   state.metrics.tasksCompleted++;
 
   // Atualiza no banco
-  await supabase
+  await db
     .from('tasks')
     .update({ done: true })
     .eq('id', task.id);
 
   // Atualiza estrelas do filho no banco
-  await supabase
+  await db
     .from('children')
     .update({ stars: child.stars })
     .eq('id', child.id);
@@ -494,7 +494,7 @@ function approveReward(i) {
   const childIdx = state.profiles.findIndex(p => p.name === a.child);
   if (childIdx >= 0) {
     state.profiles[childIdx].stars = Math.max(0, state.profiles[childIdx].stars - a.cost);
-    supabase.from('children').update({ stars: state.profiles[childIdx].stars }).eq('id', state.profiles[childIdx].id);
+    db.from('children').update({ stars: state.profiles[childIdx].stars }).eq('id', state.profiles[childIdx].id);
   }
   state.pendingApprovals.splice(i, 1);
   showToast(`Recompensa aprovada para ${a.child}! ✅`);
@@ -531,7 +531,7 @@ async function addTask() {
 
   showToast('Criando tarefa... ⏳');
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('tasks')
     .insert({
       child_id:  child.id,
@@ -696,7 +696,7 @@ document.addEventListener('keydown', e => {
 // ══════════════════════════════════════════
 // INIT — verifica sessão ativa ao abrir app
 // ══════════════════════════════════════════
-supabase.auth.getSession().then(async ({ data }) => {
+db.auth.getSession().then(async ({ data }) => {
   if (data.session) {
     await carregarFilhos(data.session.user.id);
     renderProfiles();
