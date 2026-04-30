@@ -730,15 +730,7 @@ function requestReward(r) {
 // PARENT DASHBOARD
 // ══════════════════════════════════════════
 function renderParentDashboard() {
-  // Atualiza select de filhos com dados reais
-  const selectFilho = document.getElementById('new-task-child');
-  selectFilho.innerHTML = '';
-  state.profiles.forEach((filho, i) => {
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = filho.emoji + ' ' + filho.name;
-    selectFilho.appendChild(opt);
-  });
+  // Nenhum select inline — nova tarefa só via modal FAB
 
   const allTasks = state.tasks.flat();
   const done = allTasks.filter(t => t.done).length;

@@ -1007,3 +1007,87 @@
   @media (min-width: 768px) {
     .tasks-section-title { padding: 0; }
   }
+
+  /* ═══════════════════════════════════════
+     MOBILE-FIRST APP SHELL
+     Limita a 430px e centraliza no desktop
+  ═══════════════════════════════════════ */
+
+  #app-root {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg);
+  }
+
+  @media (min-width: 768px) {
+    body {
+      background: #06040f;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    #app-root {
+      width: 430px;
+      min-width: 430px;
+      max-width: 430px;
+      min-height: 100vh;
+      position: relative;
+      box-shadow: 0 0 60px rgba(0,0,0,0.6);
+    }
+
+    /* No desktop, remove sidebar layout — use mobile layout */
+    .with-sidebar {
+      flex-direction: column !important;
+    }
+    .sidebar {
+      display: none !important;
+    }
+    .sidebar-content {
+      flex: unset !important;
+      width: 100% !important;
+      overflow-y: unset !important;
+      min-height: unset !important;
+    }
+    .desktop-header {
+      display: none !important;
+    }
+    .app-header {
+      display: flex !important;
+    }
+    .bottom-nav {
+      display: flex !important;
+    }
+
+    /* Reset desktop overrides */
+    .stats-grid { grid-template-columns: 1fr 1fr !important; }
+    .rewards-grid { grid-template-columns: 1fr 1fr !important; padding: 16px 20px !important; }
+    .scroll-content { padding: 0 0 20px !important; }
+    .dashboard-wrap { padding: 16px 20px !important; }
+    .tasks-list { padding: 0 20px !important; }
+    .section-header { padding: 0 20px !important; }
+    .form-card { margin: 16px 20px !important; }
+    .stars-banner { margin: 16px 20px !important; }
+
+    /* FAB positions for narrow view */
+    .task-fab { bottom: 90px !important; right: 16px !important; }
+    .feedback-fab { bottom: 155px !important; right: 16px !important; }
+
+    /* Modal full width on narrow */
+    .modal-sheet {
+      max-width: 430px !important;
+      border-radius: 24px 24px 0 0 !important;
+      margin: 0 !important;
+    }
+    .modal-overlay {
+      align-items: flex-end !important;
+    }
+
+    /* Auth card full width */
+    .auth-card {
+      max-width: 390px !important;
+      padding: 36px 28px !important;
+    }
+  }
