@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════
-// ELO FAMILY — app.js v3
+// ELO FAMILY — app.js v4 FINAL
 // Perfis: criança / responsável / admin
 // ══════════════════════════════════════════
 
@@ -37,7 +37,25 @@ const RAND_ICON = () => ['📌','🎯','✨','🌟','🔥','💡','🎨','🧩']
 // ── HELPERS RECORRÊNCIA ──
 function getDiaAtual(){return['dom','seg','ter','qua','qui','sex','sab'][new Date().getDay()];}
 function tarefaAtivaHoje(t){if(!t.recorrente)return true;if(!t.dias_semana||!t.dias_semana.length)return true;return t.dias_semana.includes(getDiaAtual());}
-function tarefaDoneHoje(t){if(!t.done)return false;if(!t.done_date)return t.done;return t.done_date===new Date().toISOString().split('T')[0];}
+function getTodayKey(){const d=new Date();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return `${d.getFullYear()}-${m}-${day}`;}
+function tarefaDoneHoje(t){const today=getTodayKey();if(t.completion_dates?.includes(today))return true;if(!t.done)return false;if(!t.done_date)return t.done;return t.done_date===today;}
+function calcularStreak(dates){
+  const done=new Set((dates||[]).filter(Boolean));
+  let streak=0;
+  const d=new Date();
+  for(let i=0;i<120;i++){
+    const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if(!done.has(key))break;
+    streak++;
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+function normalizarTarefa(t,completions=[]){
+  const dates=completions.map(c=>c.completed_date).filter(Boolean);
+  if(t.done_date&&!dates.includes(t.done_date))dates.push(t.done_date);
+  return {...t,done_date:t.done_date||null,recorrente:t.recorrente||false,dias_semana:t.dias_semana||[],completion_dates:dates,completion_count:dates.length,streak:calcularStreak(dates)};
+}
 
 // ── UI helpers ──
 function toggleDiasSemana(){document.getElementById('dias-semana-wrap').style.display=document.getElementById('fab-recorrente').checked?'block':'none';}
@@ -75,15 +93,27 @@ function selectStarsFab(el,val){el.closest('.star-select').querySelectorAll('.st
 function selectStarsLote(el,val){el.closest('.star-select').querySelectorAll('.star-option').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');selectedStarsLoteVal=val;}
 
 // ── STATE ──
+const MASTER_EMAILS = ['geisiane.seberino@gmail.com'];
+
 const state={
-  currentChild:null,currentUserId:null,selectedStars:2,selectedRating:null,
+  currentChild:null,currentUserId:null,currentUserRole:'parent',currentUserEmail:'',selectedStars:2,selectedRating:null,
   feedbacks:[],metrics:{tasksCompleted:0,rewardsClaimed:0,tasksCreated:0},
-  profiles:[],tasks:[],rewards:REWARDS_DEFAULT,pendingApprovals:[],history:[]
+  profiles:[],tasks:[],rewards:REWARDS_DEFAULT,pendingApprovals:[],history:[],completionsAvailable:true
 };
 
 // ── NAV ──
-function navTo(screenId){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(screenId).classList.add('active');window.scrollTo(0,0);}
-function navParent(){renderParentDashboard();navTo('screen-parent');}
+function navTo(screenId){if(screenId==='screen-admin'&&!isMaster()){showToast('Métricas disponíveis apenas para usuárias master.');screenId='screen-profiles';}document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(screenId).classList.add('active');window.scrollTo(0,0);}
+async function navParent(){await carregarTodasTarefas();renderParentDashboard();navTo('screen-parent');}
+function isMaster(){return state.currentUserRole==='master'||MASTER_EMAILS.includes((state.currentUserEmail||'').toLowerCase());}
+function navAdmin(){if(!isMaster()){showToast('Métricas disponíveis apenas para usuárias master.');return;}updateMetrics();navTo('screen-admin');}
+function applyRoleUi(){
+  document.querySelectorAll('.master-only').forEach(el=>{el.style.display=isMaster()?'block':'none';});
+  const strip=document.getElementById('role-strip');
+  if(strip){
+    const roleLabel=isMaster()?'Master do produto':'Responsável';
+    strip.innerHTML=`<div class="role-chip active">🛡️ ${roleLabel}</div><div class="role-chip">👶 Crianças: ${state.profiles.length}</div><div class="role-chip muted">📊 Métricas ${isMaster()?'liberadas':'restritas'}</div>`;
+  }
+}
 
 // ── AUTH ──
 async function doLogin(){
@@ -95,7 +125,7 @@ async function doLogin(){
   const{data,error}=await db.auth.signInWithPassword({email,password:pass});
   if(error){err.classList.add('show');err.textContent='E-mail ou senha incorretos.';return;}
   showToast('Bem-vindo! 👋');
-  await carregarFilhos(data.user.id);
+  await carregarContextoUsuario(data.user);
   renderProfiles();navTo('screen-profiles');
 }
 
@@ -112,7 +142,7 @@ async function doRegister(){
   if(pass!==pass2){err.textContent='As senhas não coincidem.';err.classList.add('show');return;}
   if(!terms||!lgpd){err.textContent='Aceite os termos e o consentimento LGPD.';err.classList.add('show');return;}
   err.classList.remove('show');showToast('Criando conta... ⏳');
-  const{data,error}=await db.auth.signUp({email,password:pass});
+  const{data,error}=await db.auth.signUp({email,password:pass,options:{data:{full_name:name,role:'parent'}}});
   if(error){err.textContent='Erro: '+error.message;err.classList.add('show');return;}
   await db.from('profiles').insert({id:data.user.id,full_name:name,email});
   showToast('Conta criada! Verifique seu e-mail 📧');
@@ -121,9 +151,21 @@ async function doRegister(){
 
 function doForgot(){const email=document.getElementById('forgot-email').value.trim();if(!email)return;db.auth.resetPasswordForEmail(email);showToast('E-mail enviado! 📧');setTimeout(()=>navTo('screen-login'),1500);}
 
-async function doLogout(){await db.auth.signOut();state.profiles=[];state.tasks=[];state.currentUserId=null;showToast('Até logo! 👋');setTimeout(()=>navTo('screen-login'),800);}
+async function doLogout(){await db.auth.signOut();state.profiles=[];state.tasks=[];state.currentUserId=null;state.currentUserRole='parent';state.currentUserEmail='';showToast('Até logo! 👋');setTimeout(()=>navTo('screen-login'),800);}
 
 // ── FILHOS ──
+async function carregarContextoUsuario(user){
+  state.currentUserId=user.id;
+  state.currentUserEmail=(user.email||'').toLowerCase();
+  state.currentUserRole=user.user_metadata?.role||user.app_metadata?.role||'parent';
+  let perfil=null;
+  const perfilRes=await db.from('profiles').select('role,is_master,email').eq('id',user.id).maybeSingle();
+  if(perfilRes.error)console.info('Perfil sem colunas de role/is_master; usando metadados do Auth.',perfilRes.error.message);
+  else perfil=perfilRes.data;
+  if(perfil?.is_master||perfil?.role==='master'||MASTER_EMAILS.includes((perfil?.email||state.currentUserEmail).toLowerCase()))state.currentUserRole='master';
+  await carregarFilhos(user.id);
+}
+
 async function carregarFilhos(userId){
   state.currentUserId=userId;
   const{data,error}=await db.from('children').select('*').eq('parent_id',userId).order('created_at',{ascending:true});
@@ -151,10 +193,11 @@ async function salvarFilho(){
 
 function renderProfiles(){
   const grid=document.getElementById('profiles-grid');grid.innerHTML='';
+  applyRoleUi();
   state.profiles.forEach((p,i)=>{
     const card=document.createElement('div');card.className='profile-card';
     const grad=i===0?'#7c3aed,#a855f7':'#eab308,#ca8a04';
-    card.innerHTML=`<div class="profile-avatar" style="background:linear-gradient(135deg,${grad})">${p.emoji}</div><div class="profile-name">${p.name}</div><div class="profile-age">${p.age} anos · ⭐${p.stars||0}</div>`;
+    card.innerHTML=`<div class="profile-role">Criança</div><div class="profile-avatar" style="background:linear-gradient(135deg,${grad})">${p.emoji}</div><div class="profile-name">${p.name}</div><div class="profile-age">${p.age} anos · ⭐${p.stars||0}</div>`;
     card.onclick=()=>selectProfile(p.id);grid.appendChild(card);
   });
   const add=document.createElement('div');add.className='profile-card profile-add';
@@ -163,11 +206,45 @@ function renderProfiles(){
   document.getElementById('stat-filhos').textContent=state.profiles.length;
 }
 
+function convidarCrianca(){
+  const code='ELO-'+Math.random().toString(36).slice(2,7).toUpperCase();
+  showToast('Convite da criança: '+code);
+}
+
 // ── TAREFAS ──
 async function carregarTarefas(childId,childIndex){
   const{data,error}=await db.from('tasks').select('*').eq('child_id',childId).order('time',{ascending:true});
   if(error){console.error(error);return;}
-  state.tasks[childIndex]=(data||[]).map(t=>({...t,done_date:t.done_date||null,recorrente:t.recorrente||false,dias_semana:t.dias_semana||[]}));
+  const tasks=data||[];
+  const ids=tasks.map(t=>t.id);
+  let completions=[];
+  if(ids.length){
+    const res=await db.from('task_completions').select('*').eq('child_id',childId).in('task_id',ids).order('completed_date',{ascending:false});
+    if(!res.error)completions=res.data||[];
+    else{state.completionsAvailable=false;console.info('task_completions indisponível; usando fallback de tasks.done.',res.error.message);}
+  }
+  state.tasks[childIndex]=tasks.map(t=>normalizarTarefa(t,completions.filter(c=>c.task_id===t.id)));
+  registrarHistoricoDeCompletions(completions,tasks);
+}
+
+async function carregarTodasTarefas(){
+  for(let i=0;i<state.profiles.length;i++){
+    await carregarTarefas(state.profiles[i].id,i);
+  }
+}
+
+function registrarHistoricoDeCompletions(completions,tasks){
+  const today=getTodayKey();
+  const byTask=Object.fromEntries(tasks.map(t=>[t.id,t]));
+  completions.filter(c=>c.completed_date===today).forEach(c=>{
+    const task=byTask[c.task_id];
+    const child=state.profiles.find(p=>p.id===c.child_id);
+    if(!task||!child)return;
+    const key=`${c.task_id}-${c.child_id}-${c.completed_date}`;
+    if(state.history.some(h=>h.key===key))return;
+    const time=c.completed_at?new Date(c.completed_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'Hoje';
+    state.history.unshift({key,task:task.name,child:child.name,stars:c.stars_earned||task.stars,time});
+  });
 }
 
 async function selectProfile(id){
@@ -196,7 +273,8 @@ function renderChildHome(){
   function renderTaskCard(task){
     const doneHoje=tarefaDoneHoje(task);
     const card=document.createElement('div');card.className='task-card'+(doneHoje?' done':'');
-    card.innerHTML=`<div class="task-icon">${task.icon}</div><div class="task-info"><div class="task-name">${task.name}${task.recorrente?'<span style="font-size:10px;color:var(--sky);background:#1a1650;padding:2px 6px;border-radius:6px;margin-left:6px;">🔄</span>':''}</div><div class="task-time">⏰ ${task.time}</div></div><div class="task-stars">⭐ ${task.stars}</div><div class="task-check">${doneHoje?'✓':''}</div>`;
+    const streak=task.recorrente&&task.streak>1?`<div class="task-streak">🔥 ${task.streak} dias</div>`:'';
+    card.innerHTML=`<div class="task-icon">${task.icon}</div><div class="task-info"><div class="task-name">${task.name}${task.recorrente?'<span style="font-size:10px;color:var(--sky);background:#1a1650;padding:2px 6px;border-radius:6px;margin-left:6px;">🔄</span>':''}</div><div class="task-time">⏰ ${task.time}${streak}</div></div><div class="task-stars">⭐ ${task.stars}</div><div class="task-check">${doneHoje?'✓':''}</div>`;
     if(!doneHoje)card.onclick=()=>completeTask(task);
     return card;
   }
@@ -215,15 +293,30 @@ function renderChildHome(){
 
 async function completeTask(task){
   const child=state.profiles[state.currentChild];
-  const today=new Date().toISOString().split('T')[0];
+  const today=getTodayKey();
+  if(tarefaDoneHoje(task)){showToast('Missão já concluída hoje! ✅');return;}
+  const completion={task_id:task.id,child_id:child.id,parent_id:state.currentUserId,completed_date:today,stars_earned:task.stars,approved_by_parent:true};
+  if(state.completionsAvailable){
+    const res=await db.from('task_completions').insert(completion);
+    if(res.error){
+      if(res.error.code==='23505'){showToast('Missão já concluída hoje! ✅');return;}
+      state.completionsAvailable=false;
+      console.info('task_completions indisponível; salvando conclusão no modelo antigo.',res.error.message);
+      await db.from('tasks').update({done:true,done_date:today}).eq('id',task.id);
+    }
+  }else{
+    await db.from('tasks').update({done:true,done_date:today}).eq('id',task.id);
+  }
   task.done=true;task.done_date=today;
+  task.completion_dates=Array.from(new Set([...(task.completion_dates||[]),today]));
+  task.completion_count=task.completion_dates.length;
+  task.streak=calcularStreak(task.completion_dates);
   child.stars=(child.stars||0)+task.stars;
   state.metrics.tasksCompleted++;
-  await db.from('tasks').update({done:true,done_date:today}).eq('id',task.id);
   await db.from('children').update({stars:child.stars}).eq('id',child.id);
-  state.history.unshift({task:task.name,child:child.name,stars:task.stars,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
+  state.history.unshift({key:`${task.id}-${child.id}-${today}`,task:task.name,child:child.name,stars:task.stars,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
   document.getElementById('reward-title').textContent='Missão completa! 🎉';
-  document.getElementById('reward-msg').textContent='+'+task.stars+' estrela'+(task.stars>1?'s':'')+'! Continue assim, '+child.name+'!';
+  document.getElementById('reward-msg').textContent='+'+task.stars+' estrela'+(task.stars>1?'s':'')+'! '+(task.streak>1?'Sequência de '+task.streak+' dias! ':'Continue assim, ')+child.name+'!';
   document.getElementById('reward-overlay').classList.add('show');
   renderChildHome();updateMetrics();
 }
@@ -299,17 +392,27 @@ async function approveReward(i){
 function rejectReward(i){state.pendingApprovals.splice(i,1);showToast('Pedido recusado.');renderParentDashboard();}
 
 async function resetTarefasRotina(){
-  if(!confirm('Resetar todas as tarefas de rotina para "não feitas" hoje?'))return;
+  if(!confirm('Resetar as conclusões de rotina de hoje? Isso remove apenas o check do dia atual.'))return;
   showToast('Resetando rotina... ⏳');
+  const today=getTodayKey();
+  const recurringIds=state.tasks.flat().filter(t=>t.recorrente&&tarefaDoneHoje(t)).map(t=>t.id);
+  if(recurringIds.length&&state.completionsAvailable){
+    const res=await db.from('task_completions').delete().in('task_id',recurringIds).eq('completed_date',today);
+    if(res.error){state.completionsAvailable=false;console.info('task_completions indisponível; resetando pelo modelo antigo.',res.error.message);}
+  }
   for(let ci=0;ci<state.profiles.length;ci++){
     const tasks=state.tasks[ci]||[];
     for(const task of tasks){
-      if(task.recorrente&&task.done){
+      if(task.recorrente&&tarefaDoneHoje(task)){
         await db.from('tasks').update({done:false,done_date:null}).eq('id',task.id);
         task.done=false;task.done_date=null;
+        task.completion_dates=(task.completion_dates||[]).filter(d=>d!==today);
+        task.completion_count=task.completion_dates.length;
+        task.streak=calcularStreak(task.completion_dates);
       }
     }
   }
+  state.history=state.history.filter(h=>!recurringIds.some(id=>h.key?.startsWith(id+'-')));
   showToast('Rotina resetada! ✅');renderParentDashboard();
 }
 
@@ -325,7 +428,7 @@ async function addTaskFab(){
   showToast('Criando tarefa... ⏳');
   const{data,error}=await db.from('tasks').insert({child_id:child.id,parent_id:state.currentUserId,name,time,stars:selectedStarsFabVal,icon:RAND_ICON(),done:false,recorrente,dias_semana}).select().single();
   if(error){showToast('Erro ao criar. Tente novamente.');console.error(error);return;}
-  state.tasks[childIdx].push({...data,done_date:null});
+  state.tasks[childIdx].push(normalizarTarefa(data));
   state.metrics.tasksCreated++;updateMetrics();
   fecharModalTarefas();renderParentDashboard();showToast('Tarefa "'+name+'" criada! '+(recorrente?'🔄':'✅'));
 }
@@ -340,7 +443,7 @@ async function adicionarSelecionadas(){
   for(const nome of selectedBibCards){
     const t=BIBLIOTECA.find(b=>b.nome===nome);if(!t)continue;
     const{data,error}=await db.from('tasks').insert({child_id:child.id,parent_id:state.currentUserId,name:t.nome,time:t.time,stars:t.stars,icon:t.icon,done:false,recorrente:false,dias_semana:[]}).select().single();
-    if(!error&&data){state.tasks[childIdx].push({...data,done_date:null});criadas++;}
+    if(!error&&data){state.tasks[childIdx].push(normalizarTarefa(data));criadas++;}
   }
   state.metrics.tasksCreated+=criadas;updateMetrics();fecharModalTarefas();renderParentDashboard();showToast(criadas+' tarefa(s) criada(s)! ✅');
 }
@@ -356,7 +459,7 @@ async function criarEmLote(){
   let criadas=0;
   for(const nome of linhas){
     const{data,error}=await db.from('tasks').insert({child_id:child.id,parent_id:state.currentUserId,name:nome,time:'08:00',stars:selectedStarsLoteVal,icon:RAND_ICON(),done:false,recorrente:false,dias_semana:[]}).select().single();
-    if(!error&&data){state.tasks[childIdx].push({...data,done_date:null});criadas++;}
+    if(!error&&data){state.tasks[childIdx].push(normalizarTarefa(data));criadas++;}
   }
   state.metrics.tasksCreated+=criadas;updateMetrics();fecharModalTarefas();renderParentDashboard();showToast(criadas+' tarefa(s) criada(s)! ✅');
 }
@@ -365,12 +468,16 @@ async function criarEmLote(){
 function updateMetrics(){
   const m=state.metrics;
   const el=id=>document.getElementById(id);
+  const pct=v=>Math.min(100,Math.max(8,v*12))+'%';
   if(el('m-tasks'))el('m-tasks').textContent=m.tasksCompleted+' conclusões';
   if(el('m-rewards'))el('m-rewards').textContent=m.rewardsClaimed+' pedidos';
   if(el('m-created'))el('m-created').textContent=m.tasksCreated+' criadas';
   if(el('kpi-tasks'))el('kpi-tasks').textContent=m.tasksCompleted;
   if(el('kpi-rewards'))el('kpi-rewards').textContent=m.rewardsClaimed;
   if(el('kpi-created'))el('kpi-created').textContent=m.tasksCreated;
+  if(el('m-tasks-bar'))el('m-tasks-bar').style.width=pct(m.tasksCompleted);
+  if(el('m-rewards-bar'))el('m-rewards-bar').style.width=pct(m.rewardsClaimed);
+  if(el('m-created-bar'))el('m-created-bar').style.width=pct(m.tasksCreated);
 }
 
 // ── FEEDBACK ──
@@ -411,5 +518,5 @@ document.addEventListener('keydown',e=>{
 
 // ── INIT ──
 db.auth.getSession().then(async({data})=>{
-  if(data.session){showToast('Sessão ativa, carregando... ⏳');await carregarFilhos(data.session.user.id);renderProfiles();navTo('screen-profiles');}
+  if(data.session){showToast('Sessão ativa, carregando... ⏳');await carregarContextoUsuario(data.session.user);renderProfiles();navTo('screen-profiles');}
 });

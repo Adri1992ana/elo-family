@@ -3,24 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0a1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>ELO Family — Beta</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
 <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "wiz445idtg");
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window,document,"clarity","script","wiz445idtg");
 </script>
 </head>
 <body>
 <div id="app-root">
 
-<!-- ═══ SCREEN: LOGIN ═══ -->
+<!-- ═══ LOGIN ═══ -->
 <div id="screen-login" class="screen active">
-  <div class="auth-wrap" style="flex:1;">
+  <div class="auth-wrap">
     <div class="auth-card">
       <div class="logo-area">
         <div class="logo-icon">🔗</div>
@@ -29,16 +32,16 @@
       </div>
       <div class="auth-title">Bem-vindo de volta!</div>
       <div class="auth-sub">Entre com seu e-mail e senha</div>
-      <div class="error-msg" id="login-error">E-mail ou senha incorretos.</div>
+      <div class="error-msg" id="login-error"></div>
       <div class="form-group">
         <label>E-mail</label>
-        <input type="email" id="login-email" placeholder="seu@email.com">
+        <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email">
       </div>
       <div class="form-group">
         <label>Senha</label>
-        <div style="position:relative;">
-          <input type="password" id="login-pass" placeholder="Sua senha" style="padding-right:48px;">
-          <button type="button" onclick="toggleSenha('login-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);">👁️</button>
+        <div class="input-icon-wrap">
+          <input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password">
+          <button type="button" onclick="toggleSenha('login-pass',this)" class="eye-btn">👁️</button>
         </div>
       </div>
       <button class="btn btn-primary" onclick="doLogin()">Entrar 🚀</button>
@@ -48,10 +51,10 @@
   </div>
 </div>
 
-<!-- ═══ SCREEN: REGISTER ═══ -->
+<!-- ═══ REGISTER ═══ -->
 <div id="screen-register" class="screen">
-  <div class="auth-wrap" style="flex:1;">
-    <div class="auth-card" style="overflow-y:auto;max-height:95vh;">
+  <div class="auth-wrap">
+    <div class="auth-card auth-card-scroll">
       <div class="logo-area">
         <div class="logo-icon">🔗</div>
         <div class="logo-title">ELO Family</div>
@@ -62,23 +65,23 @@
         <div class="pn-icon">🔒</div>
         <p>Dados protegidos conforme LGPD. Nenhuma informação de crianças é compartilhada com terceiros.</p>
       </div>
-      <div class="form-group"><label>Nome completo</label><input type="text" id="reg-name" placeholder="Seu nome completo"></div>
-      <div class="form-group"><label>E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
+      <div class="error-msg" id="reg-error"></div>
+      <div class="form-group"><label>Nome completo</label><input type="text" id="reg-name" placeholder="Seu nome completo" autocomplete="name"></div>
+      <div class="form-group"><label>E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com" autocomplete="email"></div>
       <div class="form-group">
-        <label>Senha <span style="color:var(--muted);font-weight:400">(mín. 8 chars, 1 número, 1 maiúscula)</span></label>
-        <div style="position:relative;">
-          <input type="password" id="reg-pass" placeholder="Criar senha" style="padding-right:48px;">
-          <button type="button" onclick="toggleSenha('reg-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);">👁️</button>
+        <label>Senha <span class="label-hint">(mín. 8 chars, 1 número, 1 maiúscula)</span></label>
+        <div class="input-icon-wrap">
+          <input type="password" id="reg-pass" placeholder="Criar senha" autocomplete="new-password">
+          <button type="button" onclick="toggleSenha('reg-pass',this)" class="eye-btn">👁️</button>
         </div>
       </div>
       <div class="form-group">
         <label>Confirmar senha</label>
-        <div style="position:relative;">
-          <input type="password" id="reg-pass2" placeholder="Repita a senha" style="padding-right:48px;">
-          <button type="button" onclick="toggleSenha('reg-pass2',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);">👁️</button>
+        <div class="input-icon-wrap">
+          <input type="password" id="reg-pass2" placeholder="Repita a senha" autocomplete="new-password">
+          <button type="button" onclick="toggleSenha('reg-pass2',this)" class="eye-btn">👁️</button>
         </div>
       </div>
-      <div class="error-msg" id="reg-error">Preencha todos os campos corretamente.</div>
       <div class="checkbox-row"><input type="checkbox" id="chk-terms"><label for="chk-terms">Li e aceito os <a href="#" onclick="return false">Termos de Uso</a> e a <a href="#" onclick="return false">Política de Privacidade</a>.</label></div>
       <div class="checkbox-row"><input type="checkbox" id="chk-lgpd"><label for="chk-lgpd">Consinto com o tratamento de dados das crianças vinculadas, conforme o art. 14 da LGPD.</label></div>
       <button class="btn btn-primary" onclick="doRegister()">Criar conta 🎮</button>
@@ -87,11 +90,11 @@
   </div>
 </div>
 
-<!-- ═══ SCREEN: FORGOT ═══ -->
+<!-- ═══ FORGOT ═══ -->
 <div id="screen-forgot" class="screen">
-  <div class="auth-wrap" style="flex:1;">
+  <div class="auth-wrap">
     <div class="auth-card">
-      <div style="text-align:center;font-size:56px;margin-bottom:16px;">📧</div>
+      <div style="text-align:center;font-size:52px;margin-bottom:16px;">📧</div>
       <div class="auth-title">Recuperar senha</div>
       <div class="auth-sub">Enviaremos um link para o seu e-mail.</div>
       <div class="form-group"><label>E-mail cadastrado</label><input type="email" id="forgot-email" placeholder="seu@email.com"></div>
@@ -101,36 +104,37 @@
   </div>
 </div>
 
-<!-- ═══ SCREEN: PROFILES ═══ -->
+<!-- ═══ PROFILES ═══ -->
 <div id="screen-profiles" class="screen">
-  <div class="profiles-wrap" style="flex:1;">
+  <div class="profiles-wrap">
     <div class="profiles-header">
-      <div style="font-size:48px;margin-bottom:12px;">👨‍👩‍👧‍👦</div>
+      <div style="font-size:48px;margin-bottom:10px;">👨‍👩‍👧‍👦</div>
       <div class="profiles-title">Quem vai usar?</div>
       <div class="profiles-sub">Selecione o perfil</div>
     </div>
+    <div class="role-strip" id="role-strip"></div>
     <div class="profiles-grid" id="profiles-grid"></div>
-    <div class="profiles-actions" style="display:flex;flex-direction:column;gap:10px;margin-top:auto;">
+    <div class="profiles-actions">
       <button class="btn btn-secondary" onclick="navParent()">⚙️ Painel do responsável</button>
-      <button class="btn btn-secondary" onclick="navTo('screen-admin')" style="color:var(--gold);border-color:var(--gold2);background:rgba(245,158,11,.08);">📊 Admin · Métricas</button>
+      <button class="btn btn-secondary master-only" id="btn-admin" onclick="navAdmin()" style="display:none;color:var(--gold);border-color:var(--gold2);background:rgba(245,158,11,.08);">📊 Master · Métricas</button>
       <button class="btn btn-ghost" onclick="doLogout()">Sair da conta ↪</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ SCREEN: CHILD HOME ═══ -->
-<div id="screen-child-home" class="screen" style="background:var(--bg);">
+<!-- ═══ CHILD HOME ═══ -->
+<div id="screen-child-home" class="screen">
   <div class="app-header">
     <div class="header-row">
       <button class="header-back" onclick="navTo('screen-profiles')" title="Trocar perfil">←</button>
       <div class="header-logo">🔗 ELO Family</div>
-      <div class="stars-badge" id="header-stars-badge"><span>⭐</span><span id="header-stars">0</span></div>
+      <div class="stars-badge"><span>⭐</span><span id="header-stars">0</span></div>
     </div>
   </div>
   <div class="scroll-content">
     <div class="child-hero">
       <div class="greeting">Olá,</div>
-      <div class="greeting-name" id="child-greeting">Carregando...</div>
+      <div class="greeting-name" id="child-greeting">...</div>
     </div>
     <div class="progress-banner">
       <div class="progress-top">
@@ -143,7 +147,7 @@
       <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar" style="width:0%"></div></div>
     </div>
     <div id="child-tasks-list"></div>
-    <div style="height:20px;"></div>
+    <div style="height:24px;"></div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn active" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
@@ -151,8 +155,8 @@
   </div>
 </div>
 
-<!-- ═══ SCREEN: CHILD REWARDS ═══ -->
-<div id="screen-child-rewards" class="screen" style="background:var(--bg);">
+<!-- ═══ CHILD REWARDS ═══ -->
+<div id="screen-child-rewards" class="screen">
   <div class="app-header">
     <div class="header-row">
       <button class="header-back" onclick="navTo('screen-profiles')" title="Trocar perfil">←</button>
@@ -161,16 +165,17 @@
     </div>
   </div>
   <div class="scroll-content">
-    <div class="stars-banner" style="margin:16px 16px;">
+    <div class="stars-banner">
       <div class="stars-icon">⭐</div>
       <div>
         <div class="stars-label">Saldo disponível</div>
         <div class="stars-value" id="reward-stars-val">0</div>
       </div>
     </div>
-    <div id="pending-notice" style="display:none;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:12px;padding:10px 14px;margin:0 16px 14px;font-size:13px;color:var(--sky);font-weight:700;"></div>
-    <div class="section-header"><div class="section-title">🎯 Disponíveis</div></div>
+    <div id="pending-notice" class="pending-notice" style="display:none;"></div>
+    <div class="section-header"><div class="section-title">🎯 Disponíveis para trocar</div></div>
     <div class="rewards-grid" id="child-rewards-grid"></div>
+    <div style="height:24px;"></div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
@@ -178,13 +183,13 @@
   </div>
 </div>
 
-<!-- ═══ SCREEN: PARENT DASHBOARD ═══ -->
-<div id="screen-parent" class="screen" style="background:var(--bg);">
+<!-- ═══ PARENT DASHBOARD ═══ -->
+<div id="screen-parent" class="screen">
   <div class="app-header">
     <div class="header-row">
       <button class="header-back" onclick="navTo('screen-profiles')">←</button>
       <div class="header-logo">⚙️ Painel</div>
-      <button onclick="doLogout()" style="background:none;border:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Sair</button>
+      <button onclick="doLogout()" class="logout-btn">Sair</button>
     </div>
   </div>
   <div class="scroll-content">
@@ -196,35 +201,33 @@
         <div class="stat-card"><div class="stat-icon">👶</div><div class="stat-value" id="stat-filhos">0</div><div class="stat-label">Filhos</div></div>
       </div>
       <div class="panel-actions">
-        <button class="panel-btn panel-btn-sky" onclick="resetTarefasRotina()">🔄 Reset rotina</button>
-        <button class="panel-btn panel-btn-purple" onclick="abrirModalTarefas()">➕ Nova tarefa</button>
+        <button class="panel-btn panel-btn-sky" onclick="abrirModalFilho()">👶 Filho</button>
+        <button class="panel-btn panel-btn-sky" onclick="convidarCrianca()">✉️ Convite</button>
+        <button class="panel-btn panel-btn-purple" onclick="abrirModalTarefas()">➕ Tarefa</button>
       </div>
-      <div class="panel-section">
-        <div class="section-sub">⏳ Aguardando aprovação</div>
-        <div id="approval-list"></div>
-      </div>
-      <div class="panel-section">
-        <div class="section-sub">📜 Histórico de hoje</div>
-        <div style="background:var(--card);border-radius:14px;border:1.5px solid var(--border);padding:8px 16px;">
-          <div id="history-list"></div>
-        </div>
+      <button class="reset-btn" onclick="resetTarefasRotina()">🔄 Resetar rotina diária</button>
+      <div class="section-sub">⏳ Aguardando aprovação</div>
+      <div id="approval-list"></div>
+      <div class="section-sub">📜 Histórico de hoje</div>
+      <div class="history-card">
+        <div id="history-list"></div>
       </div>
     </div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn active"><span class="nav-icon">⚙️</span><span class="nav-label">Painel</span></button>
-    <button class="nav-btn" onclick="navTo('screen-admin')"><span class="nav-icon">📊</span><span class="nav-label">Métricas</span></button>
+    <button class="nav-btn" onclick="navTo('screen-profiles')"><span class="nav-icon">👥</span><span class="nav-label">Perfis</span></button>
   </div>
   <button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
-  <button class="task-fab" onclick="abrirModalTarefas()">➕ Nova Tarefa</button>
+  <button class="task-fab" onclick="abrirModalTarefas()">➕ Tarefa</button>
 </div>
 
-<!-- ═══ SCREEN: ADMIN ═══ -->
-<div id="screen-admin" class="screen" style="background:var(--bg);">
+<!-- ═══ ADMIN ═══ -->
+<div id="screen-admin" class="screen">
   <div class="app-header">
     <div class="header-row">
-      <button class="header-back" onclick="navTo('screen-parent')">←</button>
-      <div class="header-logo" style="color:var(--gold);">📊 Admin · Métricas</div>
+      <button class="header-back" onclick="navTo('screen-profiles')">←</button>
+      <div class="header-logo" style="color:var(--gold);">📊 Métricas</div>
       <div style="width:36px;"></div>
     </div>
   </div>
@@ -259,7 +262,7 @@
     </div>
   </div>
   <div class="bottom-nav">
-    <button class="nav-btn" onclick="navTo('screen-parent')"><span class="nav-icon">⚙️</span><span class="nav-label">Painel</span></button>
+    <button class="nav-btn" onclick="navTo('screen-profiles')"><span class="nav-icon">👥</span><span class="nav-label">Perfis</span></button>
     <button class="nav-btn active"><span class="nav-icon">📊</span><span class="nav-label">Métricas</span></button>
   </div>
 </div>
@@ -280,9 +283,9 @@
     <div class="modal-handle"></div>
     <div id="feedback-form-area">
       <div class="modal-title">💬 Sua opinião importa!</div>
-      <div class="modal-sub">Este é um beta teste. Ajude-nos a melhorar o ELO Family.</div>
+      <div class="modal-sub">Beta teste — ajude a melhorar o ELO Family.</div>
       <div class="form-group">
-        <label>Como você avalia esta experiência?</label>
+        <label>Como você avalia?</label>
         <div class="rating-row">
           <div class="rating-btn" onclick="selectRating(this,1)"><span class="r-emoji">😞</span><span class="r-label">Ruim</span></div>
           <div class="rating-btn" onclick="selectRating(this,2)"><span class="r-emoji">😐</span><span class="r-label">Regular</span></div>
@@ -292,7 +295,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label>Onde teve dificuldade? <span style="font-weight:400;color:var(--muted)">(opcional)</span></label>
+        <label>Onde teve dificuldade? <span class="label-hint">(opcional)</span></label>
         <div class="difficulty-tags">
           <div class="diff-tag" onclick="toggleTag(this)">Login</div>
           <div class="diff-tag" onclick="toggleTag(this)">Criar tarefa</div>
@@ -314,7 +317,7 @@
   </div>
 </div>
 
-<!-- ═══ MODAL: ADICIONAR FILHO ═══ -->
+<!-- ═══ MODAL: FILHO ═══ -->
 <div class="modal-overlay" id="modal-add-child" onclick="fecharModalFilho()">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
@@ -324,7 +327,7 @@
     <div class="form-group"><label>Idade</label><input type="number" id="child-age" placeholder="Ex: 8" min="1" max="17"></div>
     <div class="form-group">
       <label>Avatar</label>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <div class="emoji-grid">
         <span onclick="selectEmoji(this,'👧')" class="emoji-pick selected">👧</span>
         <span onclick="selectEmoji(this,'👦')" class="emoji-pick">👦</span>
         <span onclick="selectEmoji(this,'👩')" class="emoji-pick">👩</span>
@@ -336,7 +339,7 @@
         <span onclick="selectEmoji(this,'👧🏿')" class="emoji-pick">👧🏿</span>
         <span onclick="selectEmoji(this,'👦🏿')" class="emoji-pick">👦🏿</span>
       </div>
-      <div id="selected-emoji" style="font-size:13px;color:var(--muted);">Selecionado: 👧</div>
+      <div id="selected-emoji" style="font-size:13px;color:var(--muted);margin-top:6px;">Selecionado: 👧</div>
     </div>
     <button class="btn btn-primary" onclick="salvarFilho()">Salvar filho</button>
     <button class="btn btn-ghost" onclick="fecharModalFilho()" style="margin-top:8px;">Cancelar</button>
@@ -345,21 +348,23 @@
 
 <!-- ═══ MODAL: NOVA TAREFA ═══ -->
 <div class="modal-overlay" id="modal-tarefas" onclick="fecharModalTarefas()">
-  <div class="modal-sheet" style="max-height:90vh;overflow-y:auto;" onclick="event.stopPropagation()">
+  <div class="modal-sheet modal-sheet-tall" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title">➕ Nova Tarefa</div>
-    <div class="modal-sub">Crie manualmente ou escolha da biblioteca</div>
-    <div style="display:flex;gap:8px;margin-bottom:20px;">
+    <div class="modal-sub">Manual, biblioteca ou em lote</div>
+    <div class="tab-row">
       <button class="tab-btn active" id="tab-manual" onclick="switchTab('manual')">✏️ Manual</button>
       <button class="tab-btn" id="tab-biblioteca" onclick="switchTab('biblioteca')">📚 Biblioteca</button>
-      <button class="tab-btn" id="tab-lote" onclick="switchTab('lote')">📋 Em lote</button>
+      <button class="tab-btn" id="tab-lote" onclick="switchTab('lote')">📋 Lote</button>
     </div>
-    <!-- TAB MANUAL -->
+
+    <!-- MANUAL -->
     <div id="tab-content-manual">
       <div class="form-group"><label>Nome da tarefa</label><input type="text" id="fab-task-name" placeholder="Ex: Escovar os dentes"></div>
       <div class="form-group"><label>Para qual criança?</label><select id="fab-task-child"></select></div>
       <div class="form-group"><label>Horário</label><input type="time" id="fab-task-time" value="08:00"></div>
-      <div class="form-group"><label>Estrelas 🌟</label>
+      <div class="form-group">
+        <label>Estrelas 🌟</label>
         <div class="star-select">
           <div class="star-option" onclick="selectStarsFab(this,1)">⭐ 1</div>
           <div class="star-option selected" onclick="selectStarsFab(this,2)">⭐⭐ 2</div>
@@ -367,10 +372,15 @@
           <div class="star-option" onclick="selectStarsFab(this,5)">🌟 5</div>
         </div>
       </div>
-      <div class="form-group"><label style="display:flex;align-items:center;gap:10px;cursor:pointer;"><input type="checkbox" id="fab-recorrente" onchange="toggleDiasSemana()" style="width:20px;height:20px;accent-color:var(--blue);"><span style="font-size:13px;color:var(--text);font-weight:700;">Tarefa recorrente (rotina diária)</span></label></div>
+      <div class="form-group">
+        <label class="recorrente-label">
+          <input type="checkbox" id="fab-recorrente" onchange="toggleDiasSemana()">
+          <span>Tarefa recorrente (rotina diária)</span>
+        </label>
+      </div>
       <div id="dias-semana-wrap" style="display:none;margin-bottom:16px;">
-        <label style="font-size:11px;font-weight:800;color:var(--sky);display:block;margin-bottom:8px;text-transform:uppercase;">Dias da semana</label>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <label class="elo-lbl-sm">Dias da semana</label>
+        <div class="dias-row">
           <button class="dia-btn selected" data-dia="seg" onclick="toggleDia(this)">Seg</button>
           <button class="dia-btn selected" data-dia="ter" onclick="toggleDia(this)">Ter</button>
           <button class="dia-btn selected" data-dia="qua" onclick="toggleDia(this)">Qua</button>
@@ -382,24 +392,30 @@
       </div>
       <button class="btn btn-primary" onclick="addTaskFab()">Criar tarefa</button>
     </div>
-    <!-- TAB BIBLIOTECA -->
+
+    <!-- BIBLIOTECA -->
     <div id="tab-content-biblioteca" style="display:none;">
       <div class="form-group"><label>Para qual criança?</label><select id="fab-bib-child"></select></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+      <div class="cat-scroll">
         <button class="cat-btn active" onclick="filterCat(this,'todos')">Todos</button>
         <button class="cat-btn" onclick="filterCat(this,'higiene')">🪥 Higiene</button>
         <button class="cat-btn" onclick="filterCat(this,'escola')">📚 Escola</button>
         <button class="cat-btn" onclick="filterCat(this,'casa')">🏠 Casa</button>
         <button class="cat-btn" onclick="filterCat(this,'saude')">💪 Saúde</button>
       </div>
-      <div id="biblioteca-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:280px;overflow-y:auto;"></div>
-      <button class="btn btn-primary" style="margin-top:16px;" onclick="adicionarSelecionadas()">Adicionar selecionadas</button>
+      <div id="biblioteca-grid" class="bib-grid"></div>
+      <button class="btn btn-primary" style="margin-top:14px;" onclick="adicionarSelecionadas()">Adicionar selecionadas</button>
     </div>
-    <!-- TAB LOTE -->
+
+    <!-- LOTE -->
     <div id="tab-content-lote" style="display:none;">
       <div class="form-group"><label>Para qual criança?</label><select id="fab-lote-child"></select></div>
-      <div class="form-group"><label>Cole uma tarefa por linha</label><textarea id="lote-text" rows="6" placeholder="Escovar os dentes&#10;Arrumar a mochila&#10;Ler por 20 minutos"></textarea></div>
-      <div class="form-group"><label>Estrelas para todas 🌟</label>
+      <div class="form-group">
+        <label>Cole uma tarefa por linha</label>
+        <textarea id="lote-text" rows="6" placeholder="Escovar os dentes&#10;Arrumar a mochila&#10;Ler por 20 minutos"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Estrelas para todas 🌟</label>
         <div class="star-select">
           <div class="star-option selected" onclick="selectStarsLote(this,1)">⭐ 1</div>
           <div class="star-option" onclick="selectStarsLote(this,2)">⭐⭐ 2</div>
@@ -409,15 +425,16 @@
       </div>
       <button class="btn btn-primary" onclick="criarEmLote()">Criar todas as tarefas</button>
     </div>
-    <button class="btn btn-ghost" onclick="fecharModalTarefas()" style="margin-top:8px;">Cancelar</button>
+
+    <button class="btn btn-ghost" onclick="fecharModalTarefas()" style="margin-top:10px;">Cancelar</button>
   </div>
 </div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="js/supabase.js?v=12"></script>
-<script src="js/app.js?v=12"></script>
+<script src="js/supabase.js?v=15"></script>
+<script src="js/app.js?v=15"></script>
 </div>
 </body>
 </html>
