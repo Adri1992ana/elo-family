@@ -33,7 +33,7 @@
       <div class="error-msg" id="login-error">E-mail ou senha incorretos. Tente novamente.</div>
       <div class="form-group">
         <label>E-mail</label>
-        <input type="email" id="login-email" placeholder="seu@email.com" value="pai@teste.com">
+        <input type="email" id="login-email" placeholder="seu@email.com">
       </div>
       <div class="form-group">
         <label>Senha</label>
@@ -134,7 +134,7 @@
     <div class="profiles-grid" id="profiles-grid">
       <!-- populated by JS -->
     </div>
-    <div style="max-width:500px;margin:0 auto;padding:0 24px;">
+    <div class="profiles-actions">
       <button class="btn btn-secondary" onclick="navParent()" style="margin-bottom:12px;">⚙️ Acessar painel do responsável</button>
       <button class="btn btn-ghost" onclick="doLogout()">Sair da conta</button>
     </div>
@@ -165,13 +165,7 @@
       <button class="header-action" onclick="openFeedback()">💬</button>
     </div>
   </div>
-  <div class="desktop-header">
-    <div class="desktop-header-title" id="desktop-child-greeting">Olá! 👋</div>
-    <div class="desktop-header-actions">
-      <button class="header-action" onclick="openFeedback()" style="background:#1a1650;color:var(--sky);">💬</button>
-      <button class="header-action" onclick="navTo('screen-profiles')" style="background:#1a1650;color:var(--muted);">←</button>
-    </div>
-  </div>
+
   <div class="scroll-content">
     <div class="child-hero">
       <div class="greeting">Olá,</div>
@@ -260,19 +254,10 @@
       <button class="header-action" onclick="openFeedback()">💬</button>
     </div>
   </div>
-  <div class="desktop-header">
-    <div class="desktop-header-title">⚙️ Painel do Responsável</div>
-    <div class="desktop-header-actions">
-      <button class="btn btn-primary" onclick="abrirModalTarefas()" style="width:auto;padding:10px 20px;font-size:14px;">➕ Nova Tarefa</button>
-      <button onclick="resetTarefasRotina()" style="width:auto;padding:10px 20px;font-size:14px;border-radius:14px;border:2px solid var(--border);background:#1a1650;color:var(--sky);font-family:Nunito,sans-serif;font-weight:800;cursor:pointer;">🔄 Reset Rotina</button>
-      <button class="header-action" onclick="openFeedback()" style="background:#1a1650;color:var(--sky);">💬</button>
-    </div>
-  </div>
+
   <div class="scroll-content">
     <div class="dashboard-wrap">
-      <div style="margin-bottom:16px;">
-        <button onclick="resetTarefasRotina()" class="btn btn-secondary" style="width:auto;display:inline-flex;align-items:center;gap:8px;padding:12px 20px;">🔄 Reset Rotina do Dia</button>
-      </div>
+      <button onclick="resetTarefasRotina()" class="reset-btn">🔄 Reset rotina do dia</button>
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">✅</div>
@@ -309,7 +294,7 @@
         <div class="section-header" style="padding:0;margin-bottom:12px;">
           <div class="section-title">📜 Histórico de hoje</div>
         </div>
-        <div class="metrics-card" style="padding:8px 16px;">
+        <div style="background:var(--card);border-radius:var(--radius-md);border:1.5px solid var(--border);padding:8px 16px;">
           <div id="history-list"><!-- populated by JS --></div>
         </div>
       </div>
@@ -350,10 +335,8 @@
       <div style="width:40px;"></div>
     </div>
   </div>
-  <div class="desktop-header">
-    <div class="desktop-header-title">📊 Métricas Beta</div>
-  </div>
-  <div class="scroll-content" style="padding:16px 20px;">
+
+  <div class="scroll-content" style="padding:12px 16px 80px;">
     <div class="metrics-card">
       <div class="metrics-title">📈 Eventos PostHog (simulado)</div>
       <div class="metric-row">
@@ -525,7 +508,7 @@
     <div class="modal-sub">Crie manualmente ou escolha da biblioteca</div>
 
     <!-- TABS -->
-    <div style="display:flex;gap:8px;margin-bottom:20px;">
+    <div style="display:flex;gap:8px;margin-bottom:20px;" class="tab-row">
       <button class="tab-btn active" id="tab-manual" onclick="switchTab('manual')">✏️ Manual</button>
       <button class="tab-btn" id="tab-biblioteca" onclick="switchTab('biblioteca')">📚 Biblioteca</button>
       <button class="tab-btn" id="tab-lote" onclick="switchTab('lote')">📋 Em lote</button>
@@ -618,8 +601,8 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-<script src="js/supabase.js?v=10"></script>
-<script src="js/app.js?v=10"></script>
+<script src="js/supabase.js?v=11"></script>
+<script src="js/app.js?v=11"></script>
 </div>
 </body>
 </html>
