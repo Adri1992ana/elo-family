@@ -1,37 +1,44 @@
-# 🔗 ELO Family — com Supabase Backend
+# 🔗 ELO Family — Beta v3
+
+Rotina infantil gamificada com tema gamer dark.
+
+## Perfis de acesso
+
+| Perfil | Acesso |
+|---|---|
+| 👧 Criança | Dashboard de tarefas, recompensas, rodapé fixo |
+| ⚙️ Responsável | Criar tarefas, aprovar recompensas, gerenciar filhos |
+| 📊 Admin/Master | Métricas de uso, feedbacks, KPIs do produto |
+
+## Tecnologias
+
+- HTML + CSS + JS puro (sem framework)
+- [Supabase](https://supabase.com) para auth e banco de dados
+- Fontes: Nunito + Baloo 2 (Google Fonts)
+
+## Como rodar
+
+1. Clone o repositório
+2. Abra `index.html` no navegador (ou use Live Server no VS Code)
+3. As credenciais do Supabase já estão em `js/supabase.js`
 
 ## Estrutura
 
 ```
-elo-family/
-├── index.html          ← app completo + modal de filhos
+elo-family-supabase/
+├── index.html
 ├── css/
-│   └── style.css       ← estilos paleta Gamer
+│   └── style.css
 ├── js/
-│   ├── supabase.js     ← ⚠️ configure suas credenciais aqui
-│   └── app.js          ← lógica completa com Supabase
+│   ├── supabase.js   ← configuração e conexão
+│   └── app.js        ← toda a lógica do app
 └── README.md
 ```
 
-## ⚠️ Antes de publicar — configure o Supabase
-
-Abra `js/supabase.js` e substitua:
-
-```js
-const SUPABASE_URL = 'https://SEU_PROJETO.supabase.co';
-const SUPABASE_KEY = 'SUA_CHAVE_ANON_PUBLIC';
-```
-
-Encontre esses valores em: **Supabase > Settings > API**
-
-## Subir no GitHub
+## Git
 
 ```bash
 git add .
-git commit -m "feat: integra Supabase backend"
+git commit -m "feat: redesign gamer dark v3"
 git push origin main
 ```
-
-## Versão
-
-Beta v2.0 — com Supabase Auth + PostgreSQL

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ELO Family — Beta</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
@@ -17,9 +17,8 @@
 </head>
 <body>
 <div id="app-root">
-<!-- ═══════════════════════════════════════════
-     SCREEN: LOGIN
-═══════════════════════════════════════════ -->
+
+<!-- ═══ SCREEN: LOGIN ═══ -->
 <div id="screen-login" class="screen active">
   <div class="auth-wrap" style="flex:1;">
     <div class="auth-card">
@@ -30,7 +29,7 @@
       </div>
       <div class="auth-title">Bem-vindo de volta!</div>
       <div class="auth-sub">Entre com seu e-mail e senha</div>
-      <div class="error-msg" id="login-error">E-mail ou senha incorretos. Tente novamente.</div>
+      <div class="error-msg" id="login-error">E-mail ou senha incorretos.</div>
       <div class="form-group">
         <label>E-mail</label>
         <input type="email" id="login-email" placeholder="seu@email.com">
@@ -42,16 +41,14 @@
           <button type="button" onclick="toggleSenha('login-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);">👁️</button>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
+      <button class="btn btn-primary" onclick="doLogin()">Entrar 🚀</button>
       <div class="auth-link"><a onclick="navTo('screen-forgot')">Esqueci minha senha</a></div>
-      <div class="auth-link">Ainda não tem conta? <a onclick="navTo('screen-register')">Criar conta</a></div>
+      <div class="auth-link">Não tem conta? <a onclick="navTo('screen-register')">Criar conta</a></div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: REGISTER
-═══════════════════════════════════════════ -->
+<!-- ═══ SCREEN: REGISTER ═══ -->
 <div id="screen-register" class="screen">
   <div class="auth-wrap" style="flex:1;">
     <div class="auth-card" style="overflow-y:auto;max-height:95vh;">
@@ -63,16 +60,10 @@
       <div class="auth-sub">Cadastre-se como responsável</div>
       <div class="privacy-notice">
         <div class="pn-icon">🔒</div>
-        <p>Seus dados e os da sua família são protegidos conforme a LGPD. Nenhuma informação de crianças é compartilhada com terceiros.</p>
+        <p>Dados protegidos conforme LGPD. Nenhuma informação de crianças é compartilhada com terceiros.</p>
       </div>
-      <div class="form-group">
-        <label>Nome completo</label>
-        <input type="text" id="reg-name" placeholder="Seu nome completo">
-      </div>
-      <div class="form-group">
-        <label>E-mail</label>
-        <input type="email" id="reg-email" placeholder="seu@email.com">
-      </div>
+      <div class="form-group"><label>Nome completo</label><input type="text" id="reg-name" placeholder="Seu nome completo"></div>
+      <div class="form-group"><label>E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
       <div class="form-group">
         <label>Senha <span style="color:var(--muted);font-weight:400">(mín. 8 chars, 1 número, 1 maiúscula)</span></label>
         <div style="position:relative;">
@@ -88,310 +79,181 @@
         </div>
       </div>
       <div class="error-msg" id="reg-error">Preencha todos os campos corretamente.</div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="chk-terms">
-        <label for="chk-terms">Li e aceito os <a href="#" onclick="return false">Termos de Uso</a> e a <a href="#" onclick="return false">Política de Privacidade</a>.</label>
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="chk-lgpd">
-        <label for="chk-lgpd">Consinto com o tratamento de dados das crianças vinculadas à minha conta, conforme o art. 14 da LGPD.</label>
-      </div>
-      <button class="btn btn-primary" onclick="doRegister()">Criar conta</button>
+      <div class="checkbox-row"><input type="checkbox" id="chk-terms"><label for="chk-terms">Li e aceito os <a href="#" onclick="return false">Termos de Uso</a> e a <a href="#" onclick="return false">Política de Privacidade</a>.</label></div>
+      <div class="checkbox-row"><input type="checkbox" id="chk-lgpd"><label for="chk-lgpd">Consinto com o tratamento de dados das crianças vinculadas, conforme o art. 14 da LGPD.</label></div>
+      <button class="btn btn-primary" onclick="doRegister()">Criar conta 🎮</button>
       <div class="auth-link">Já tenho conta. <a onclick="navTo('screen-login')">Fazer login</a></div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: FORGOT PASSWORD
-═══════════════════════════════════════════ -->
+<!-- ═══ SCREEN: FORGOT ═══ -->
 <div id="screen-forgot" class="screen">
   <div class="auth-wrap" style="flex:1;">
     <div class="auth-card">
       <div style="text-align:center;font-size:56px;margin-bottom:16px;">📧</div>
       <div class="auth-title">Recuperar senha</div>
       <div class="auth-sub">Enviaremos um link para o seu e-mail.</div>
-      <div class="form-group">
-        <label>E-mail cadastrado</label>
-        <input type="email" id="forgot-email" placeholder="seu@email.com">
-      </div>
+      <div class="form-group"><label>E-mail cadastrado</label><input type="email" id="forgot-email" placeholder="seu@email.com"></div>
       <button class="btn btn-primary" onclick="doForgot()">Enviar link</button>
       <div class="auth-link"><a onclick="navTo('screen-login')">← Voltar ao login</a></div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: PROFILES
-═══════════════════════════════════════════ -->
+<!-- ═══ SCREEN: PROFILES ═══ -->
 <div id="screen-profiles" class="screen">
   <div class="profiles-wrap" style="flex:1;">
     <div class="profiles-header">
       <div style="font-size:48px;margin-bottom:12px;">👨‍👩‍👧‍👦</div>
       <div class="profiles-title">Quem vai usar?</div>
-      <div class="profiles-sub">Selecione o perfil ou acesse o painel</div>
+      <div class="profiles-sub">Selecione o perfil</div>
     </div>
-    <div class="profiles-grid" id="profiles-grid">
-      <!-- populated by JS -->
-    </div>
-    <div class="profiles-actions">
-      <button class="btn btn-secondary" onclick="navParent()" style="margin-bottom:12px;">⚙️ Acessar painel do responsável</button>
-      <button class="btn btn-ghost" onclick="doLogout()">Sair da conta</button>
+    <div class="profiles-grid" id="profiles-grid"></div>
+    <div class="profiles-actions" style="display:flex;flex-direction:column;gap:10px;margin-top:auto;">
+      <button class="btn btn-secondary" onclick="navParent()">⚙️ Painel do responsável</button>
+      <button class="btn btn-secondary" onclick="navTo('screen-admin')" style="color:var(--gold);border-color:var(--gold2);background:rgba(245,158,11,.08);">📊 Admin · Métricas</button>
+      <button class="btn btn-ghost" onclick="doLogout()">Sair da conta ↪</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: CHILD HOME
-═══════════════════════════════════════════ -->
-<div id="screen-child-home" class="screen with-sidebar" style="background:var(--bg);">
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-logo">🔗 ELO Family</div>
-    <div class="sidebar-nav">
-      <button class="sidebar-item active" onclick="switchChildTab('home')">🏠 Início</button>
-      <button class="sidebar-item" onclick="switchChildTab('rewards')">🎁 Recompensas</button>
-    </div>
-    <div class="sidebar-footer">
-      <button class="sidebar-item" onclick="navTo('screen-profiles')">← Trocar perfil</button>
-    </div>
-  </div>
-  <!-- CONTENT -->
-  <div class="sidebar-content">
+<!-- ═══ SCREEN: CHILD HOME ═══ -->
+<div id="screen-child-home" class="screen" style="background:var(--bg);">
   <div class="app-header">
     <div class="header-row">
-      <button class="header-back" onclick="navTo('screen-profiles')">←</button>
       <div class="header-logo">🔗 ELO Family</div>
-      <button class="header-action" onclick="openFeedback()">💬</button>
+      <div class="stars-badge" id="header-stars-badge"><span>⭐</span><span id="header-stars">0</span></div>
     </div>
   </div>
-
   <div class="scroll-content">
     <div class="child-hero">
       <div class="greeting">Olá,</div>
       <div class="greeting-name" id="child-greeting">Carregando...</div>
     </div>
-    <div class="stars-banner">
-      <div class="stars-icon">⭐</div>
-      <div>
-        <div class="stars-label">Suas estrelas</div>
-        <div class="stars-value" id="child-stars">0</div>
+    <div class="progress-banner">
+      <div class="progress-top">
+        <div>
+          <div class="progress-label">Progresso do dia</div>
+          <div class="progress-count" id="progress-count">0/0 tarefas</div>
+        </div>
+        <div class="progress-circle" id="progress-pct">0%</div>
       </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar" style="width:0%"></div></div>
     </div>
-    <div class="section-header">
-      <div class="section-title">📋 Tarefas de hoje</div>
-      <div class="section-link" id="tasks-progress">0/0 feitas</div>
-    </div>
-    <div class="tasks-list" id="child-tasks-list">
-      <!-- populated by JS -->
-    </div>
+    <div id="child-tasks-list"></div>
     <div style="height:20px;"></div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn active" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
     <button class="nav-btn" onclick="switchChildTab('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">Recompensas</span></button>
   </div>
-  <button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
-  </div><!-- end sidebar-content -->
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: CHILD REWARDS
-═══════════════════════════════════════════ -->
+<!-- ═══ SCREEN: CHILD REWARDS ═══ -->
 <div id="screen-child-rewards" class="screen" style="background:var(--bg);">
   <div class="app-header">
     <div class="header-row">
-      <button class="header-back" onclick="navTo('screen-child-home')">←</button>
       <div class="header-logo">🎁 Recompensas</div>
-      <div style="width:40px;"></div>
+      <div class="stars-badge"><span>⭐</span><span id="reward-stars">0</span></div>
     </div>
   </div>
   <div class="scroll-content">
-    <div class="stars-banner" style="margin:16px 20px;">
+    <div class="stars-banner" style="margin:16px 16px;">
       <div class="stars-icon">⭐</div>
       <div>
         <div class="stars-label">Saldo disponível</div>
-        <div class="stars-value" id="reward-stars">0</div>
+        <div class="stars-value" id="reward-stars-val">0</div>
       </div>
     </div>
-    <div class="section-header">
-      <div class="section-title">🎯 Disponíveis</div>
-    </div>
-    <div class="rewards-grid" id="child-rewards-grid">
-      <!-- populated by JS -->
-    </div>
+    <div id="pending-notice" style="display:none;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:12px;padding:10px 14px;margin:0 16px 14px;font-size:13px;color:var(--sky);font-weight:700;"></div>
+    <div class="section-header"><div class="section-title">🎯 Disponíveis</div></div>
+    <div class="rewards-grid" id="child-rewards-grid"></div>
   </div>
   <div class="bottom-nav">
-    <button class="nav-btn" onclick="navTo('screen-child-home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
+    <button class="nav-btn" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
     <button class="nav-btn active" onclick="switchChildTab('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">Recompensas</span></button>
   </div>
-  <button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: PARENT DASHBOARD
-═══════════════════════════════════════════ -->
-<div id="screen-parent" class="screen with-sidebar" style="background:var(--bg);">
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-logo">🔗 ELO Family</div>
-    <div class="sidebar-nav">
-      <button class="sidebar-item active" onclick="navParent()">⚙️ Painel</button>
-      <button class="sidebar-item" onclick="navTo('screen-metrics')">📊 Métricas</button>
-      <button class="sidebar-item" onclick="abrirModalTarefas()">➕ Nova Tarefa</button>
-    </div>
-    <div class="sidebar-footer">
-      <button class="sidebar-item" onclick="navTo('screen-profiles')">← Perfis</button>
-      <button class="sidebar-item" onclick="doLogout()">↪ Sair</button>
-    </div>
-  </div>
-  <!-- CONTENT -->
-  <div class="sidebar-content">
+<!-- ═══ SCREEN: PARENT DASHBOARD ═══ -->
+<div id="screen-parent" class="screen" style="background:var(--bg);">
   <div class="app-header">
     <div class="header-row">
       <button class="header-back" onclick="navTo('screen-profiles')">←</button>
       <div class="header-logo">⚙️ Painel</div>
-      <button class="header-action" onclick="openFeedback()">💬</button>
+      <button onclick="doLogout()" style="background:none;border:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Sair</button>
     </div>
   </div>
-
   <div class="scroll-content">
     <div class="dashboard-wrap">
-      <button onclick="resetTarefasRotina()" class="reset-btn">🔄 Reset rotina do dia</button>
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">✅</div>
-          <div class="stat-value" id="stat-completed">0</div>
-          <div class="stat-label">Tarefas concluídas hoje</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">⭐</div>
-          <div class="stat-value" id="stat-stars">0</div>
-          <div class="stat-label">Estrelas acumuladas</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🎁</div>
-          <div class="stat-value" id="stat-pending">0</div>
-          <div class="stat-label">Pedidos pendentes</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🏆</div>
-          <div class="stat-value" id="stat-streak">3</div>
-          <div class="stat-label">Dias consecutivos</div>
-        </div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="stat-completed">0</div><div class="stat-label">Tarefas hoje</div></div>
+        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="stat-stars">0</div><div class="stat-label">Estrelas totais</div></div>
+        <div class="stat-card"><div class="stat-icon">🎁</div><div class="stat-value" id="stat-pending">0</div><div class="stat-label">Pedidos</div></div>
+        <div class="stat-card"><div class="stat-icon">👶</div><div class="stat-value" id="stat-filhos">0</div><div class="stat-label">Filhos</div></div>
       </div>
-
+      <div class="panel-actions">
+        <button class="panel-btn panel-btn-sky" onclick="resetTarefasRotina()">🔄 Reset rotina</button>
+        <button class="panel-btn panel-btn-purple" onclick="abrirModalTarefas()">➕ Nova tarefa</button>
+      </div>
       <div class="panel-section">
-        <div class="section-header" style="padding:0;margin-bottom:12px;">
-          <div class="section-title">⏳ Aguardando aprovação</div>
-        </div>
-        <div id="approval-list">
-          <!-- populated by JS -->
-        </div>
+        <div class="section-sub">⏳ Aguardando aprovação</div>
+        <div id="approval-list"></div>
       </div>
-
       <div class="panel-section">
-        <div class="section-header" style="padding:0;margin-bottom:12px;">
-          <div class="section-title">📜 Histórico de hoje</div>
-        </div>
-        <div style="background:var(--card);border-radius:var(--radius-md);border:1.5px solid var(--border);padding:8px 16px;">
-          <div id="history-list"><!-- populated by JS --></div>
+        <div class="section-sub">📜 Histórico de hoje</div>
+        <div style="background:var(--card);border-radius:14px;border:1.5px solid var(--border);padding:8px 16px;">
+          <div id="history-list"></div>
         </div>
       </div>
-
-
     </div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn active"><span class="nav-icon">⚙️</span><span class="nav-label">Painel</span></button>
-    <button class="nav-btn" onclick="navTo('screen-metrics')"><span class="nav-icon">📊</span><span class="nav-label">Métricas</span></button>
+    <button class="nav-btn" onclick="navTo('screen-admin')"><span class="nav-icon">📊</span><span class="nav-label">Métricas</span></button>
   </div>
   <button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
   <button class="task-fab" onclick="abrirModalTarefas()">➕ Nova Tarefa</button>
-  </div><!-- end sidebar-content -->
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: METRICS / ANALYTICS
-═══════════════════════════════════════════ -->
-<div id="screen-metrics" class="screen with-sidebar" style="background:var(--bg);">
-  <div class="sidebar">
-    <div class="sidebar-logo">🔗 ELO Family</div>
-    <div class="sidebar-nav">
-      <button class="sidebar-item" onclick="navParent()">⚙️ Painel</button>
-      <button class="sidebar-item active" onclick="navTo('screen-metrics')">📊 Métricas</button>
-      <button class="sidebar-item" onclick="abrirModalTarefas()">➕ Nova Tarefa</button>
-    </div>
-    <div class="sidebar-footer">
-      <button class="sidebar-item" onclick="navTo('screen-profiles')">← Perfis</button>
-      <button class="sidebar-item" onclick="doLogout()">↪ Sair</button>
-    </div>
-  </div>
-  <div class="sidebar-content">
+<!-- ═══ SCREEN: ADMIN ═══ -->
+<div id="screen-admin" class="screen" style="background:var(--bg);">
   <div class="app-header">
     <div class="header-row">
       <button class="header-back" onclick="navTo('screen-parent')">←</button>
-      <div class="header-logo">📊 Métricas Beta</div>
-      <div style="width:40px;"></div>
+      <div class="header-logo" style="color:var(--gold);">📊 Admin · Métricas</div>
+      <div style="width:36px;"></div>
     </div>
   </div>
-
-  <div class="scroll-content" style="padding:12px 16px 80px;">
+  <div class="scroll-content" style="padding:12px 16px 40px;">
+    <div class="admin-notice"><span>🔐 Acesso restrito — usuárias masters do produto</span></div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">Tarefas concluídas</div><div class="kpi-val" id="kpi-tasks" style="color:var(--green);">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Recompensas pedidas</div><div class="kpi-val" id="kpi-rewards" style="color:var(--gold);">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Tarefas criadas</div><div class="kpi-val" id="kpi-created" style="color:var(--sky);">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Beta testers</div><div class="kpi-val" style="color:var(--purple);">1/20</div></div>
+    </div>
     <div class="metrics-card">
       <div class="metrics-title">📈 Eventos PostHog (simulado)</div>
-      <div class="metric-row">
-        <div>
-          <div class="metric-key">sessao_iniciada</div>
-          <div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:85%"></div></div>
-        </div>
-        <div class="metric-val">17 sessões</div>
-      </div>
-      <div class="metric-row">
-        <div>
-          <div class="metric-key">tarefa_concluida</div>
-          <div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:70%"></div></div>
-        </div>
-        <div class="metric-val" id="m-tasks">0</div>
-      </div>
-      <div class="metric-row">
-        <div>
-          <div class="metric-key">recompensa_solicitada</div>
-          <div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:30%"></div></div>
-        </div>
-        <div class="metric-val" id="m-rewards">0</div>
-      </div>
-      <div class="metric-row">
-        <div>
-          <div class="metric-key">retencao_d7</div>
-          <div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:60%"></div></div>
-        </div>
-        <div class="metric-val">60%</div>
-      </div>
-      <div class="metric-row">
-        <div>
-          <div class="metric-key">tarefa_criada</div>
-          <div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:45%"></div></div>
-        </div>
-        <div class="metric-val" id="m-created">0</div>
-      </div>
+      <div class="metric-row"><div><div class="metric-key">sessao_iniciada</div><div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div></div><div class="metric-val">17 sessões</div></div>
+      <div class="metric-row"><div><div class="metric-key">tarefa_concluida</div><div class="progress-bar"><div class="progress-fill" id="m-tasks-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-tasks">0 conclusões</div></div>
+      <div class="metric-row"><div><div class="metric-key">recompensa_solicitada</div><div class="progress-bar"><div class="progress-fill" id="m-rewards-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-rewards">0 pedidos</div></div>
+      <div class="metric-row"><div><div class="metric-key">retencao_d7</div><div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div></div><div class="metric-val">60%</div></div>
+      <div class="metric-row"><div><div class="metric-key">tarefa_criada</div><div class="progress-bar"><div class="progress-fill" id="m-created-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-created">0 criadas</div></div>
     </div>
-
+    <div class="metrics-card">
+      <div class="metrics-title">🧪 Usuários Beta</div>
+      <div class="metric-row"><div class="metric-key">DAU hoje</div><div class="metric-val">1</div></div>
+      <div class="metric-row"><div class="metric-key">Plataforma</div><div class="metric-val">Web / PWA</div></div>
+      <div class="metric-row"><div class="metric-key">Versão</div><div class="metric-val">Beta 1.0</div></div>
+      <div class="metric-row"><div class="metric-key">Retenção D7</div><div class="metric-val">60%</div></div>
+    </div>
     <div class="metrics-card">
       <div class="metrics-title">💬 Feedbacks recebidos</div>
       <div id="feedbacks-list">
-        <div class="empty-state" style="padding:20px 0;">
-          <div class="empty-icon">🗂️</div>
-          <p>Nenhum feedback ainda.<br>Use o botão roxo para enviar.</p>
-        </div>
+        <div class="empty-state" style="padding:20px 0;"><div class="empty-icon">🗂️</div><p>Nenhum feedback ainda.</p></div>
       </div>
-    </div>
-
-    <div class="metrics-card">
-      <div class="metrics-title">🧪 Usuários Beta</div>
-      <div class="metric-row"><div class="metric-key">Total de beta testers</div><div class="metric-val">1 / 20</div></div>
-      <div class="metric-row"><div class="metric-key">DAU hoje</div><div class="metric-val">1</div></div>
-      <div class="metric-row"><div class="metric-key">Plataforma</div><div class="metric-val">Web Preview</div></div>
-      <div class="metric-row"><div class="metric-key">Versão</div><div class="metric-val">Beta 1.0</div></div>
     </div>
   </div>
   <div class="bottom-nav">
@@ -400,39 +262,33 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     REWARD ANIMATION OVERLAY
-═══════════════════════════════════════════ -->
+<!-- ═══ REWARD OVERLAY ═══ -->
 <div class="reward-overlay" id="reward-overlay" onclick="closeReward()">
   <div class="reward-modal" onclick="event.stopPropagation()">
     <div class="reward-stars">⭐</div>
-    <div class="reward-title" id="reward-title">Arrasou!</div>
+    <div class="reward-title" id="reward-title">Missão completa! 🎉</div>
     <div class="reward-msg" id="reward-msg">Você ganhou estrelas!</div>
     <button class="btn btn-gold" onclick="closeReward()">Uhuu! 🎉</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     FEEDBACK MODAL
-═══════════════════════════════════════════ -->
+<!-- ═══ FEEDBACK MODAL ═══ -->
 <div class="modal-overlay" id="feedback-modal" onclick="closeFeedback()">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div id="feedback-form-area">
       <div class="modal-title">💬 Sua opinião importa!</div>
       <div class="modal-sub">Este é um beta teste. Ajude-nos a melhorar o ELO Family.</div>
-
       <div class="form-group">
         <label>Como você avalia esta experiência?</label>
         <div class="rating-row">
-          <div class="rating-btn" onclick="selectRating(this, 1)"><span class="r-emoji">😞</span><span class="r-label">Ruim</span></div>
-          <div class="rating-btn" onclick="selectRating(this, 2)"><span class="r-emoji">😐</span><span class="r-label">Regular</span></div>
-          <div class="rating-btn" onclick="selectRating(this, 3)"><span class="r-emoji">🙂</span><span class="r-label">Bom</span></div>
-          <div class="rating-btn" onclick="selectRating(this, 4)"><span class="r-emoji">😄</span><span class="r-label">Ótimo</span></div>
-          <div class="rating-btn" onclick="selectRating(this, 5)"><span class="r-emoji">🤩</span><span class="r-label">Incrível</span></div>
+          <div class="rating-btn" onclick="selectRating(this,1)"><span class="r-emoji">😞</span><span class="r-label">Ruim</span></div>
+          <div class="rating-btn" onclick="selectRating(this,2)"><span class="r-emoji">😐</span><span class="r-label">Regular</span></div>
+          <div class="rating-btn" onclick="selectRating(this,3)"><span class="r-emoji">🙂</span><span class="r-label">Bom</span></div>
+          <div class="rating-btn" onclick="selectRating(this,4)"><span class="r-emoji">😄</span><span class="r-label">Ótimo</span></div>
+          <div class="rating-btn" onclick="selectRating(this,5)"><span class="r-emoji">🤩</span><span class="r-label">Incrível</span></div>
         </div>
       </div>
-
       <div class="form-group">
         <label>Onde teve dificuldade? <span style="font-weight:400;color:var(--muted)">(opcional)</span></label>
         <div class="difficulty-tags">
@@ -444,38 +300,26 @@
           <div class="diff-tag" onclick="toggleTag(this)">Entender o app</div>
         </div>
       </div>
-
-      <div class="form-group">
-        <label>Comentários ou sugestões</label>
-        <textarea id="feedback-text" rows="3" placeholder="O que podemos melhorar? Teve algum bug?"></textarea>
-      </div>
-
+      <div class="form-group"><label>Comentários</label><textarea id="feedback-text" rows="3" placeholder="O que podemos melhorar?"></textarea></div>
       <button class="btn btn-primary" onclick="submitFeedback()">Enviar feedback</button>
     </div>
     <div class="success-msg" id="feedback-success">
       <div class="success-icon">🎉</div>
       <div class="success-text">Feedback enviado!</div>
-      <div class="success-sub">Obrigado por ajudar a tornar o ELO Family melhor. 💙</div>
+      <div class="success-sub">Obrigado por ajudar a melhorar o ELO Family. 💙</div>
       <button class="btn btn-ghost" onclick="closeFeedback()" style="margin-top:16px;">Fechar</button>
     </div>
   </div>
 </div>
 
-
-<!-- MODAL: Adicionar Filho -->
+<!-- ═══ MODAL: ADICIONAR FILHO ═══ -->
 <div class="modal-overlay" id="modal-add-child" onclick="fecharModalFilho()">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title">👶 Adicionar filho</div>
     <div class="modal-sub">Cadastre uma criança na sua conta</div>
-    <div class="form-group">
-      <label>Nome da criança</label>
-      <input type="text" id="child-name" placeholder="Ex: Ana Clara">
-    </div>
-    <div class="form-group">
-      <label>Idade</label>
-      <input type="number" id="child-age" placeholder="Ex: 8" min="1" max="17">
-    </div>
+    <div class="form-group"><label>Nome da criança</label><input type="text" id="child-name" placeholder="Ex: Ana Clara"></div>
+    <div class="form-group"><label>Idade</label><input type="number" id="child-age" placeholder="Ex: 8" min="1" max="17"></div>
     <div class="form-group">
       <label>Avatar</label>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
@@ -489,47 +333,31 @@
         <span onclick="selectEmoji(this,'👨🏽')" class="emoji-pick">👨🏽</span>
         <span onclick="selectEmoji(this,'👧🏿')" class="emoji-pick">👧🏿</span>
         <span onclick="selectEmoji(this,'👦🏿')" class="emoji-pick">👦🏿</span>
-        <span onclick="selectEmoji(this,'👩🏿')" class="emoji-pick">👩🏿</span>
-        <span onclick="selectEmoji(this,'👨🏿')" class="emoji-pick">👨🏿</span>
       </div>
-      <div id="selected-emoji" style="font-size:13px;color:var(--muted);">Emoji selecionado: 👧</div>
+      <div id="selected-emoji" style="font-size:13px;color:var(--muted);">Selecionado: 👧</div>
     </div>
     <button class="btn btn-primary" onclick="salvarFilho()">Salvar filho</button>
     <button class="btn btn-ghost" onclick="fecharModalFilho()" style="margin-top:8px;">Cancelar</button>
   </div>
 </div>
 
-
-<!-- MODAL: Nova Tarefa (com biblioteca em lote) -->
+<!-- ═══ MODAL: NOVA TAREFA ═══ -->
 <div class="modal-overlay" id="modal-tarefas" onclick="fecharModalTarefas()">
   <div class="modal-sheet" style="max-height:90vh;overflow-y:auto;" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title">➕ Nova Tarefa</div>
     <div class="modal-sub">Crie manualmente ou escolha da biblioteca</div>
-
-    <!-- TABS -->
-    <div style="display:flex;gap:8px;margin-bottom:20px;" class="tab-row">
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
       <button class="tab-btn active" id="tab-manual" onclick="switchTab('manual')">✏️ Manual</button>
       <button class="tab-btn" id="tab-biblioteca" onclick="switchTab('biblioteca')">📚 Biblioteca</button>
       <button class="tab-btn" id="tab-lote" onclick="switchTab('lote')">📋 Em lote</button>
     </div>
-
-    <!-- TAB: MANUAL -->
+    <!-- TAB MANUAL -->
     <div id="tab-content-manual">
-      <div class="form-group">
-        <label>Nome da tarefa</label>
-        <input type="text" id="fab-task-name" placeholder="Ex: Escovar os dentes">
-      </div>
-      <div class="form-group">
-        <label>Para qual criança?</label>
-        <select id="fab-task-child"></select>
-      </div>
-      <div class="form-group">
-        <label>Horário</label>
-        <input type="time" id="fab-task-time" value="08:00">
-      </div>
-      <div class="form-group">
-        <label>Estrelas 🌟</label>
+      <div class="form-group"><label>Nome da tarefa</label><input type="text" id="fab-task-name" placeholder="Ex: Escovar os dentes"></div>
+      <div class="form-group"><label>Para qual criança?</label><select id="fab-task-child"></select></div>
+      <div class="form-group"><label>Horário</label><input type="time" id="fab-task-time" value="08:00"></div>
+      <div class="form-group"><label>Estrelas 🌟</label>
         <div class="star-select">
           <div class="star-option" onclick="selectStarsFab(this,1)">⭐ 1</div>
           <div class="star-option selected" onclick="selectStarsFab(this,2)">⭐⭐ 2</div>
@@ -537,14 +365,9 @@
           <div class="star-option" onclick="selectStarsFab(this,5)">🌟 5</div>
         </div>
       </div>
-      <div class="form-group">
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-          <input type="checkbox" id="fab-recorrente" onchange="toggleDiasSemana()" style="width:20px;height:20px;accent-color:var(--blue);">
-          Tarefa recorrente (rotina diária)
-        </label>
-      </div>
+      <div class="form-group"><label style="display:flex;align-items:center;gap:10px;cursor:pointer;"><input type="checkbox" id="fab-recorrente" onchange="toggleDiasSemana()" style="width:20px;height:20px;accent-color:var(--blue);"><span style="font-size:13px;color:var(--text);font-weight:700;">Tarefa recorrente (rotina diária)</span></label></div>
       <div id="dias-semana-wrap" style="display:none;margin-bottom:16px;">
-        <label style="font-size:13px;font-weight:700;color:var(--sky);display:block;margin-bottom:8px;">Dias da semana</label>
+        <label style="font-size:11px;font-weight:800;color:var(--sky);display:block;margin-bottom:8px;text-transform:uppercase;">Dias da semana</label>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="dia-btn selected" data-dia="seg" onclick="toggleDia(this)">Seg</button>
           <button class="dia-btn selected" data-dia="ter" onclick="toggleDia(this)">Ter</button>
@@ -557,13 +380,9 @@
       </div>
       <button class="btn btn-primary" onclick="addTaskFab()">Criar tarefa</button>
     </div>
-
-    <!-- TAB: BIBLIOTECA -->
+    <!-- TAB BIBLIOTECA -->
     <div id="tab-content-biblioteca" style="display:none;">
-      <div class="form-group">
-        <label>Para qual criança?</label>
-        <select id="fab-bib-child"></select>
-      </div>
+      <div class="form-group"><label>Para qual criança?</label><select id="fab-bib-child"></select></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
         <button class="cat-btn active" onclick="filterCat(this,'todos')">Todos</button>
         <button class="cat-btn" onclick="filterCat(this,'higiene')">🪥 Higiene</button>
@@ -571,22 +390,14 @@
         <button class="cat-btn" onclick="filterCat(this,'casa')">🏠 Casa</button>
         <button class="cat-btn" onclick="filterCat(this,'saude')">💪 Saúde</button>
       </div>
-      <div id="biblioteca-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:300px;overflow-y:auto;"></div>
+      <div id="biblioteca-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:280px;overflow-y:auto;"></div>
       <button class="btn btn-primary" style="margin-top:16px;" onclick="adicionarSelecionadas()">Adicionar selecionadas</button>
     </div>
-
-    <!-- TAB: EM LOTE -->
+    <!-- TAB LOTE -->
     <div id="tab-content-lote" style="display:none;">
-      <div class="form-group">
-        <label>Para qual criança?</label>
-        <select id="fab-lote-child"></select>
-      </div>
-      <div class="form-group">
-        <label>Cole uma tarefa por linha</label>
-        <textarea id="lote-text" rows="6" placeholder="Escovar os dentes&#10;Arrumar a mochila&#10;Ler por 20 minutos&#10;Guardar brinquedos"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Estrelas para todas 🌟</label>
+      <div class="form-group"><label>Para qual criança?</label><select id="fab-lote-child"></select></div>
+      <div class="form-group"><label>Cole uma tarefa por linha</label><textarea id="lote-text" rows="6" placeholder="Escovar os dentes&#10;Arrumar a mochila&#10;Ler por 20 minutos"></textarea></div>
+      <div class="form-group"><label>Estrelas para todas 🌟</label>
         <div class="star-select">
           <div class="star-option selected" onclick="selectStarsLote(this,1)">⭐ 1</div>
           <div class="star-option" onclick="selectStarsLote(this,2)">⭐⭐ 2</div>
@@ -596,13 +407,15 @@
       </div>
       <button class="btn btn-primary" onclick="criarEmLote()">Criar todas as tarefas</button>
     </div>
+    <button class="btn btn-ghost" onclick="fecharModalTarefas()" style="margin-top:8px;">Cancelar</button>
   </div>
 </div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-<script src="js/supabase.js?v=11"></script>
-<script src="js/app.js?v=11"></script>
+
+<script src="js/supabase.js?v=12"></script>
+<script src="js/app.js?v=12"></script>
 </div>
 </body>
 </html>
