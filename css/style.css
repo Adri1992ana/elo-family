@@ -1008,86 +1008,105 @@
     .tasks-section-title { padding: 0; }
   }
 
+  
   /* ═══════════════════════════════════════
-     MOBILE-FIRST APP SHELL
-     Limita a 430px e centraliza no desktop
+     PHONE FRAME — exibe como celular no desktop
   ═══════════════════════════════════════ */
 
   #app-root {
     width: 100%;
     min-height: 100vh;
     background: var(--bg);
+    position: relative;
   }
 
-  @media (min-width: 768px) {
+  /* No desktop: centraliza como moldura de celular */
+  @media (min-width: 600px) {
+    html, body {
+      background: #030209;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
     body {
-      background: #06040f;
       display: flex;
       align-items: flex-start;
       justify-content: center;
+      padding: 32px 0 60px;
       min-height: 100vh;
-      padding: 0;
     }
 
     #app-root {
-      width: 430px;
-      min-width: 430px;
-      max-width: 430px;
-      min-height: 100vh;
+      width: 390px;
+      min-width: 390px;
+      max-width: 390px;
+      min-height: 844px;
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 10px #1a1a2e,
+        0 0 0 12px #2e2a7a,
+        0 0 80px rgba(124,58,237,0.3),
+        0 40px 100px rgba(0,0,0,0.8);
       position: relative;
-      box-shadow: 0 0 60px rgba(0,0,0,0.6);
     }
 
-    /* No desktop, remove sidebar layout — use mobile layout */
-    .with-sidebar {
-      flex-direction: column !important;
+    /* Notch simulado */
+    #app-root::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: #030209;
+      border-radius: 0 0 20px 20px;
+      z-index: 9999;
     }
-    .sidebar {
-      display: none !important;
+
+    /* Padding top para compensar o notch */
+    .auth-wrap,
+    .profiles-wrap {
+      padding-top: 48px !important;
     }
-    .sidebar-content {
-      flex: unset !important;
-      width: 100% !important;
-      overflow-y: unset !important;
-      min-height: unset !important;
-    }
-    .desktop-header {
-      display: none !important;
-    }
+
     .app-header {
-      display: flex !important;
-    }
-    .bottom-nav {
-      display: flex !important;
+      padding-top: 36px !important;
     }
 
-    /* Reset desktop overrides */
+    /* Force mobile layout — hide sidebar */
+    .with-sidebar { flex-direction: column !important; }
+    .sidebar { display: none !important; }
+    .sidebar-content { flex: unset !important; width: 100% !important; min-height: unset !important; overflow-y: unset !important; }
+    .desktop-header { display: none !important; }
+    .app-header { display: flex !important; }
+    .bottom-nav { display: flex !important; position: sticky !important; }
+
+    /* Reset all desktop overrides */
     .stats-grid { grid-template-columns: 1fr 1fr !important; }
     .rewards-grid { grid-template-columns: 1fr 1fr !important; padding: 16px 20px !important; }
     .scroll-content { padding: 0 0 20px !important; }
     .dashboard-wrap { padding: 16px 20px !important; }
     .tasks-list { padding: 0 20px !important; }
     .section-header { padding: 0 20px !important; }
-    .form-card { margin: 16px 20px !important; }
     .stars-banner { margin: 16px 20px !important; }
 
-    /* FAB positions for narrow view */
+    /* FABs */
     .task-fab { bottom: 90px !important; right: 16px !important; }
     .feedback-fab { bottom: 155px !important; right: 16px !important; }
 
-    /* Modal full width on narrow */
-    .modal-sheet {
-      max-width: 430px !important;
-      border-radius: 24px 24px 0 0 !important;
-      margin: 0 !important;
-    }
-    .modal-overlay {
-      align-items: flex-end !important;
-    }
+    /* Modal from bottom */
+    .modal-overlay { align-items: flex-end !important; }
+    .modal-sheet { max-width: 390px !important; border-radius: 24px 24px 0 0 !important; }
 
-    /* Auth card full width */
-    .auth-card {
-      max-width: 390px !important;
-      padding: 36px 28px !important;
-    }
+    /* Auth card */
+    .auth-card { max-width: 350px !important; padding: 32px 24px !important; max-height: 85vh; overflow-y: auto; }
+
+    /* Reward overlay dentro da moldura */
+    .reward-overlay { position: absolute !important; }
+
+    /* Toast dentro da moldura */
+    .toast { position: absolute !important; }
   }
