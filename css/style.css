@@ -29,7 +29,7 @@ html,body{font-family:'Nunito',sans-serif;background:#030209;color:var(--text);m
 #app-root{width:100%;min-height:100vh;background:var(--bg);position:relative;overflow-x:hidden;}
 @media(min-width:600px){
   body{display:flex;justify-content:center;align-items:flex-start;padding:28px 0 60px;background:#030209;}
-  #app-root{width:390px;min-width:390px;max-width:390px;min-height:844px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #110f2e,0 0 0 12px #2d2a6e,0 60px 120px rgba(0,0,0,.9),0 0 60px rgba(109,40,217,.25);}
+  #app-root{width:390px;min-width:390px;max-width:390px;min-height:844px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #110f2e,0 0 0 12px #2d2a6e,0 60px 120px rgba(0,0,0,.9),0 0 60px rgba(109,40,217,.25);transform:translateZ(0);}
   #app-root::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#030209;border-radius:0 0 18px 18px;z-index:9999;}
   .auth-wrap,.profiles-wrap{padding-top:36px!important;}
   .app-header{padding-top:32px!important;}
@@ -241,6 +241,8 @@ html,body{font-family:'Nunito',sans-serif;background:#030209;color:var(--text);m
 .task-fab:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(109,40,217,.7);}
 .feedback-fab{position:fixed;bottom:152px;right:16px;background:var(--card2);color:var(--muted2);border:1.5px solid var(--border);border-radius:50px;padding:9px 13px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;cursor:pointer;z-index:500;display:flex;align-items:center;gap:5px;transition:all .15s;}
 .feedback-fab:hover{border-color:var(--sky);color:var(--sky);}
+/* Garante que a screen do parent seja o contexto de posicionamento */
+#screen-parent{position:relative;}
 
 /* ─── MODALS ─── */
 .modal-overlay{position:fixed;inset:0;background:rgba(3,2,9,.75);display:none;align-items:flex-end;justify-content:center;z-index:900;}
