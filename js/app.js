@@ -1,19 +1,36 @@
 
 // ══════════════════════════════════════════
+// PROFILES UI — esconde painel se modo criança
+// ══════════════════════════════════════════
+function applyProfilesUi(){
+  const btnPainel=document.getElementById('btn-painel-resp');
+  const btnAdmin=document.getElementById('btn-admin');
+  const btnLogout=document.getElementById('btn-logout-resp');
+  if(state.isChildMode){
+    if(btnPainel)btnPainel.style.display='none';
+    if(btnAdmin)btnAdmin.style.display='none';
+    if(btnLogout){
+      btnLogout.textContent='↩ Trocar de perfil';
+      btnLogout.onclick=()=>{
+        if(confirm('Deseja sair do seu perfil?\n\nAtenção: na próxima vez que abrir o app, você precisará digitar o código novamente.'))
+          sairComoCrianca();
+      };
+    }
+  }else{
+    if(btnPainel)btnPainel.style.display='';
+    if(btnAdmin)btnAdmin.style.display=isMaster()?'block':'none';
+    if(btnLogout){btnLogout.textContent='Sair da conta ↪';btnLogout.onclick=doLogout;}
+  }
+}
+
+
+// ══════════════════════════════════════════
 // SAÍDA DA CRIANÇA
 // ══════════════════════════════════════════
 function confirmarSaidaCrianca(){
-  // Se tem sessão salva, pergunta se quer realmente sair
-  try{
-    const saved=localStorage.getItem('elo_child_session');
-    if(saved){
-      if(!confirm('Sair do perfil? Você precisará do código novamente para entrar.'))return;
-      sairComoCrianca();
-      return;
-    }
-  }catch(e){}
-  // Sem sessão salva — volta para login normalmente
-  navTo('screen-login');
+  // Seta de volta apenas navega para home da criança — nunca faz logout
+  renderChildHome();
+  navTo('screen-child-home');
 }
 
 // ══════════════════════════════════════════
@@ -116,11 +133,23 @@ function selectStarsLote(el,val){el.closest('.star-select').querySelectorAll('.s
 const state={
   currentChild:null,currentUserId:null,currentUserRole:'parent',currentUserEmail:'',selectedStars:2,selectedRating:null,
   feedbacks:[],metrics:{tasksCompleted:0,rewardsClaimed:0,tasksCreated:0},
-  profiles:[],tasks:[],rewards:REWARDS_DEFAULT,pendingApprovals:[],history:[],completionsAvailable:true,lastInviteCode:null,lastInviteChildIdx:0,childSession:null
+  profiles:[],tasks:[],rewards:REWARDS_DEFAULT,pendingApprovals:[],history:[],completionsAvailable:true,lastInviteCode:null,lastInviteChildIdx:0,childSession:null,isChildMode:false
 };
 
 // ── NAV ──
-function navTo(screenId){if(screenId==='screen-admin'&&!isMaster()){showToast('Métricas disponíveis apenas para usuárias master.');screenId='screen-profiles';}document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(screenId).classList.add('active');window.scrollTo(0,0);}
+function navTo(screenId){
+  // Bloqueia criança de acessar telas de responsável
+  if(state.isChildMode&&(screenId==='screen-parent'||screenId==='screen-admin')){
+    showToast('Área restrita ao responsável.');
+    return;
+  }
+  if(screenId==='screen-admin'&&!isMaster()){showToast('Métricas disponíveis apenas para usuárias master.');screenId='screen-profiles';}
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  window.scrollTo(0,0);
+  // Atualiza visibilidade do painel na tela de perfis
+  if(screenId==='screen-profiles') applyProfilesUi();
+}
 async function navParent(){await carregarTodasTarefas();renderParentDashboard();navTo('screen-parent');}
 function isMaster(){return state.currentUserRole==='master';}
 function navAdmin(){if(!isMaster()){showToast('Métricas disponíveis apenas para usuárias master.');return;}updateMetrics();navTo('screen-admin');}
@@ -617,7 +646,8 @@ async function acessarComoCrianca(parentId, childId){
   if(childIdx<0){showToast('Criança não encontrada. Contate o responsável.');return;}
 
   state.currentChild=childIdx;
-  state.childSession={parentId,childId}; // guarda em memória
+  state.childSession={parentId,childId};
+  state.isChildMode=true; // modo criança — sem acesso ao painel
 
   // Salva sessão no localStorage para acesso permanente
   try{
@@ -797,6 +827,7 @@ function sairComoCrianca(){
   try{localStorage.removeItem('elo_child_session');}catch(e){}
   state.currentChild=null;
   state.childSession=null;
+  state.isChildMode=false;
   state.profiles=[];
   state.tasks=[];
   navTo('screen-login');

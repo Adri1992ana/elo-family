@@ -147,10 +147,10 @@
     </div>
     <div class="role-strip" id="role-strip"></div>
     <div class="profiles-grid" id="profiles-grid"></div>
-    <div class="profiles-actions">
-      <button class="btn btn-secondary" onclick="navParent()">⚙️ Painel do responsável</button>
+    <div class="profiles-actions" id="profiles-actions">
+      <button class="btn btn-secondary" id="btn-painel-resp" onclick="navParent()">⚙️ Painel do responsável</button>
       <button class="btn btn-secondary master-only" id="btn-admin" onclick="navAdmin()" style="display:none;color:var(--gold);border-color:var(--gold2);background:rgba(245,158,11,.08);">📊 Master · Métricas</button>
-      <button class="btn btn-ghost" onclick="doLogout()">Sair da conta ↪</button>
+      <button class="btn btn-ghost" id="btn-logout-resp" onclick="doLogout()">Sair da conta ↪</button>
     </div>
   </div>
 </div>
@@ -192,7 +192,7 @@
 <div id="screen-child-rewards" class="screen">
   <div class="app-header">
     <div class="header-row">
-      <button class="header-back" onclick="navTo('screen-profiles')" title="Trocar perfil">←</button>
+      <button class="header-back" onclick="switchChildTab('home')">←</button>
       <div class="header-logo">🎁 Recompensas</div>
       <div class="stars-badge"><span>⭐</span><span id="reward-stars">0</span></div>
     </div>
@@ -577,8 +577,8 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="js/supabase.js?v=21"></script>
-<script src="js/app.js?v=21"></script>
+<script src="js/supabase.js?v=22"></script>
+<script src="js/app.js?v=22"></script>
 </div>
 </body>
 </html>
