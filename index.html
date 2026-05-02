@@ -30,23 +30,56 @@
         <div class="logo-title">ELO Family</div>
         <div class="logo-sub">Rotina infantil gamificada <span class="badge badge-beta">Beta</span></div>
       </div>
-      <div class="auth-title">Bem-vindo de volta!</div>
-      <div class="auth-sub">Entre com seu e-mail e senha</div>
-      <div class="error-msg" id="login-error"></div>
-      <div class="form-group">
-        <label>E-mail</label>
-        <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email">
+
+      <!-- TABS DE ACESSO -->
+      <div class="login-tabs">
+        <button class="login-tab active" id="ltab-resp" onclick="switchLoginTab('responsavel')">👨‍👩‍👧 Responsável</button>
+        <button class="login-tab" id="ltab-child" onclick="switchLoginTab('crianca')">🎮 Sou criança</button>
       </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <div class="input-icon-wrap">
-          <input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password">
-          <button type="button" onclick="toggleSenha('login-pass',this)" class="eye-btn">👁️</button>
+
+      <!-- PAINEL: RESPONSÁVEL -->
+      <div id="login-panel-responsavel">
+        <div class="auth-sub" style="margin-bottom:16px;">Entre com seu e-mail e senha</div>
+        <div class="error-msg" id="login-error"></div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <div class="input-icon-wrap">
+            <input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password">
+            <button type="button" onclick="toggleSenha('login-pass',this)" class="eye-btn">👁️</button>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="doLogin()">Entrar 🚀</button>
+        <div class="auth-link"><a onclick="navTo('screen-forgot')">Esqueci minha senha</a></div>
+        <div class="auth-link">Não tem conta? <a onclick="navTo('screen-register')">Criar conta</a></div>
+      </div>
+
+      <!-- PAINEL: CRIANÇA -->
+      <div id="login-panel-crianca" style="display:none;">
+        <div class="auth-sub" style="margin-bottom:16px;">Peça o código para seu responsável</div>
+        <div class="error-msg" id="child-code-error"></div>
+        <div class="form-group">
+          <label>Código de acesso</label>
+          <input type="text" id="child-invite-code"
+            placeholder="ELO-XXXXX"
+            maxlength="9"
+            style="font-size:22px;font-weight:800;letter-spacing:5px;text-align:center;text-transform:uppercase;"
+            oninput="this.value=this.value.toUpperCase()">
+        </div>
+        <button class="btn btn-gold" onclick="entrarComCodigo()">🎮 Entrar</button>
+        <div style="margin-top:20px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:14px 16px;">
+          <div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:8px;">Como conseguir o código?</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">
+            1. Peça ao seu responsável<br>
+            2. Ele abre o app → Painel → Convite<br>
+            3. Te passa o código gerado
+          </div>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="doLogin()">Entrar 🚀</button>
-      <div class="auth-link"><a onclick="navTo('screen-forgot')">Esqueci minha senha</a></div>
-      <div class="auth-link">Não tem conta? <a onclick="navTo('screen-register')">Criar conta</a></div>
+
     </div>
   </div>
 </div>
@@ -204,6 +237,8 @@
         <button class="panel-btn panel-btn-sky" onclick="abrirModalFilho()">👶 Filho</button>
         <button class="panel-btn panel-btn-sky" onclick="convidarCrianca()">✉️ Convite</button>
         <button class="panel-btn panel-btn-purple" onclick="abrirModalTarefas()">➕ Tarefa</button>
+        <button class="panel-btn panel-btn-gold" onclick="abrirRewardsMgmt()">🎁 Recompensas</button>
+        <button class="panel-btn panel-btn-teal" onclick="abrirGerenciarFilhos()">✏️ Editar filhos</button>
       </div>
       <button class="reset-btn" onclick="resetTarefasRotina()">🔄 Resetar rotina diária</button>
       <div class="section-sub">⏳ Aguardando aprovação</div>
@@ -219,7 +254,6 @@
     <button class="nav-btn" onclick="navTo('screen-profiles')"><span class="nav-icon">👥</span><span class="nav-label">Perfis</span></button>
   </div>
   <button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
-  <button class="task-fab" onclick="abrirModalTarefas()">➕ Tarefa</button>
 </div>
 
 <!-- ═══ ADMIN ═══ -->
@@ -430,11 +464,121 @@
   </div>
 </div>
 
+
+<!-- ═══ MODAL: CONVITE ═══ -->
+<div class="modal-overlay" id="modal-convite" onclick="fecharConvite()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✉️ Código de acesso</div>
+    <div class="modal-sub">Compartilhe com a criança para ela entrar</div>
+    <div style="text-align:center;margin:20px 0 24px;">
+      <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Código gerado</div>
+      <div id="convite-code-display" style="font-family:'Baloo 2',cursive;font-size:38px;font-weight:800;letter-spacing:8px;color:var(--sky);background:var(--card2);border:2px solid var(--sky);border-radius:16px;padding:20px 16px;">ELO-????</div>
+      <div id="convite-child-name" style="font-size:13px;color:var(--muted);margin-top:10px;"></div>
+    </div>
+    <button onclick="copiarCodigo()" class="btn btn-secondary" style="margin-bottom:10px;">📋 Copiar código</button>
+    <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.2);border-radius:12px;padding:14px 16px;margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:800;color:var(--sky);margin-bottom:8px;">📱 Instruções para a criança:</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;">
+        1. Abra o app ELO Family<br>
+        2. Toque em <strong style="color:var(--gold);">🎮 Sou criança</strong><br>
+        3. Digite o código acima<br>
+        4. Pronto! Tarefas liberadas ✅
+      </div>
+    </div>
+    <button class="btn btn-ghost" onclick="fecharConvite()">Fechar</button>
+  </div>
+</div>
+
+
+<!-- ═══ MODAL: RECOMPENSAS ═══ -->
+<div class="modal-overlay" id="modal-rewards-mgmt" onclick="fecharRewardsMgmt()">
+  <div class="modal-sheet modal-sheet-tall" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎁 Recompensas</div>
+    <div class="modal-sub">Gerencie o que as crianças podem trocar</div>
+    <div id="rewards-mgmt-list" style="margin-bottom:16px;"></div>
+    <div style="border-top:1px solid var(--border);padding-top:16px;">
+      <div style="font-size:13px;font-weight:800;color:var(--sky);margin-bottom:12px;">✨ Adicionar nova</div>
+      <div class="form-group">
+        <label>Nome da recompensa</label>
+        <input type="text" id="new-reward-name" placeholder="Ex: Sorvete especial">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div class="form-group" style="flex:1;">
+          <label>Custo (estrelas)</label>
+          <input type="number" id="new-reward-cost" value="10" min="1" max="999">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Emoji</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;" id="reward-emoji-picker">
+            <span class="rew-emoji-opt selected" onclick="selecionarEmojiRecompensa(this,'🎁')">🎁</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🍦')">🍦</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🎮')">🎮</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🍕')">🍕</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🎬')">🎬</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🌙')">🌙</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'⭐')">⭐</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🏆')">🏆</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🎠')">🎠</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🎉')">🎉</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🍫')">🍫</span>
+            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🧸')">🧸</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="adicionarRecompensa()">✨ Adicionar recompensa</button>
+    </div>
+    <button class="btn btn-ghost" onclick="fecharRewardsMgmt()" style="margin-top:8px;">Fechar</button>
+  </div>
+</div>
+
+
+<!-- ═══ MODAL: GERENCIAR FILHOS ═══ -->
+<div class="modal-overlay" id="modal-filhos-mgmt" onclick="fecharGerenciarFilhos()">
+  <div class="modal-sheet modal-sheet-tall" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Gerenciar filhos</div>
+    <div class="modal-sub">Edite ou remova perfis de crianças</div>
+    <div id="filhos-mgmt-list"></div>
+    <button class="btn btn-ghost" onclick="fecharGerenciarFilhos()" style="margin-top:12px;">Fechar</button>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDITAR FILHO ═══ -->
+<div class="modal-overlay" id="modal-edit-child" onclick="fecharEditarFilho()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Editar filho</div>
+    <input type="hidden" id="edit-child-id">
+    <div class="form-group"><label>Nome</label><input type="text" id="edit-child-name"></div>
+    <div class="form-group"><label>Idade</label><input type="number" id="edit-child-age" min="1" max="17"></div>
+    <div class="form-group">
+      <label>Avatar</label>
+      <div class="emoji-grid" id="edit-emoji-grid">
+        <span onclick="selectEmojiEdit(this,'👧')" class="emoji-pick selected">👧</span>
+        <span onclick="selectEmojiEdit(this,'👦')" class="emoji-pick">👦</span>
+        <span onclick="selectEmojiEdit(this,'👩')" class="emoji-pick">👩</span>
+        <span onclick="selectEmojiEdit(this,'👨')" class="emoji-pick">👨</span>
+        <span onclick="selectEmojiEdit(this,'👧🏽')" class="emoji-pick">👧🏽</span>
+        <span onclick="selectEmojiEdit(this,'👦🏽')" class="emoji-pick">👦🏽</span>
+        <span onclick="selectEmojiEdit(this,'👩🏽')" class="emoji-pick">👩🏽</span>
+        <span onclick="selectEmojiEdit(this,'👨🏽')" class="emoji-pick">👨🏽</span>
+        <span onclick="selectEmojiEdit(this,'👧🏿')" class="emoji-pick">👧🏿</span>
+        <span onclick="selectEmojiEdit(this,'👦🏿')" class="emoji-pick">👦🏿</span>
+      </div>
+      <div id="edit-selected-emoji" style="font-size:13px;color:var(--muted);margin-top:6px;">Selecionado: 👧</div>
+    </div>
+    <button class="btn btn-primary" onclick="salvarEdicaoFilho()">Salvar alterações</button>
+    <button class="btn btn-ghost" onclick="fecharEditarFilho()" style="margin-top:8px;">Cancelar</button>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="js/supabase.js?v=15"></script>
-<script src="js/app.js?v=15"></script>
+<script src="js/supabase.js?v=20"></script>
+<script src="js/app.js?v=20"></script>
 </div>
 </body>
 </html>

@@ -93,25 +93,28 @@ function selectStarsFab(el,val){el.closest('.star-select').querySelectorAll('.st
 function selectStarsLote(el,val){el.closest('.star-select').querySelectorAll('.star-option').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');selectedStarsLoteVal=val;}
 
 // ── STATE ──
-const MASTER_EMAILS = ['geisiane.seberino@gmail.com'];
+// Controle de master feito exclusivamente pelo Supabase (coluna is_master na tabela profiles)
 
 const state={
   currentChild:null,currentUserId:null,currentUserRole:'parent',currentUserEmail:'',selectedStars:2,selectedRating:null,
   feedbacks:[],metrics:{tasksCompleted:0,rewardsClaimed:0,tasksCreated:0},
-  profiles:[],tasks:[],rewards:REWARDS_DEFAULT,pendingApprovals:[],history:[],completionsAvailable:true
+  profiles:[],tasks:[],rewards:REWARDS_DEFAULT,pendingApprovals:[],history:[],completionsAvailable:true,lastInviteCode:null,lastInviteChildIdx:0
 };
 
 // ── NAV ──
 function navTo(screenId){if(screenId==='screen-admin'&&!isMaster()){showToast('Métricas disponíveis apenas para usuárias master.');screenId='screen-profiles';}document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(screenId).classList.add('active');window.scrollTo(0,0);}
 async function navParent(){await carregarTodasTarefas();renderParentDashboard();navTo('screen-parent');}
-function isMaster(){return state.currentUserRole==='master'||MASTER_EMAILS.includes((state.currentUserEmail||'').toLowerCase());}
+function isMaster(){return state.currentUserRole==='master';}
 function navAdmin(){if(!isMaster()){showToast('Métricas disponíveis apenas para usuárias master.');return;}updateMetrics();navTo('screen-admin');}
 function applyRoleUi(){
   document.querySelectorAll('.master-only').forEach(el=>{el.style.display=isMaster()?'block':'none';});
   const strip=document.getElementById('role-strip');
   if(strip){
-    const roleLabel=isMaster()?'Master do produto':'Responsável';
-    strip.innerHTML=`<div class="role-chip active">🛡️ ${roleLabel}</div><div class="role-chip">👶 Crianças: ${state.profiles.length}</div><div class="role-chip muted">📊 Métricas ${isMaster()?'liberadas':'restritas'}</div>`;
+    if(isMaster()){
+      strip.innerHTML=`<div class="role-chip active">🛡️ Master do produto</div><div class="role-chip">👶 Crianças: ${state.profiles.length}</div><div class="role-chip" style="color:var(--gold);">📊 Métricas liberadas</div>`;
+    } else {
+      strip.innerHTML=`<div class="role-chip active">👨‍👩‍👧 Responsável</div><div class="role-chip">👶 Crianças: ${state.profiles.length}</div>`;
+    }
   }
 }
 
@@ -162,7 +165,7 @@ async function carregarContextoUsuario(user){
   const perfilRes=await db.from('profiles').select('role,is_master,email').eq('id',user.id).maybeSingle();
   if(perfilRes.error)console.info('Perfil sem colunas de role/is_master; usando metadados do Auth.',perfilRes.error.message);
   else perfil=perfilRes.data;
-  if(perfil?.is_master||perfil?.role==='master'||MASTER_EMAILS.includes((perfil?.email||state.currentUserEmail).toLowerCase()))state.currentUserRole='master';
+  if(perfil?.is_master||perfil?.role==='master')state.currentUserRole='master';
   await carregarFilhos(user.id);
 }
 
@@ -208,7 +211,18 @@ function renderProfiles(){
 
 function convidarCrianca(){
   const code='ELO-'+Math.random().toString(36).slice(2,7).toUpperCase();
-  showToast('Convite da criança: '+code);
+  state.lastInviteCode=code;
+  state.lastInviteChildIdx=state.profiles.length>0?0:0;
+  document.getElementById('convite-code-display').textContent=code;
+  const childName=state.profiles[0]?.name||'';
+  document.getElementById('convite-child-name').textContent=childName?'👶 Criança vinculada: '+childName:'Selecione a criança no painel';
+  document.getElementById('modal-convite').classList.add('show');
+}
+function fecharConvite(){document.getElementById('modal-convite').classList.remove('show');}
+function copiarCodigo(){
+  const code=document.getElementById('convite-code-display').textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(code).then(()=>showToast('Código copiado! 📋'));}
+  else{const el=document.createElement('textarea');el.value=code;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);showToast('Código copiado! 📋');}
 }
 
 // ── TAREFAS ──
@@ -506,6 +520,169 @@ function renderFeedbacksList(){
     list.appendChild(item);
   });
 }
+
+
+// ══════════════════════════════════════════
+// LOGIN TABS
+// ══════════════════════════════════════════
+function switchLoginTab(tab){
+  const isResp=tab==='responsavel';
+  document.getElementById('ltab-resp').classList.toggle('active',isResp);
+  document.getElementById('ltab-child').classList.toggle('active',!isResp);
+  document.getElementById('login-panel-responsavel').style.display=isResp?'block':'none';
+  document.getElementById('login-panel-crianca').style.display=isResp?'none':'block';
+}
+
+// ══════════════════════════════════════════
+// CHILD LOGIN — entrar com código
+// ══════════════════════════════════════════
+function entrarComCodigo(){
+  const code=document.getElementById('child-invite-code').value.trim().toUpperCase();
+  const err=document.getElementById('child-code-error');
+  if(!code||code.length<4){err.classList.add('show');err.textContent='Digite o código de convite.';return;}
+  if(!state.lastInviteCode||code!==state.lastInviteCode){
+    err.classList.add('show');
+    err.textContent='Código inválido. Peça um novo ao seu responsável.';
+    return;
+  }
+  err.classList.remove('show');
+  const childIdx=state.lastInviteChildIdx||0;
+  state.currentChild=childIdx;
+  const child=state.profiles[childIdx];
+  if(!child){err.classList.add('show');err.textContent='Nenhuma criança encontrada. O responsável precisa cadastrar primeiro.';return;}
+  carregarTarefas(child.id,childIdx).then(()=>{
+    renderChildHome();
+    navTo('screen-child-home');
+    showToast('Bem-vindo(a), '+child.name+'! 🎮');
+  });
+}
+
+// ══════════════════════════════════════════
+// REWARDS MANAGEMENT
+// ══════════════════════════════════════════
+let emojiRecompensaSelecionado='🎁';
+
+function selecionarEmojiRecompensa(el,emoji){
+  emojiRecompensaSelecionado=emoji;
+  document.querySelectorAll('.rew-emoji-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function abrirRewardsMgmt(){
+  renderRewardsMgmtList();
+  document.getElementById('modal-rewards-mgmt').classList.add('show');
+}
+function fecharRewardsMgmt(){document.getElementById('modal-rewards-mgmt').classList.remove('show');}
+
+function renderRewardsMgmtList(){
+  const list=document.getElementById('rewards-mgmt-list');list.innerHTML='';
+  if(!state.rewards.length){list.innerHTML='<div class="empty-state" style="padding:16px 0;"><div class="empty-icon">🎁</div><p>Nenhuma recompensa</p></div>';return;}
+  state.rewards.forEach((r,i)=>{
+    const item=document.createElement('div');
+    item.style.cssText='display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(45,42,110,.5);';
+    item.innerHTML=`<div style="font-size:28px;">${r.emoji}</div><div style="flex:1;"><div style="font-weight:800;font-size:14px;color:var(--text);">${r.name}</div><div style="font-size:12px;color:var(--gold);">⭐ ${r.cost} estrelas</div></div><button onclick="removerRecompensa(${i})" style="background:rgba(239,68,68,.12);border:1.5px solid var(--red);color:var(--red);padding:6px 12px;border-radius:8px;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;cursor:pointer;">🗑️ Remover</button>`;
+    list.appendChild(item);
+  });
+}
+
+function adicionarRecompensa(){
+  const name=document.getElementById('new-reward-name').value.trim();
+  const cost=parseInt(document.getElementById('new-reward-cost').value);
+  if(!name){showToast('Digite o nome!');return;}
+  if(!cost||cost<1){showToast('Custo inválido!');return;}
+  state.rewards.push({id:Date.now(),name,cost,emoji:emojiRecompensaSelecionado});
+  document.getElementById('new-reward-name').value='';
+  document.getElementById('new-reward-cost').value='10';
+  emojiRecompensaSelecionado='🎁';
+  document.querySelectorAll('.rew-emoji-opt').forEach(e=>e.classList.remove('selected'));
+  const first=document.querySelector('.rew-emoji-opt');if(first)first.classList.add('selected');
+  renderRewardsMgmtList();
+  showToast('"'+name+'" adicionada! 🎁');
+}
+
+function removerRecompensa(i){
+  if(!confirm('Remover "'+state.rewards[i].name+'"?'))return;
+  state.rewards.splice(i,1);renderRewardsMgmtList();showToast('Recompensa removida.');
+}
+
+// ══════════════════════════════════════════
+// GERENCIAR FILHOS — editar / excluir
+// ══════════════════════════════════════════
+let emojiEditSelecionado='👧';
+
+function selectEmojiEdit(el,emoji){
+  emojiEditSelecionado=emoji;
+  document.getElementById('edit-selected-emoji').textContent='Selecionado: '+emoji;
+  document.querySelectorAll('#edit-emoji-grid .emoji-pick').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function abrirGerenciarFilhos(){
+  renderFilhosMgmtList();
+  document.getElementById('modal-filhos-mgmt').classList.add('show');
+}
+function fecharGerenciarFilhos(){document.getElementById('modal-filhos-mgmt').classList.remove('show');}
+function fecharEditarFilho(){document.getElementById('modal-edit-child').classList.remove('show');}
+
+function renderFilhosMgmtList(){
+  const list=document.getElementById('filhos-mgmt-list');list.innerHTML='';
+  if(!state.profiles.length){list.innerHTML='<div class="empty-state" style="padding:16px 0;"><div class="empty-icon">👶</div><p>Nenhum filho cadastrado</p></div>';return;}
+  state.profiles.forEach((p,i)=>{
+    const item=document.createElement('div');
+    item.style.cssText='display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(45,42,110,.5);';
+    item.innerHTML=`
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">${p.emoji}</div>
+      <div style="flex:1;">
+        <div style="font-weight:800;font-size:15px;color:var(--text);">${p.name}</div>
+        <div style="font-size:12px;color:var(--muted);">${p.age} anos · ⭐ ${p.stars||0} estrelas</div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="abrirEditarFilho(${i})" style="background:rgba(34,211,238,.1);border:1.5px solid var(--sky);color:var(--sky);padding:7px 12px;border-radius:8px;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;cursor:pointer;">✏️</button>
+        <button onclick="excluirFilho(${i})" style="background:rgba(239,68,68,.1);border:1.5px solid var(--red);color:var(--red);padding:7px 12px;border-radius:8px;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;cursor:pointer;">🗑️</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function abrirEditarFilho(i){
+  const p=state.profiles[i];
+  document.getElementById('edit-child-id').value=p.id;
+  document.getElementById('edit-child-name').value=p.name;
+  document.getElementById('edit-child-age').value=p.age;
+  emojiEditSelecionado=p.emoji;
+  document.getElementById('edit-selected-emoji').textContent='Selecionado: '+p.emoji;
+  document.querySelectorAll('#edit-emoji-grid .emoji-pick').forEach(e=>{
+    e.classList.toggle('selected',e.textContent.trim()===p.emoji);
+  });
+  document.getElementById('modal-edit-child').classList.add('show');
+}
+
+async function salvarEdicaoFilho(){
+  const id=document.getElementById('edit-child-id').value;
+  const nome=document.getElementById('edit-child-name').value.trim();
+  const idade=parseInt(document.getElementById('edit-child-age').value);
+  if(!nome||!idade){showToast('Preencha nome e idade!');return;}
+  showToast('Salvando... ⏳');
+  const{error}=await db.from('children').update({name:nome,age:idade,emoji:emojiEditSelecionado}).eq('id',id);
+  if(error){showToast('Erro ao salvar.');console.error(error);return;}
+  const idx=state.profiles.findIndex(p=>p.id===id);
+  if(idx>=0){state.profiles[idx].name=nome;state.profiles[idx].age=idade;state.profiles[idx].emoji=emojiEditSelecionado;}
+  fecharEditarFilho();renderFilhosMgmtList();renderProfiles();
+  showToast(nome+' atualizado! ✅');
+}
+
+async function excluirFilho(i){
+  const p=state.profiles[i];
+  if(!confirm('Excluir '+p.name+' e todas as suas tarefas? Essa ação não pode ser desfeita.'))return;
+  showToast('Excluindo... ⏳');
+  const{error}=await db.from('children').delete().eq('id',p.id);
+  if(error){showToast('Erro ao excluir.');console.error(error);return;}
+  state.profiles.splice(i,1);state.tasks.splice(i,1);
+  renderFilhosMgmtList();renderProfiles();
+  showToast(p.name+' removido(a).');
+}
+
 
 // ── TOAST ──
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
