@@ -1,3 +1,21 @@
+
+// ══════════════════════════════════════════
+// SAÍDA DA CRIANÇA
+// ══════════════════════════════════════════
+function confirmarSaidaCrianca(){
+  // Se tem sessão salva, pergunta se quer realmente sair
+  try{
+    const saved=localStorage.getItem('elo_child_session');
+    if(saved){
+      if(!confirm('Sair do perfil? Você precisará do código novamente para entrar.'))return;
+      sairComoCrianca();
+      return;
+    }
+  }catch(e){}
+  // Sem sessão salva — volta para login normalmente
+  navTo('screen-login');
+}
+
 // ══════════════════════════════════════════
 // ELO FAMILY — app.js v4 FINAL
 // Perfis: criança / responsável / admin
@@ -98,7 +116,7 @@ function selectStarsLote(el,val){el.closest('.star-select').querySelectorAll('.s
 const state={
   currentChild:null,currentUserId:null,currentUserRole:'parent',currentUserEmail:'',selectedStars:2,selectedRating:null,
   feedbacks:[],metrics:{tasksCompleted:0,rewardsClaimed:0,tasksCreated:0},
-  profiles:[],tasks:[],rewards:REWARDS_DEFAULT,pendingApprovals:[],history:[],completionsAvailable:true,lastInviteCode:null,lastInviteChildIdx:0
+  profiles:[],tasks:[],rewards:REWARDS_DEFAULT,pendingApprovals:[],history:[],completionsAvailable:true,lastInviteCode:null,lastInviteChildIdx:0,childSession:null
 };
 
 // ── NAV ──
@@ -254,15 +272,20 @@ function copiarCodigo(){
 // ── TAREFAS ──
 async function carregarTarefas(childId,childIndex){
   const{data,error}=await db.from('tasks').select('*').eq('child_id',childId).order('time',{ascending:true});
-  if(error){console.error(error);return;}
+  if(error){console.error('Erro ao carregar tarefas:',error);return;}
   const tasks=data||[];
   const ids=tasks.map(t=>t.id);
   let completions=[];
-  if(ids.length){
+  if(ids.length&&state.completionsAvailable){
     const res=await db.from('task_completions').select('*').eq('child_id',childId).in('task_id',ids).order('completed_date',{ascending:false});
     if(!res.error)completions=res.data||[];
-    else{state.completionsAvailable=false;console.info('task_completions indisponível; usando fallback de tasks.done.',res.error.message);}
+    else{
+      state.completionsAvailable=false;
+      console.info('task_completions indisponível; usando fallback.',res.error.message);
+    }
   }
+  // Garante que o array de tasks do estado tem o índice correto
+  while(state.tasks.length<=childIndex)state.tasks.push([]);
   state.tasks[childIndex]=tasks.map(t=>normalizarTarefa(t,completions.filter(c=>c.task_id===t.id)));
   registrarHistoricoDeCompletions(completions,tasks);
 }
@@ -569,35 +592,38 @@ async function entrarComCodigo(){
   err.classList.remove('show');
   showToast('Verificando código... ⏳');
 
-  // Busca no Supabase
+  // Busca no Supabase — aceita usado ou não (código permanente)
   const{data,error}=await db.from('invite_codes')
     .select('*')
     .eq('code',code)
-    .eq('used',false)
     .maybeSingle();
 
   if(error||!data){
     err.classList.add('show');
-    err.textContent='Código inválido ou expirado. Peça um novo ao responsável.';
+    err.textContent='Código inválido. Peça um novo ao responsável.';
     return;
   }
 
-  // Marca como usado
-  await db.from('invite_codes').update({used:true}).eq('code',code);
-
-  // Carrega contexto do pai e filho
   showToast('Código válido! Carregando... ⏳');
-  const parentId=data.parent_id;
-  const childId=data.child_id;
+  await acessarComoCrianca(data.parent_id, data.child_id);
+}
 
+async function acessarComoCrianca(parentId, childId){
   // Carrega filhos do responsável
   await carregarFilhos(parentId);
 
   // Encontra o filho correto
   const childIdx=state.profiles.findIndex(p=>p.id===childId);
-  if(childIdx<0){err.classList.add('show');err.textContent='Criança não encontrada.';return;}
+  if(childIdx<0){showToast('Criança não encontrada. Contate o responsável.');return;}
 
   state.currentChild=childIdx;
+  state.childSession={parentId,childId}; // guarda em memória
+
+  // Salva sessão no localStorage para acesso permanente
+  try{
+    localStorage.setItem('elo_child_session',JSON.stringify({parentId,childId,childName:state.profiles[childIdx].name,ts:Date.now()}));
+  }catch(e){console.warn('localStorage indisponível',e);}
+
   await carregarTarefas(childId,childIdx);
   renderChildHome();
   navTo('screen-child-home');
@@ -742,5 +768,36 @@ document.addEventListener('keydown',e=>{
 
 // ── INIT ──
 db.auth.getSession().then(async({data})=>{
-  if(data.session){showToast('Sessão ativa, carregando... ⏳');await carregarContextoUsuario(data.session.user);renderProfiles();navTo('screen-profiles');}
+  if(data.session){
+    showToast('Sessão ativa, carregando... ⏳');
+    await carregarContextoUsuario(data.session.user);
+    renderProfiles();
+    navTo('screen-profiles');
+    return;
+  }
+  // Verifica sessão de criança salva no localStorage
+  try{
+    const saved=localStorage.getItem('elo_child_session');
+    if(saved){
+      const sess=JSON.parse(saved);
+      // Sessão válida por 90 dias
+      const dias=(Date.now()-sess.ts)/(1000*60*60*24);
+      if(dias<90&&sess.parentId&&sess.childId){
+        showToast('Olá de novo, '+sess.childName+'! 🎮');
+        await acessarComoCrianca(sess.parentId,sess.childId);
+        return;
+      }else{
+        localStorage.removeItem('elo_child_session');
+      }
+    }
+  }catch(e){console.warn('localStorage indisponível',e);}
 });
+
+function sairComoCrianca(){
+  try{localStorage.removeItem('elo_child_session');}catch(e){}
+  state.currentChild=null;
+  state.childSession=null;
+  state.profiles=[];
+  state.tasks=[];
+  navTo('screen-login');
+}
