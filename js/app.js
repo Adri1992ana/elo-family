@@ -209,13 +209,39 @@ function renderProfiles(){
   document.getElementById('stat-filhos').textContent=state.profiles.length;
 }
 
-function convidarCrianca(){
+async function convidarCrianca(){
+  // Permite escolher para qual filho gerar o código
+  if(state.profiles.length===0){showToast('Cadastre um filho primeiro!');return;}
+
+  // Se só tem um filho, usa direto; se tem mais, abre seletor
+  let childIdx=0;
+  if(state.profiles.length>1){
+    const opts=state.profiles.map((p,i)=>i+': '+p.emoji+' '+p.name).join('\n');
+    const escolha=prompt('Para qual filho?\n'+opts+'\n\nDigite o número:');
+    if(escolha===null)return;
+    childIdx=parseInt(escolha)||0;
+    if(childIdx<0||childIdx>=state.profiles.length)childIdx=0;
+  }
+
+  const child=state.profiles[childIdx];
   const code='ELO-'+Math.random().toString(36).slice(2,7).toUpperCase();
+
+  // Salva no Supabase
+  showToast('Gerando código... ⏳');
+  const{error}=await db.from('invite_codes').insert({
+    code,
+    parent_id:state.currentUserId,
+    child_id:child.id,
+    used:false
+  });
+  if(error){console.error(error);showToast('Erro ao gerar código.');}
+
+  // Salva em memória também
   state.lastInviteCode=code;
-  state.lastInviteChildIdx=state.profiles.length>0?0:0;
+  state.lastInviteChildIdx=childIdx;
+
   document.getElementById('convite-code-display').textContent=code;
-  const childName=state.profiles[0]?.name||'';
-  document.getElementById('convite-child-name').textContent=childName?'👶 Criança vinculada: '+childName:'Selecione a criança no painel';
+  document.getElementById('convite-child-name').textContent='👶 Criança: '+child.name;
   document.getElementById('modal-convite').classList.add('show');
 }
 function fecharConvite(){document.getElementById('modal-convite').classList.remove('show');}
@@ -536,25 +562,46 @@ function switchLoginTab(tab){
 // ══════════════════════════════════════════
 // CHILD LOGIN — entrar com código
 // ══════════════════════════════════════════
-function entrarComCodigo(){
+async function entrarComCodigo(){
   const code=document.getElementById('child-invite-code').value.trim().toUpperCase();
   const err=document.getElementById('child-code-error');
   if(!code||code.length<4){err.classList.add('show');err.textContent='Digite o código de convite.';return;}
-  if(!state.lastInviteCode||code!==state.lastInviteCode){
+  err.classList.remove('show');
+  showToast('Verificando código... ⏳');
+
+  // Busca no Supabase
+  const{data,error}=await db.from('invite_codes')
+    .select('*')
+    .eq('code',code)
+    .eq('used',false)
+    .maybeSingle();
+
+  if(error||!data){
     err.classList.add('show');
-    err.textContent='Código inválido. Peça um novo ao seu responsável.';
+    err.textContent='Código inválido ou expirado. Peça um novo ao responsável.';
     return;
   }
-  err.classList.remove('show');
-  const childIdx=state.lastInviteChildIdx||0;
+
+  // Marca como usado
+  await db.from('invite_codes').update({used:true}).eq('code',code);
+
+  // Carrega contexto do pai e filho
+  showToast('Código válido! Carregando... ⏳');
+  const parentId=data.parent_id;
+  const childId=data.child_id;
+
+  // Carrega filhos do responsável
+  await carregarFilhos(parentId);
+
+  // Encontra o filho correto
+  const childIdx=state.profiles.findIndex(p=>p.id===childId);
+  if(childIdx<0){err.classList.add('show');err.textContent='Criança não encontrada.';return;}
+
   state.currentChild=childIdx;
-  const child=state.profiles[childIdx];
-  if(!child){err.classList.add('show');err.textContent='Nenhuma criança encontrada. O responsável precisa cadastrar primeiro.';return;}
-  carregarTarefas(child.id,childIdx).then(()=>{
-    renderChildHome();
-    navTo('screen-child-home');
-    showToast('Bem-vindo(a), '+child.name+'! 🎮');
-  });
+  await carregarTarefas(childId,childIdx);
+  renderChildHome();
+  navTo('screen-child-home');
+  showToast('Bem-vindo(a), '+state.profiles[childIdx].name+'! 🎮');
 }
 
 // ══════════════════════════════════════════
