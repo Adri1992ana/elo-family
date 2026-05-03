@@ -236,6 +236,7 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
       <div class="greeting">Olá,</div>
       <div class="greeting-name" id="child-greeting">...</div>
     </div>
+    <div id="streak-wrap" style="padding:0 16px;margin-top:4px;display:none;"></div>
     <div class="progress-banner">
       <div class="progress-top">
         <div>
@@ -246,12 +247,20 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
       </div>
       <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar" style="width:0%"></div></div>
     </div>
+    <div id="empty-tasks-state" style="display:none;">
+      <div class="empty-state">
+        <div class="empty-state-art">⚔️</div>
+        <div class="empty-state-title">Nenhuma missão hoje!</div>
+        <div class="empty-state-sub">Seu responsável ainda não adicionou tarefas.<br>Fique de olho, novas missões chegam em breve!</div>
+      </div>
+    </div>
     <div id="child-tasks-list"></div>
     <div style="height:24px;"></div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn active" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
     <button class="nav-btn" onclick="switchChildTab('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">Recompensas</span></button>
+    <button class="nav-btn" onclick="trocarUsuario()" style="opacity:.4;"><span class="nav-icon" style="font-size:15px;">🔄</span><span class="nav-label" style="font-size:9px;">Trocar</span></button>
   </div>
 </div>
 
@@ -280,6 +289,7 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
   <div class="bottom-nav">
     <button class="nav-btn" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
     <button class="nav-btn active" onclick="switchChildTab('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">Recompensas</span></button>
+    <button class="nav-btn" onclick="trocarUsuario()" style="opacity:.4;"><span class="nav-icon" style="font-size:15px;">🔄</span><span class="nav-label" style="font-size:9px;">Trocar</span></button>
   </div>
 </div>
 
@@ -644,8 +654,8 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="js/supabase.js?v=30"></script>
-<script src="js/app.js?v=30"></script>
+<script src="js/supabase.js?v=32"></script>
+<script src="js/app.js?v=32"></script>
 </div>
 <script>
 /* ══ ELO FAMILY — MELHORIAS BETA v3.1 ══ */

@@ -1,5 +1,14 @@
 
 // ══════════════════════════════════════════
+// TROCAR USUÁRIO — limpa sessão e vai para login
+// ══════════════════════════════════════════
+function trocarUsuario(){
+  if(!confirm('Trocar de usuário?\n\nA sessão atual será encerrada.\nA criança precisará do código para entrar novamente.'))return;
+  sairComoCrianca();
+}
+
+
+// ══════════════════════════════════════════
 // STREAK — calcula dias consecutivos
 // ══════════════════════════════════════════
 function calcularStreak(tasks){
