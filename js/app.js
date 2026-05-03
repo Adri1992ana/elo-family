@@ -1,5 +1,23 @@
 
 // ══════════════════════════════════════════
+// STREAK — calcula dias consecutivos
+// ══════════════════════════════════════════
+function calcularStreak(tasks){
+  // Conta quantos dias consecutivos tiveram ao menos 1 tarefa concluída
+  const hoje=new Date().toISOString().split('T')[0];
+  const datas=new Set(tasks.filter(t=>t.done_date).map(t=>t.done_date));
+  let streak=0, data=new Date();
+  for(let i=0;i<60;i++){
+    const d=data.toISOString().split('T')[0];
+    if(datas.has(d)){streak++;}
+    else if(i>0){break;}
+    data.setDate(data.getDate()-1);
+  }
+  return streak;
+}
+
+
+// ══════════════════════════════════════════
 // PROFILES UI — esconde painel se modo criança
 // ══════════════════════════════════════════
 function applyProfilesUi(){
@@ -647,15 +665,24 @@ async function acessarComoCrianca(parentId, childId){
 
   state.currentChild=childIdx;
   state.childSession={parentId,childId};
-  state.isChildMode=true; // modo criança — sem acesso ao painel
+  state.isChildMode=true;
 
-  // Salva sessão no localStorage para acesso permanente
+  // Salva sessão no localStorage
   try{
     localStorage.setItem('elo_child_session',JSON.stringify({parentId,childId,childName:state.profiles[childIdx].name,ts:Date.now()}));
+    sessionStorage.setItem('elo_role','child');
   }catch(e){console.warn('localStorage indisponível',e);}
+
+  // Ativa tema aventura
+  if(typeof ativarTemaAventura==='function') ativarTemaAventura();
 
   await carregarTarefas(childId,childIdx);
   renderChildHome();
+  // Calcula e exibe streak
+  if(typeof renderStreakUI==='function'){
+    const streak=calcularStreak(state.tasks[childIdx]||[]);
+    renderStreakUI(streak);
+  }
   navTo('screen-child-home');
   showToast('Bem-vindo(a), '+state.profiles[childIdx].name+'! 🎮');
 }
@@ -824,11 +851,12 @@ db.auth.getSession().then(async({data})=>{
 });
 
 function sairComoCrianca(){
-  try{localStorage.removeItem('elo_child_session');}catch(e){}
+  try{localStorage.removeItem('elo_child_session');sessionStorage.removeItem('elo_role');}catch(e){}
   state.currentChild=null;
   state.childSession=null;
   state.isChildMode=false;
   state.profiles=[];
   state.tasks=[];
+  if(typeof desativarTemaAventura==='function') desativarTemaAventura();
   navTo('screen-login');
 }
