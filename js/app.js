@@ -7,6 +7,10 @@ function trocarUsuario(){
   sairComoCrianca();
 }
 
+// Stubs de tema — serão sobrescritos pelo script inline do HTML
+if(typeof window.ativarTemaAventura==='undefined') window.ativarTemaAventura=function(){document.body.classList.add('child-mode');};
+if(typeof window.desativarTemaAventura==='undefined') window.desativarTemaAventura=function(){document.body.classList.remove('child-mode');};
+
 
 // ══════════════════════════════════════════
 // STREAK — calcula dias consecutivos
@@ -30,11 +34,9 @@ function calcularStreak(tasks){
 // PROFILES UI — esconde painel se modo criança
 // ══════════════════════════════════════════
 function applyProfilesUi(){
-  const btnPainel=document.getElementById('btn-painel-resp');
   const btnAdmin=document.getElementById('btn-admin');
   const btnLogout=document.getElementById('btn-logout-resp');
   if(state.isChildMode){
-    if(btnPainel)btnPainel.style.display='none';
     if(btnAdmin)btnAdmin.style.display='none';
     if(btnLogout){
       btnLogout.textContent='↩ Trocar de perfil';
@@ -44,7 +46,6 @@ function applyProfilesUi(){
       };
     }
   }else{
-    if(btnPainel)btnPainel.style.display='';
     if(btnAdmin)btnAdmin.style.display=isMaster()?'block':'none';
     if(btnLogout){btnLogout.textContent='Sair da conta ↪';btnLogout.onclick=doLogout;}
   }
@@ -94,7 +95,35 @@ const REWARDS_DEFAULT = [
   {id:6,name:'Adesivo especial',       emoji:'⭐',cost:5},
 ];
 
-const RAND_ICON = () => ['📌','🎯','✨','🌟','🔥','💡','🎨','🧩'][Math.floor(Math.random()*8)];
+const ICON_MAP = [
+  {keys:['dente','escov','bucal','fio dental'],icon:'🪥'},
+  {keys:['banho','chuveiro','ducha'],icon:'🚿'},
+  {keys:['mão','sabão','lavar'],icon:'🧼'},
+  {keys:['cabelo','penteado','pentear','escova'],icon:'💇'},
+  {keys:['lição','tarefa','dever','escola','estudar','prova','matéria'],icon:'📝'},
+  {keys:['mochila','arrumar mochila','preparar mochila'],icon:'🎒'},
+  {keys:['ler','leitura','livro','litu'],icon:'📚'},
+  {keys:['quarto','cama','arrumar quarto','arruma'],icon:'🛏️'},
+  {keys:['brinquedo','guardar','organizar'],icon:'🧸'},
+  {keys:['mesa','prato','jantar','almoço'],icon:'🍽️'},
+  {keys:['varrer','limpar','vassoura'],icon:'🧹'},
+  {keys:['água','beber','hidrat'],icon:'💧'},
+  {keys:['exercício','correr','academia','treino','esporte','nadar','natação'],icon:'🏃'},
+  {keys:['dormir','cama','deitar','sono'],icon:'😴'},
+  {keys:['fruta','comer','alimenta','verdura','salada'],icon:'🍎'},
+  {keys:['medicament','remédio','vitamina'],icon:'💊'},
+  {keys:['jogo','game','video'],icon:'🎮'},
+  {keys:['música','instrumento','violão','piano','tocar'],icon:'🎵'},
+  {keys:['oração','rezar','meditação'],icon:'🙏'},
+  {keys:['missão','quest','desafio'],icon:'⚔️'},
+];
+function iconParaTarefa(nome=''){
+  const n=nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  for(const m of ICON_MAP){if(m.keys.some(k=>n.includes(k)))return m.icon;}
+  const fallback=['⚔️','🎯','✨','🌟','🔥','💡','🎨','🧩','🏆','📌'];
+  return fallback[Math.floor(Math.random()*fallback.length)];
+}
+const RAND_ICON = () => iconParaTarefa();
 
 // ── HELPERS RECORRÊNCIA ──
 function getDiaAtual(){return['dom','seg','ter','qua','qui','sex','sab'][new Date().getDay()];}
@@ -177,7 +206,16 @@ function navTo(screenId){
   // Atualiza visibilidade do painel na tela de perfis
   if(screenId==='screen-profiles') applyProfilesUi();
 }
-async function navParent(){await carregarTodasTarefas();renderParentDashboard();navTo('screen-parent');}
+async function navParent(){
+  desativarTemaAventura();
+  state.isChildMode=false;
+  await carregarTodasTarefas();
+  renderParentDashboard();
+  renderChildSwitchCards();
+  renderParentGreeting();
+  applyRoleUi();
+  navTo('screen-parent');
+}
 function isMaster(){return state.currentUserRole==='master';}
 function navAdmin(){if(!isMaster()){showToast('Métricas disponíveis apenas para usuárias master.');return;}updateMetrics();navTo('screen-admin');}
 function applyRoleUi(){
@@ -190,6 +228,8 @@ function applyRoleUi(){
       strip.innerHTML=`<div class="role-chip active">👨‍👩‍👧 Responsável</div><div class="role-chip">👶 Crianças: ${state.profiles.length}</div>`;
     }
   }
+  const btnAdminNav=document.getElementById('btn-admin-nav');
+  if(btnAdminNav)btnAdminNav.style.display=isMaster()?'flex':'none';
 }
 
 // ── AUTH ──
@@ -203,7 +243,9 @@ async function doLogin(){
   if(error){err.classList.add('show');err.textContent='E-mail ou senha incorretos.';return;}
   showToast('Bem-vindo! 👋');
   await carregarContextoUsuario(data.user);
-  renderProfiles();navTo('screen-profiles');
+  await carregarTodasTarefas();
+  renderParentDashboard();
+  navTo('screen-parent');
 }
 
 async function doRegister(){
@@ -434,9 +476,15 @@ async function completeTask(task){
   state.metrics.tasksCompleted++;
   await db.from('children').update({stars:child.stars}).eq('id',child.id);
   state.history.unshift({key:`${task.id}-${child.id}-${today}`,task:task.name,child:child.name,stars:task.stars,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
-  document.getElementById('reward-title').textContent='Missão completa! 🎉';
-  document.getElementById('reward-msg').textContent='+'+task.stars+' estrela'+(task.stars>1?'s':'')+'! '+(task.streak>1?'Sequência de '+task.streak+' dias! ':'Continue assim, ')+child.name+'!';
-  document.getElementById('reward-overlay').classList.add('show');
+  const streakMsg = task.streak>1 ? `🔥 ${task.streak} dias seguidos!` : `Continue assim, ${child.name}!`;
+  const msg = `+${task.stars} estrela${task.stars>1?'s':''}! ${streakMsg}`;
+  if(typeof window.showReward==='function'){
+    window.showReward(task.stars, msg, 'Missão completa! 🎉');
+  } else {
+    document.getElementById('reward-title').textContent='Missão completa! 🎉';
+    document.getElementById('reward-msg').textContent=msg;
+    document.getElementById('reward-overlay').classList.add('show');
+  }
   renderChildHome();updateMetrics();
 }
 function closeReward(){document.getElementById('reward-overlay').classList.remove('show');}
@@ -482,16 +530,23 @@ function renderParentDashboard(){
   document.getElementById('stat-stars').textContent=stars;
   document.getElementById('stat-pending').textContent=state.pendingApprovals.length;
   document.getElementById('stat-filhos').textContent=state.profiles.length;
-  const aList=document.getElementById('approval-list');aList.innerHTML='';
-  if(state.pendingApprovals.length===0){aList.innerHTML='<div class="empty-state" style="padding:20px 0;"><div class="empty-icon">✅</div><p>Nenhum pedido pendente</p></div>';}
-  else{
-    state.pendingApprovals.forEach((a,i)=>{
-      const card=document.createElement('div');card.className='approval-card';
-      card.innerHTML=`<div style="font-size:28px;">${a.emoji}</div><div class="approval-info"><div class="approval-name">${a.reward}</div><div class="approval-child">${a.child} · ⭐ ${a.cost}</div></div><div class="approval-actions"><button style="background:var(--green);color:#fff;" onclick="approveReward(${i})">✓</button><button style="background:var(--red);color:#fff;" onclick="rejectReward(${i})">✗</button></div>`;
-      aList.appendChild(card);
-    });
+
+  // badge de pendentes na aba Aprovar
+  const tabAprovar=document.getElementById('tab-aprovar-btn');
+  if(tabAprovar){
+    tabAprovar.textContent=state.pendingApprovals.length>0
+      ?`🎁 Aprovar (${state.pendingApprovals.length})`:'🎁 Aprovar';
   }
-  const hList=document.getElementById('history-list');hList.innerHTML='';
+
+  renderChildSwitchCards();
+  renderParentGreeting();
+  renderResumoSemanal();
+
+  // Renderizar aba ativa
+  switchParentTab(_parentTabAtual);
+
+  // Histórico
+  const hList=document.getElementById('history-list');if(!hList)return;hList.innerHTML='';
   if(state.history.length===0){hList.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;">Nenhuma tarefa concluída ainda</div>';}
   else{
     state.history.slice(0,8).forEach(h=>{
@@ -500,6 +555,8 @@ function renderParentDashboard(){
       hList.appendChild(item);
     });
   }
+
+  verificarOnboarding();
 }
 
 async function approveReward(i){
@@ -545,7 +602,7 @@ async function addTaskFab(){
   if(!name){showToast('Digite o nome da tarefa!');return;}
   const child=state.profiles[childIdx];if(!child){showToast('Selecione uma criança!');return;}
   showToast('Criando tarefa... ⏳');
-  const{data,error}=await db.from('tasks').insert({child_id:child.id,parent_id:state.currentUserId,name,time,stars:selectedStarsFabVal,icon:RAND_ICON(),done:false,recorrente,dias_semana}).select().single();
+  const{data,error}=await db.from('tasks').insert({child_id:child.id,parent_id:state.currentUserId,name,time,stars:selectedStarsFabVal,icon:iconParaTarefa(name),done:false,recorrente,dias_semana}).select().single();
   if(error){showToast('Erro ao criar. Tente novamente.');console.error(error);return;}
   state.tasks[childIdx].push(normalizarTarefa(data));
   state.metrics.tasksCreated++;updateMetrics();
@@ -577,7 +634,7 @@ async function criarEmLote(){
   showToast('Criando '+linhas.length+' tarefas... ⏳');
   let criadas=0;
   for(const nome of linhas){
-    const{data,error}=await db.from('tasks').insert({child_id:child.id,parent_id:state.currentUserId,name:nome,time:'08:00',stars:selectedStarsLoteVal,icon:RAND_ICON(),done:false,recorrente:false,dias_semana:[]}).select().single();
+    const{data,error}=await db.from('tasks').insert({child_id:child.id,parent_id:state.currentUserId,name:nome,time:'08:00',stars:selectedStarsLoteVal,icon:iconParaTarefa(nome),done:false,recorrente:false,dias_semana:[]}).select().single();
     if(!error&&data){state.tasks[childIdx].push(normalizarTarefa(data));criadas++;}
   }
   state.metrics.tasksCreated+=criadas;updateMetrics();fecharModalTarefas();renderParentDashboard();showToast(criadas+' tarefa(s) criada(s)! ✅');
@@ -837,8 +894,9 @@ db.auth.getSession().then(async({data})=>{
   if(data.session){
     showToast('Sessão ativa, carregando... ⏳');
     await carregarContextoUsuario(data.session.user);
-    renderProfiles();
-    navTo('screen-profiles');
+    await carregarTodasTarefas();
+    renderParentDashboard();
+    navTo('screen-parent');
     return;
   }
   // Verifica sessão de criança salva no localStorage
@@ -868,4 +926,276 @@ function sairComoCrianca(){
   state.tasks=[];
   if(typeof desativarTemaAventura==='function') desativarTemaAventura();
   navTo('screen-login');
+}
+
+// ══════════════════════════════════════════
+// ONBOARDING — primeira sessão
+// ══════════════════════════════════════════
+function verificarOnboarding(){
+  try{
+    if(localStorage.getItem('elo_onboarded'))return;
+    if(state.profiles.length>0)return; // já tem filhos, não precisa
+    setTimeout(()=>document.getElementById('modal-onboarding').classList.add('show'),600);
+  }catch(e){}
+}
+
+function onboardingNext(passo,acao){
+  document.getElementById('modal-onboarding').classList.remove('show');
+  try{localStorage.setItem('elo_onboarded','1');}catch(e){}
+  if(acao){
+    if(passo===0){setTimeout(()=>abrirModalFilho(),300);}
+    else if(passo===1){setTimeout(()=>{switchParentTab('filhos');abrirModalTarefas();},300);}
+    else if(passo===2){setTimeout(()=>{switchParentTab('recompensas');abrirRewardsMgmt();},300);}
+  }
+}
+
+// ══════════════════════════════════════════
+// ABAS DO PAINEL
+// ══════════════════════════════════════════
+let _parentTabAtual='hoje';
+function switchParentTab(tab){
+  _parentTabAtual=tab;
+  document.querySelectorAll('.parent-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.parent-tab-pane').forEach(p=>p.classList.remove('active'));
+  const btn=document.querySelector(`.parent-tab[onclick*="'${tab}'"]`);
+  if(btn)btn.classList.add('active');
+  const pane=document.getElementById('pane-'+tab);
+  if(pane)pane.classList.add('active');
+  if(tab==='filhos') renderFilhosNaAba();
+  if(tab==='recompensas') renderRecompensasNaAba();
+  if(tab==='aprovar') renderAprovacoes();
+}
+
+function renderAprovacoes(){
+  const aList=document.getElementById('approval-list');if(!aList)return;
+  aList.innerHTML='';
+  if(state.pendingApprovals.length===0){
+    aList.innerHTML='<div class="empty-state" style="padding:20px 0;"><div class="empty-icon">✅</div><p>Nenhum pedido pendente</p></div>';
+    return;
+  }
+  state.pendingApprovals.forEach((a,i)=>{
+    const card=document.createElement('div');card.className='approval-card';
+    card.innerHTML=`<div style="font-size:28px;">${a.emoji}</div><div class="approval-info"><div class="approval-name">${a.reward}</div><div class="approval-child">${a.child} · ⭐ ${a.cost}</div></div><div class="approval-actions"><button style="background:var(--green);color:#fff;" onclick="approveReward(${i})">✓</button><button style="background:var(--red);color:#fff;" onclick="rejectReward(${i})">✗</button></div>`;
+    aList.appendChild(card);
+  });
+}
+
+function renderFilhosNaAba(){
+  const wrap=document.getElementById('filhos-lista-painel');if(!wrap)return;
+  wrap.innerHTML='';
+  if(!state.profiles.length){
+    wrap.innerHTML='<div class="empty-state" style="padding:16px 0;"><div class="empty-icon">👶</div><p>Nenhum filho cadastrado</p></div>';
+    return;
+  }
+  state.profiles.forEach((p,i)=>{
+    const tasks=state.tasks[i]||[];
+    const ativas=tasks.filter(tarefaAtivaHoje);
+    const done=ativas.filter(tarefaDoneHoje).length;
+    const pct=ativas.length?Math.round(done/ativas.length*100):0;
+    const item=document.createElement('div');
+    item.style.cssText='display:flex;align-items:center;gap:14px;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:13px 15px;margin-bottom:8px;';
+    item.innerHTML=`
+      <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${p.emoji}</div>
+      <div style="flex:1;">
+        <div style="font-weight:800;font-size:14px;color:var(--text);">${p.name}</div>
+        <div style="font-size:11px;color:var(--muted);">${p.age} anos · ⭐ ${p.stars||0} estrelas</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:4px;height:3px;margin-top:5px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--sky),var(--purple));border-radius:4px;"></div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;">${done}/${ativas.length} missões hoje</div>
+      </div>
+      <button onclick="convidarCriancaIdx(${i})" style="background:rgba(34,211,238,.08);border:1.5px solid rgba(34,211,238,.3);color:var(--sky);padding:6px 10px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;">✉️</button>
+    `;
+    wrap.appendChild(item);
+  });
+}
+
+function renderRecompensasNaAba(){
+  const wrap=document.getElementById('rewards-painel-lista');if(!wrap)return;
+  wrap.innerHTML='';
+  if(!state.rewards.length){
+    wrap.innerHTML='<div class="empty-state" style="padding:16px 0;"><div class="empty-icon">🎁</div><p>Nenhuma recompensa definida</p></div>';
+    return;
+  }
+  state.rewards.forEach(r=>{
+    const item=document.createElement('div');
+    item.style.cssText='display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;';
+    item.innerHTML=`<div style="font-size:26px;">${r.emoji}</div><div style="flex:1;"><div style="font-weight:800;font-size:13px;color:var(--text);">${r.name}</div><div style="font-size:11px;color:var(--gold);">⭐ ${r.cost} estrelas</div></div>`;
+    wrap.appendChild(item);
+  });
+}
+
+// Convite direto por índice de filho (botão na aba Filhos)
+async function convidarCriancaIdx(childIdx){
+  const child=state.profiles[childIdx];if(!child)return;
+  const code='ELO-'+Math.random().toString(36).slice(2,7).toUpperCase();
+  showToast('Gerando código... ⏳');
+  const{error}=await db.from('invite_codes').insert({code,parent_id:state.currentUserId,child_id:child.id,used:false});
+  if(error){showToast('Erro ao gerar código.');return;}
+  state.lastInviteCode=code;state.lastInviteChildIdx=childIdx;
+  document.getElementById('convite-code-display').textContent=code;
+  document.getElementById('convite-child-name').textContent='👶 Criança: '+child.name;
+  document.getElementById('modal-convite').classList.add('show');
+}
+
+// ══════════════════════════════════════════
+// RESUMO SEMANAL
+// ══════════════════════════════════════════
+async function renderResumoSemanal(){
+  const wrap=document.getElementById('weekly-summary-wrap');
+  if(!wrap||!state.profiles.length)return;
+  wrap.innerHTML='';
+
+  // Calcular os últimos 7 dias
+  const dias=['dom','seg','ter','qua','qui','sex','sáb'];
+  const hoje=new Date();
+  const semana=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(hoje);d.setDate(hoje.getDate()-i);
+    const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    semana.push({key,label:dias[d.getDay()],count:0});
+  }
+
+  // Contar conclusões por dia a partir dos dados em memória
+  let totalSemana=0,melhorDia='',melhorCount=0;
+  state.tasks.flat().forEach(t=>{
+    (t.completion_dates||[]).forEach(dt=>{
+      const slot=semana.find(s=>s.key===dt);
+      if(slot){slot.count++;totalSemana++;}
+    });
+    if(t.done_date){
+      const slot=semana.find(s=>s.key===t.done_date);
+      if(slot&&!t.completion_dates?.includes(t.done_date)){slot.count++;totalSemana++;}
+    }
+  });
+  semana.forEach(s=>{if(s.count>melhorCount){melhorCount=s.count;melhorDia=s.label;}});
+  const maxCount=Math.max(...semana.map(s=>s.count),1);
+
+  const nomeCrianca=state.profiles.length===1?state.profiles[0].name:'as crianças';
+  const textoResumo=totalSemana===0
+    ?'Nenhuma missão concluída essa semana ainda.'
+    :`${nomeCrianca} ${totalSemana===1?'concluiu 1 missão':'concluiu '+totalSemana+' missões'} essa semana${melhorDia?'. Melhor dia: '+melhorDia:''}! 🎉`;
+
+  wrap.innerHTML=`
+    <div class="weekly-card">
+      <div class="weekly-title">📊 Resumo da semana</div>
+      <div class="weekly-stat">${totalSemana} missão${totalSemana!==1?'s':''}</div>
+      <div class="weekly-sub">${textoResumo}</div>
+      <div class="weekly-days">
+        ${semana.map(s=>`
+          <div class="weekly-day">
+            <div class="weekly-day-lbl">${s.label}</div>
+            <div class="weekly-day-bar">
+              <div class="weekly-day-fill" style="height:${s.count?Math.max(20,Math.round(s.count/maxCount*100))+'%':'0%'};"></div>
+            </div>
+            <div class="weekly-day-val">${s.count||''}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+
+function devolverAoResponsavel(){
+  // Se o responsável ainda tem sessão Supabase ativa, volta ao painel sem login
+  db.auth.getSession().then(async({data})=>{
+    if(data.session){
+      if(!confirm('Devolver o celular ao responsável?'))return;
+      try{localStorage.removeItem('elo_child_session');sessionStorage.removeItem('elo_role');}catch(e){}
+      state.currentChild=null;
+      state.childSession=null;
+      state.isChildMode=false;
+      if(typeof desativarTemaAventura==='function') desativarTemaAventura();
+      showToast('Voltando ao painel... 👋');
+      await carregarContextoUsuario(data.session.user);
+      await carregarTodasTarefas();
+      renderParentDashboard();
+      navTo('screen-parent');
+    } else {
+      // Sessão expirou — vai para login
+      sairComoCrianca();
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+// PASSAR PARA CRIANÇA — do painel, sem pedir código
+// ══════════════════════════════════════════
+async function passarParaCrianca(childIdx){
+  const child=state.profiles[childIdx];
+  if(!child){showToast('Criança não encontrada.');return;}
+  if(!confirm('Passar o celular para '+child.name+'?'))return;
+  state.currentChild=childIdx;
+  state.childSession={parentId:state.currentUserId,childId:child.id};
+  state.isChildMode=true;
+  try{
+    localStorage.setItem('elo_child_session',JSON.stringify({parentId:state.currentUserId,childId:child.id,childName:child.name,ts:Date.now()}));
+    sessionStorage.setItem('elo_role','child');
+  }catch(e){}
+  if(typeof ativarTemaAventura==='function') ativarTemaAventura();
+  showToast('Preparando missões de '+child.name+'... 🎮');
+  await carregarTarefas(child.id,childIdx);
+  renderChildHome();
+  if(typeof renderStreakUI==='function'){
+    const streak=calcularStreak(state.tasks[childIdx]||[]);
+    renderStreakUI(streak);
+  }
+  navTo('screen-child-home');
+  showToast('Vai lá, '+child.name+'! 🚀');
+}
+
+// ══════════════════════════════════════════
+// RENDER — cards de troca no painel
+// ══════════════════════════════════════════
+function renderChildSwitchCards(){
+  const wrap=document.getElementById('child-switch-cards');
+  const emptyEl=document.getElementById('parent-empty-state');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  if(!state.profiles.length){
+    wrap.style.display='none';
+    if(emptyEl)emptyEl.style.display='block';
+    return;
+  }
+  wrap.style.display='flex';
+  if(emptyEl)emptyEl.style.display='none';
+  state.profiles.forEach((p,i)=>{
+    const tasks=state.tasks[i]||[];
+    const ativas=tasks.filter(tarefaAtivaHoje);
+    const done=ativas.filter(tarefaDoneHoje).length;
+    const pct=ativas.length?Math.round(done/ativas.length*100):0;
+    const card=document.createElement('div');
+    card.style.cssText='display:flex;align-items:center;gap:14px;background:var(--card);border:1.5px solid rgba(45,42,110,.6);border-radius:16px;padding:14px 16px;cursor:pointer;transition:border-color .2s;';
+    card.onmouseenter=()=>card.style.borderColor='var(--primary)';
+    card.onmouseleave=()=>card.style.borderColor='rgba(45,42,110,.6)';
+    card.innerHTML=`
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">${p.emoji}</div>
+      <div style="flex:1;">
+        <div style="font-weight:800;font-size:15px;color:var(--text);">${p.name}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${p.age} anos · ⭐ ${p.stars||0} estrelas</div>
+        <div style="margin-top:6px;background:rgba(255,255,255,.06);border-radius:6px;height:4px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--primary),var(--purple));border-radius:6px;transition:width .4s;"></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">${done}/${ativas.length} missões hoje (${pct}%)</div>
+      </div>
+      <div style="font-size:22px;">▶</div>
+    `;
+    card.onclick=()=>passarParaCrianca(i);
+    wrap.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════
+// RENDER — saudação do responsável
+// ══════════════════════════════════════════
+function renderParentGreeting(){
+  const greetEl=document.getElementById('parent-greeting-name');
+  const dateEl=document.getElementById('parent-greeting-date');
+  if(!greetEl)return;
+  const hora=new Date().getHours();
+  const saudacao=hora<12?'Bom dia ☀️':hora<18?'Boa tarde 🌤️':'Boa noite 🌙';
+  greetEl.textContent=saudacao+' 👋';
+  if(dateEl){
+    const hoje=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+    dateEl.textContent=hoje.charAt(0).toUpperCase()+hoje.slice(1);
+  }
 }

@@ -70,6 +70,29 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
 /* ══ BETA TAG global ══ */
 .beta-corner { position:fixed; bottom:72px; right:12px; font-size:10px; font-weight:800; color:var(--muted); opacity:.45; pointer-events:none; letter-spacing:.5px; z-index:100; }
 
+/* ══ ONBOARDING dots ══ */
+.ob-dot { width:8px; height:8px; border-radius:50%; background:var(--border); transition:all .25s; }
+.ob-dot.active { background:var(--sky); width:22px; border-radius:6px; }
+
+/* ══ ABAS DO PAINEL ══ */
+.parent-tabs { display:flex; gap:0; border-bottom:1.5px solid var(--border); margin:0 -16px 16px; padding:0 16px; }
+.parent-tab { flex:1; padding:10px 4px; text-align:center; font-size:11px; font-weight:800; color:var(--muted2); cursor:pointer; border-bottom:2.5px solid transparent; margin-bottom:-1.5px; transition:all .18s; white-space:nowrap; background:none; border-top:none; border-left:none; border-right:none; }
+.parent-tab.active { color:var(--sky); border-bottom-color:var(--sky); }
+.parent-tab-pane { display:none; }
+.parent-tab-pane.active { display:block; animation:fadeUp .2s ease; }
+
+/* ══ RESUMO SEMANAL ══ */
+.weekly-card { background:linear-gradient(135deg,rgba(34,211,238,.08),rgba(109,40,217,.08)); border:1.5px solid rgba(34,211,238,.2); border-radius:var(--radius); padding:14px 16px; margin-bottom:14px; }
+.weekly-title { font-size:11px; font-weight:800; color:var(--sky); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+.weekly-stat { font-family:'Baloo 2',cursive; font-size:22px; font-weight:800; color:var(--text); }
+.weekly-sub { font-size:12px; color:var(--muted); margin-top:2px; line-height:1.5; }
+.weekly-days { display:flex; gap:4px; margin-top:10px; }
+.weekly-day { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; }
+.weekly-day-lbl { font-size:9px; color:var(--muted2); font-weight:700; }
+.weekly-day-bar { width:100%; border-radius:4px; background:var(--card2); position:relative; overflow:hidden; height:36px; }
+.weekly-day-fill { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top,var(--sky),var(--purple)); border-radius:4px; transition:height .5s ease; }
+.weekly-day-val { font-size:9px; color:var(--muted); font-weight:700; }
+
 /* ══ TIPOGRAFIA — Baloo só em títulos ══ */
 .child-hero .greeting-name, .progress-label, .section-title, .modal-title, .logo-title { font-family:'Baloo 2',cursive; }
 .task-name, .task-time, label, .auth-sub, p, .modal-sub, .stat-label { font-family:'Nunito',sans-serif; }
@@ -204,18 +227,18 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
   </div>
 </div>
 
-<!-- ═══ PROFILES ═══ -->
+<!-- ═══ PROFILES (agora é tela de "Passar para criança" — acessada pelo painel) ═══ -->
 <div id="screen-profiles" class="screen">
   <div class="profiles-wrap">
     <div class="profiles-header">
-      <div style="font-size:48px;margin-bottom:10px;">👨‍👩‍👧‍👦</div>
-      <div class="profiles-title">Quem vai usar?</div>
-      <div class="profiles-sub">Selecione o perfil</div>
+      <div style="font-size:48px;margin-bottom:10px;">🎮</div>
+      <div class="profiles-title">Passar para criança</div>
+      <div class="profiles-sub">Selecione quem vai usar agora</div>
     </div>
     <div class="role-strip" id="role-strip"></div>
     <div class="profiles-grid" id="profiles-grid"></div>
     <div class="profiles-actions" id="profiles-actions">
-      <button class="btn btn-secondary" id="btn-painel-resp" onclick="navParent()">⚙️ Painel do responsável</button>
+      <button class="btn btn-ghost" onclick="navParent()" style="margin-top:4px;">← Voltar ao painel</button>
       <button class="btn btn-secondary master-only" id="btn-admin" onclick="navAdmin()" style="display:none;color:var(--gold);border-color:var(--gold2);background:rgba(245,158,11,.08);">📊 Master · Métricas</button>
       <button class="btn btn-ghost" id="btn-logout-resp" onclick="doLogout()">Sair da conta ↪</button>
     </div>
@@ -260,7 +283,7 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
   <div class="bottom-nav">
     <button class="nav-btn active" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
     <button class="nav-btn" onclick="switchChildTab('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">Recompensas</span></button>
-    <button class="nav-btn" onclick="trocarUsuario()" style="opacity:.4;"><span class="nav-icon" style="font-size:15px;">🔄</span><span class="nav-label" style="font-size:9px;">Trocar</span></button>
+    <button class="nav-btn" onclick="devolverAoResponsavel()" style="opacity:.75;"><span class="nav-icon" style="font-size:15px;">👩</span><span class="nav-label" style="font-size:9px;">Responsável</span></button>
   </div>
 </div>
 
@@ -289,7 +312,7 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
   <div class="bottom-nav">
     <button class="nav-btn" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
     <button class="nav-btn active" onclick="switchChildTab('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">Recompensas</span></button>
-    <button class="nav-btn" onclick="trocarUsuario()" style="opacity:.4;"><span class="nav-icon" style="font-size:15px;">🔄</span><span class="nav-label" style="font-size:9px;">Trocar</span></button>
+    <button class="nav-btn" onclick="devolverAoResponsavel()" style="opacity:.75;"><span class="nav-icon" style="font-size:15px;">👩</span><span class="nav-label" style="font-size:9px;">Responsável</span></button>
   </div>
 </div>
 
@@ -297,38 +320,91 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
 <div id="screen-parent" class="screen">
   <div class="app-header">
     <div class="header-row">
-      <button class="header-back" onclick="navTo('screen-profiles')">←</button>
-      <div class="header-logo">⚙️ Painel</div>
+      <div class="header-logo">🔗 ELO Family</div>
       <button onclick="doLogout()" class="logout-btn">Sair</button>
     </div>
   </div>
   <div class="scroll-content">
     <div class="dashboard-wrap">
+
+      <!-- Saudação responsável -->
+      <div id="parent-greeting-wrap" style="padding:4px 0 12px;">
+        <div style="font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--text);" id="parent-greeting-name">Olá! 👋</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="parent-greeting-date"></div>
+      </div>
+
+      <!-- Stats -->
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="stat-completed">0</div><div class="stat-label">Tarefas hoje</div></div>
         <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="stat-stars">0</div><div class="stat-label">Estrelas totais</div></div>
         <div class="stat-card"><div class="stat-icon">🎁</div><div class="stat-value" id="stat-pending">0</div><div class="stat-label">Pedidos</div></div>
         <div class="stat-card"><div class="stat-icon">👶</div><div class="stat-value" id="stat-filhos">0</div><div class="stat-label">Filhos</div></div>
       </div>
-      <div class="panel-actions">
-        <button class="panel-btn panel-btn-sky" onclick="abrirModalFilho()">👶 Filho</button>
-        <button class="panel-btn panel-btn-sky" onclick="convidarCrianca()">✉️ Convite</button>
-        <button class="panel-btn panel-btn-purple" onclick="abrirModalTarefas()">➕ Tarefa</button>
-        <button class="panel-btn panel-btn-gold" onclick="abrirRewardsMgmt()">🎁 Recompensas</button>
-        <button class="panel-btn panel-btn-teal" onclick="abrirGerenciarFilhos()">✏️ Editar filhos</button>
+
+      <!-- ABAS -->
+      <div class="parent-tabs">
+        <button class="parent-tab active" onclick="switchParentTab('hoje')">🏠 Hoje</button>
+        <button class="parent-tab" onclick="switchParentTab('aprovar')" id="tab-aprovar-btn">🎁 Aprovar</button>
+        <button class="parent-tab" onclick="switchParentTab('filhos')">👶 Filhos</button>
+        <button class="parent-tab" onclick="switchParentTab('recompensas')">🏆 Recompensas</button>
       </div>
-      <button class="reset-btn" onclick="resetTarefasRotina()">🔄 Resetar rotina diária</button>
-      <div class="section-sub">⏳ Aguardando aprovação</div>
-      <div id="approval-list"></div>
-      <div class="section-sub">📜 Histórico de hoje</div>
-      <div class="history-card">
-        <div id="history-list"></div>
+
+      <!-- ABA: HOJE -->
+      <div id="pane-hoje" class="parent-tab-pane active">
+        <!-- Resumo semanal -->
+        <div id="weekly-summary-wrap"></div>
+
+        <!-- Cards de filhos para passar o celular -->
+        <div class="section-sub" style="margin-top:4px;">👶 Passar o celular para</div>
+        <div id="child-switch-cards" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
+        <div id="parent-empty-state" style="display:none;">
+          <div class="empty-state">
+            <div class="empty-state-art">👨‍👩‍👧</div>
+            <div class="empty-state-title">Nenhum filho cadastrado</div>
+            <div class="empty-state-sub">Adicione seu primeiro filho e crie missões!</div>
+            <button class="btn btn-primary" onclick="abrirModalFilho()" style="margin-top:4px;">👶 Adicionar filho</button>
+          </div>
+        </div>
+
+        <!-- Histórico do dia -->
+        <div class="section-sub">📜 Histórico de hoje</div>
+        <div class="history-card">
+          <div id="history-list"></div>
+        </div>
+        <button class="reset-btn" onclick="resetTarefasRotina()" style="margin-top:12px;">🔄 Resetar rotina diária</button>
       </div>
+
+      <!-- ABA: APROVAR -->
+      <div id="pane-aprovar" class="parent-tab-pane">
+        <div class="section-sub" style="margin-top:0;">⏳ Aguardando aprovação</div>
+        <div id="approval-list"></div>
+      </div>
+
+      <!-- ABA: FILHOS -->
+      <div id="pane-filhos" class="parent-tab-pane">
+        <div class="panel-actions" style="margin-top:4px;">
+          <button class="panel-btn panel-btn-sky" onclick="abrirModalFilho()">👶 Novo filho</button>
+          <button class="panel-btn panel-btn-sky" onclick="convidarCrianca()">✉️ Convite</button>
+          <button class="panel-btn panel-btn-teal" onclick="abrirGerenciarFilhos()">✏️ Editar</button>
+        </div>
+        <div id="filhos-lista-painel" style="margin-top:8px;"></div>
+      </div>
+
+      <!-- ABA: RECOMPENSAS -->
+      <div id="pane-recompensas" class="parent-tab-pane">
+        <div class="panel-actions" style="margin-top:4px;">
+          <button class="panel-btn panel-btn-gold" onclick="abrirRewardsMgmt()" style="grid-column:1/-1;">🎁 Gerenciar recompensas</button>
+          <button class="panel-btn panel-btn-purple" onclick="abrirModalTarefas()" style="grid-column:1/-1;">➕ Nova tarefa</button>
+        </div>
+        <div class="section-sub">🎁 Recompensas ativas</div>
+        <div id="rewards-painel-lista" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
     </div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn active"><span class="nav-icon">⚙️</span><span class="nav-label">Painel</span></button>
-    <button class="nav-btn" onclick="navTo('screen-profiles')"><span class="nav-icon">👥</span><span class="nav-label">Perfis</span></button>
+    <button class="nav-btn master-only" id="btn-admin-nav" onclick="navAdmin()" style="display:none;"><span class="nav-icon">📊</span><span class="nav-label">Métricas</span></button>
   </div>
   <button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
 </div>
@@ -337,7 +413,7 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
 <div id="screen-admin" class="screen">
   <div class="app-header">
     <div class="header-row">
-      <button class="header-back" onclick="navTo('screen-profiles')">←</button>
+      <button class="header-back" onclick="navParent()">←</button>
       <div class="header-logo" style="color:var(--gold);">📊 Métricas</div>
       <div style="width:36px;"></div>
     </div>
@@ -373,7 +449,7 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
     </div>
   </div>
   <div class="bottom-nav">
-    <button class="nav-btn" onclick="navTo('screen-profiles')"><span class="nav-icon">👥</span><span class="nav-label">Perfis</span></button>
+    <button class="nav-btn" onclick="navParent()"><span class="nav-icon">⚙️</span><span class="nav-label">Painel</span></button>
     <button class="nav-btn active"><span class="nav-icon">📊</span><span class="nav-label">Métricas</span></button>
   </div>
 </div>
@@ -381,7 +457,8 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
 <!-- ═══ REWARD OVERLAY ═══ -->
 <div class="reward-overlay" id="reward-overlay" onclick="closeReward()">
   <div class="reward-modal" onclick="event.stopPropagation()">
-    <div class="reward-stars">⭐</div>
+    <div class="reward-stars" id="reward-stars-icon">⭐</div>
+    <div class="xp-rise" id="reward-xp-rise">+2 ⭐</div>
     <div class="reward-title" id="reward-title">Missão completa! 🎉</div>
     <div class="reward-msg" id="reward-msg">Você ganhou estrelas!</div>
     <button class="btn btn-gold" onclick="closeReward()">Uhuu! 🎉</button>
@@ -651,6 +728,49 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
   </div>
 </div>
 
+<!-- ═══ MODAL: ONBOARDING ═══ -->
+<div class="modal-overlay" id="modal-onboarding">
+  <div class="modal-sheet" onclick="event.stopPropagation()" style="padding-bottom:32px;">
+    <div class="modal-handle"></div>
+    <!-- Indicador de passo -->
+    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:20px;">
+      <div class="ob-dot active" id="ob-dot-0"></div>
+      <div class="ob-dot" id="ob-dot-1"></div>
+      <div class="ob-dot" id="ob-dot-2"></div>
+    </div>
+    <!-- Passo 0 -->
+    <div id="ob-step-0" class="ob-step">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:56px;margin-bottom:12px;">👶</div>
+        <div class="modal-title" style="justify-content:center;">Adicione seu filho</div>
+        <div class="modal-sub">Comece cadastrando a criança que vai usar o app. Você pode adicionar mais depois.</div>
+      </div>
+      <button class="btn btn-primary" onclick="onboardingNext(0,true)">👶 Adicionar agora</button>
+      <button class="btn btn-ghost" onclick="onboardingNext(0,false)" style="margin-top:8px;">Pular por agora</button>
+    </div>
+    <!-- Passo 1 -->
+    <div id="ob-step-1" class="ob-step" style="display:none;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:56px;margin-bottom:12px;">⚔️</div>
+        <div class="modal-title" style="justify-content:center;">Crie a primeira missão</div>
+        <div class="modal-sub">Tarefas viram missões gamificadas. Cada missão concluída vale estrelas que a criança pode trocar por recompensas.</div>
+      </div>
+      <button class="btn btn-primary" onclick="onboardingNext(1,true)">➕ Criar missão</button>
+      <button class="btn btn-ghost" onclick="onboardingNext(1,false)" style="margin-top:8px;">Pular por agora</button>
+    </div>
+    <!-- Passo 2 -->
+    <div id="ob-step-2" class="ob-step" style="display:none;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:56px;margin-bottom:12px;">🎁</div>
+        <div class="modal-title" style="justify-content:center;">Defina uma recompensa</div>
+        <div class="modal-sub">Escolha o que a criança pode ganhar com as estrelas — sorvete, tempo de jogo, passeio. Isso motiva demais!</div>
+      </div>
+      <button class="btn btn-primary" onclick="onboardingNext(2,true)">🎁 Definir recompensa</button>
+      <button class="btn btn-ghost" onclick="onboardingNext(2,false)" style="margin-top:8px;">Começar sem recompensas</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -749,33 +869,29 @@ function playCompleteSound() {
 }
 
 /* ── 4. PATCH showReward — confete + XP ── */
-const _origShowReward = window.showReward;
 window.showReward = function(stars, msg, title) {
   const overlay = document.getElementById('reward-overlay');
   const xpEl = document.getElementById('reward-xp-rise');
   const starsIcon = document.getElementById('reward-stars-icon');
 
-  /* Ícone baseado em estrelas */
   if (starsIcon) starsIcon.textContent = stars >= 5 ? '🌟' : '⭐';
-  if (xpEl) { xpEl.textContent = '+' + (stars || 2) + ' ⭐'; xpEl.style.animation = 'none'; void xpEl.offsetWidth; xpEl.style.animation = ''; }
-
-  /* Usa a função original se existir */
-  if (typeof _origShowReward === 'function') _origShowReward.apply(this, arguments);
-  else {
-    document.getElementById('reward-title').textContent = title || 'Missão completa! 🎉';
-    document.getElementById('reward-msg').textContent = msg || 'Você ganhou estrelas!';
-    overlay && overlay.classList.add('active');
+  if (xpEl) {
+    xpEl.textContent = '+' + (stars || 2) + ' ⭐';
+    xpEl.style.animation = 'none';
+    void xpEl.offsetWidth;
+    xpEl.style.animation = '';
   }
+  document.getElementById('reward-title').textContent = title || 'Missão completa! 🎉';
+  document.getElementById('reward-msg').textContent = msg || 'Você ganhou estrelas!';
+  if (overlay) overlay.classList.add('show');
   launchConfetti(2500);
   playCompleteSound();
 };
 
 /* Patch closeReward */
-const _origCloseReward = window.closeReward;
 window.closeReward = function() {
   const overlay = document.getElementById('reward-overlay');
-  if (overlay) overlay.classList.remove('active');
-  if (typeof _origCloseReward === 'function') _origCloseReward.apply(this, arguments);
+  if (overlay) overlay.classList.remove('show');
 };
 
 /* ── 5. STREAK com chama ── */
