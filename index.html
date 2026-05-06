@@ -306,7 +306,7 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
       <div class="progress-top">
         <div>
           <div class="progress-label">Progresso do dia</div>
-          <div class="progress-count" id="progress-count">0/0 tarefas</div>
+          <div class="progress-count" id="progress-count">0/0 missões</div>
         </div>
         <div class="progress-circle" id="progress-pct">0%</div>
       </div>
@@ -400,7 +400,7 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
 
       <!-- Stats -->
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="stat-completed">0</div><div class="stat-label">Tarefas hoje</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="stat-completed">0</div><div class="stat-label">Missões hoje</div></div>
         <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="stat-stars">0</div><div class="stat-label">Estrelas totais</div></div>
         <div class="stat-card"><div class="stat-icon">🎁</div><div class="stat-value" id="stat-pending">0</div><div class="stat-label">Pedidos</div></div>
         <div class="stat-card"><div class="stat-icon">👶</div><div class="stat-value" id="stat-filhos">0</div><div class="stat-label">Filhos</div></div>
@@ -417,20 +417,44 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
       <!-- ABA: HOJE -->
       <div id="pane-hoje" class="parent-tab-pane active">
 
-        <!-- FIX 5 — CTA destacado, botão primário -->
+        <!-- CARD: PROGRESSO — alterna entre visão Dia e Semana -->
+        <div class="home-card card-progresso" id="card-progresso">
+          <div class="home-card-header">
+            <span class="home-card-title" id="progresso-card-title">🎯 Progresso</span>
+            <div class="progresso-tabs" role="tablist">
+              <button class="progresso-tab active" id="ptab-dia"    onclick="switchProgressoTab('dia')"    role="tab">Dia</button>
+              <button class="progresso-tab"         id="ptab-semana" onclick="switchProgressoTab('semana')" role="tab">Semana</button>
+            </div>
+          </div>
+          <!-- renderHomeHoje() preenche quando aba Dia está ativa -->
+          <div id="hoje-body"><div class="hoje-vazia">Carregando...</div></div>
+          <!-- renderHomeSemana() preenche quando aba Semana está ativa (oculto por padrão) -->
+          <div id="semana-body" style="display:none"><div class="hoje-vazia">Carregando...</div></div>
+        </div>
+
+        <!-- CARD: META — recompensa e quanto falta -->
+        <div class="home-card card-meta" id="card-meta" style="display:none">
+          <div class="home-card-header">
+            <span class="home-card-title">🏆 Meta da semana</span>
+          </div>
+          <div id="meta-body"></div>
+        </div>
+
+        <!-- CTA criar missão -->
         <button class="btn-criar-missao-hoje" onclick="abrirModalTarefas()">
           <span class="cta-icon">🚀</span>
           <div class="cta-text">
             <h3>Criar nova missão</h3>
-            <p>Adicione tarefas de rotina para os seus filhos</p>
+            <p>Adicione missões de rotina para os seus filhos</p>
           </div>
           <span class="cta-arrow">›</span>
         </button>
 
-        <div id="weekly-summary-wrap"></div>
-        <div class="section-sub" style="margin-top:4px">👶 Passar o celular para</div>
+        <!-- Passar para criança -->
+        <div class="section-sub" id="label-passar-celular" style="margin-top:4px">👶 Passar o celular para</div>
         <div id="child-switch-cards" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px"></div>
-        <!-- FIX 9 — empty state completo -->
+
+        <!-- Empty state sem filhos -->
         <div id="parent-empty-state" style="display:none">
           <div class="empty-v2">
             <div class="e2-art">👨‍👩‍👧</div>
@@ -440,9 +464,9 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
           </div>
         </div>
 
+        <!-- Histórico do dia -->
         <div class="section-sub">📜 Histórico de hoje</div>
         <div class="history-card"><div id="history-list"></div></div>
-        <!-- data-reset-rotina: permite que o JS encontre este botão para mutação inline de confirmação -->
         <button class="reset-btn" data-reset-rotina onclick="resetTarefasRotina()" style="margin-top:12px">🔄 Resetar rotina diária</button>
       </div>
 
@@ -468,7 +492,7 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
         <div class="panel-actions" style="margin-top:4px">
           <button class="panel-btn panel-btn-gold" onclick="abrirRewardsMgmt()" style="grid-column:1/-1">🎁 Gerenciar recompensas</button>
           <!-- FIX 5: botão secundário/ghost para criar missão nessa aba -->
-          <button class="panel-btn" onclick="abrirModalTarefas()" style="grid-column:1/-1;background:rgba(109,40,217,.08);border:1.5px solid rgba(109,40,217,.3);color:var(--purple)">➕ Nova tarefa</button>
+          <button class="panel-btn" onclick="abrirModalTarefas()" style="grid-column:1/-1;background:rgba(109,40,217,.08);border:1.5px solid rgba(109,40,217,.3);color:var(--purple)">➕ Nova missão</button>
         </div>
         <div class="section-sub">🎁 Recompensas ativas</div>
         <div id="rewards-painel-lista" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -492,16 +516,16 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
   <div class="scroll-content" style="padding:12px 16px 40px">
     <div class="admin-notice"><span>🔐 Acesso restrito — usuárias masters do produto</span></div>
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">Tarefas concluídas</div><div class="kpi-val" id="kpi-tasks" style="color:var(--green)">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Missões concluídas</div><div class="kpi-val" id="kpi-tasks" style="color:var(--green)">0</div></div>
       <div class="kpi-card"><div class="kpi-label">Recompensas pedidas</div><div class="kpi-val" id="kpi-rewards" style="color:var(--gold)">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Tarefas criadas</div><div class="kpi-val" id="kpi-created" style="color:var(--sky)">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Missões criadas</div><div class="kpi-val" id="kpi-created" style="color:var(--sky)">0</div></div>
       <div class="kpi-card"><div class="kpi-label">Beta testers</div><div class="kpi-val" style="color:var(--purple)">1/20</div></div>
     </div>
     <div class="metrics-card">
       <div class="metrics-title">📈 Eventos registrados</div>
-      <div class="metric-row"><div><div class="metric-key">tarefa_concluida</div><div class="progress-bar"><div class="progress-fill" id="m-tasks-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-tasks">0 conclusões</div></div>
+      <div class="metric-row"><div><div class="metric-key">missao_concluida</div><div class="progress-bar"><div class="progress-fill" id="m-tasks-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-tasks">0 conclusões</div></div>
       <div class="metric-row"><div><div class="metric-key">recompensa_solicitada</div><div class="progress-bar"><div class="progress-fill" id="m-rewards-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-rewards">0 pedidos</div></div>
-      <div class="metric-row"><div><div class="metric-key">tarefa_criada</div><div class="progress-bar"><div class="progress-fill" id="m-created-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-created">0 criadas</div></div>
+      <div class="metric-row"><div><div class="metric-key">missao_criada</div><div class="progress-bar"><div class="progress-fill" id="m-created-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-created">0 criadas</div></div>
     </div>
     <div class="metrics-card">
       <div class="metrics-title">💬 Feedbacks recebidos</div>
@@ -546,8 +570,8 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
         <label>Onde teve dificuldade? <span class="label-hint">(opcional)</span></label>
         <div class="difficulty-tags">
           <div class="diff-tag" onclick="toggleTag(this)">Login</div>
-          <div class="diff-tag" onclick="toggleTag(this)">Criar tarefa</div>
-          <div class="diff-tag" onclick="toggleTag(this)">Completar tarefa</div>
+          <div class="diff-tag" onclick="toggleTag(this)">Criar missão</div>
+          <div class="diff-tag" onclick="toggleTag(this)">Completar missão</div>
           <div class="diff-tag" onclick="toggleTag(this)">Recompensas</div>
           <div class="diff-tag" onclick="toggleTag(this)">Navegar</div>
           <div class="diff-tag" onclick="toggleTag(this)">Entender o app</div>
@@ -594,11 +618,11 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
   </div>
 </div>
 
-<!-- ═══ MODAL: NOVA TAREFA ═══ -->
+<!-- ═══ MODAL: NOVA MISSÃO ═══ -->
 <div class="modal-overlay" id="modal-tarefas" onclick="fecharModalTarefas()">
   <div class="modal-sheet modal-sheet-tall" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ Nova Tarefa</div>
+    <div class="modal-title">➕ Nova Missão</div>
     <div class="modal-sub">Manual, biblioteca ou em lote</div>
     <div class="tab-row">
       <button class="tab-btn active" id="tab-manual"     onclick="switchTab('manual')">✏️ Manual</button>
@@ -608,9 +632,8 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
 
     <!-- MANUAL -->
     <div id="tab-content-manual">
-      <div class="form-group"><label>Nome da tarefa</label><input type="text" id="fab-task-name" placeholder="Ex: Escovar os dentes"></div>
+      <div class="form-group"><label>Nome da missão</label><input type="text" id="fab-task-name" placeholder="Ex: Escovar os dentes"></div>
       <div class="form-group"><label>Para qual criança?</label><select id="fab-task-child"></select></div>
-      <div class="form-group"><label>Horário</label><input type="time" id="fab-task-time" value="08:00"></div>
       <div class="form-group">
         <label>Estrelas 🌟</label>
         <div class="star-select">
@@ -620,13 +643,20 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
           <div class="star-option" onclick="selectStarsFab(this,5)">🌟 5</div>
         </div>
       </div>
+
+      <div class="reward-preview" id="reward-preview-block">
+        <div class="reward-preview-label">Pontos dessa missão</div>
+        <div class="reward-preview-value">
+          <span class="reward-preview-stars" id="rp-stars">⭐⭐ 2 estrelas</span>
+        </div>
+      </div>
+
+      <div class="form-group"><label>Horário</label><input type="time" id="fab-task-time" value="08:00"></div>
       <div class="form-group">
         <label class="recorrente-label">
           <input type="checkbox" id="fab-recorrente" onchange="toggleDiasSemana()">
-          <!-- Ajuste 3: texto explica o impacto da recorrência antes de o usuário marcar -->
           <span>Missão recorrente — define quando ela aparece na rotina</span>
         </label>
-        <!-- Microcopy: explica o impacto antes de o usuário marcar -->
         <div class="recurrence-hint" id="rec-hint">Define em quais dias essa missão aparecerá na rotina. O histórico de conclusões é sempre preservado.</div>
       </div>
       <div id="dias-semana-wrap" style="display:none;margin-bottom:16px">
@@ -641,7 +671,7 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
           <button class="dia-btn" data-dia="dom" onclick="toggleDia(this)">Dom</button>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="addTaskFab()">Criar tarefa</button>
+      <button class="btn btn-primary" onclick="addTaskFab()">Criar missão</button>
     </div>
 
     <!-- BIBLIOTECA -->
@@ -667,7 +697,7 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
     <div id="tab-content-lote" style="display:none">
       <div class="form-group"><label>Para qual criança?</label><select id="fab-lote-child"></select></div>
       <div class="form-group">
-        <label>Cole uma tarefa por linha</label>
+        <label>Cole uma missão por linha</label>
         <textarea id="lote-text" rows="6" placeholder="Escovar os dentes&#10;Arrumar a mochila&#10;Ler por 20 minutos"></textarea>
       </div>
       <div class="form-group">
@@ -679,7 +709,7 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
           <div class="star-option" onclick="selectStarsLote(this,5)">🌟 5</div>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="criarEmLote()">Criar todas as tarefas</button>
+      <button class="btn btn-primary" onclick="criarEmLote()">Criar todas as missões</button>
     </div>
 
     <button class="btn btn-ghost" onclick="fecharModalTarefas()" style="margin-top:10px">Cancelar</button>
@@ -704,7 +734,7 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
         1. Abra o app ELO Family<br>
         2. Toque em <strong style="color:var(--gold)">🎮 Sou criança</strong><br>
         3. Digite o código acima<br>
-        4. Pronto! Tarefas liberadas ✅
+        4. Pronto! Missões liberadas ✅
       </div>
     </div>
     <button class="btn btn-ghost" onclick="fecharConvite()">Fechar</button>
@@ -717,8 +747,7 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
     <div class="modal-handle"></div>
     <div class="modal-title">🎁 Recompensas</div>
     <div class="modal-sub">Gerencie o que as crianças podem trocar</div>
-    <div id="rewards-mgmt-list" style="margin-bottom:16px"></div>
-    <div style="border-top:1px solid var(--border);padding-top:16px">
+    <div style="border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:16px">
       <div style="font-size:13px;font-weight:800;color:var(--sky);margin-bottom:12px">✨ Adicionar nova</div>
       <div class="form-group"><label>Nome da recompensa</label><input type="text" id="new-reward-name" placeholder="Ex: Sorvete especial"></div>
       <div style="display:flex;gap:10px">
@@ -742,6 +771,7 @@ body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgb
       </div>
       <button class="btn btn-primary" onclick="adicionarRecompensa()">✨ Adicionar recompensa</button>
     </div>
+    <div id="rewards-mgmt-list"></div>
     <button class="btn btn-ghost" onclick="fecharRewardsMgmt()" style="margin-top:8px">Fechar</button>
   </div>
 </div>

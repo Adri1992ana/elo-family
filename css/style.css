@@ -710,3 +710,381 @@ input,select,textarea,button{font-family:'Nunito',sans-serif;}
   font-size: 12px;
   cursor: pointer;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   HOME GAMIFICADA — Cards de progresso, semana e streak
+   Preview de recompensa no modal de missão
+══════════════════════════════════════════════════════════════ */
+
+/* ── CARD HOJE ── */
+.home-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+/* linha colorida no topo de cada card */
+.home-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.home-card.card-hoje::before      { background: linear-gradient(90deg, var(--sky), var(--purple)); }
+.home-card.card-semana::before    { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+.home-card.card-meta::before      { background: linear-gradient(90deg, var(--green), var(--sky)); }
+.home-card.card-progresso::before { background: linear-gradient(90deg, var(--sky), var(--purple)); }
+
+/* Seletor Dia / Semana */
+.progresso-tabs {
+  display: flex;
+  gap: 2px;
+  background: rgba(255,255,255,.06);
+  border-radius: 8px;
+  padding: 2px;
+}
+.progresso-tab {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.progresso-tab.active {
+  background: var(--card2);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+
+.home-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.home-card-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.home-card-action {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--sky);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  padding: 0;
+}
+
+/* Progresso do dia */
+.hoje-count {
+  font-family: 'Baloo 2', cursive;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.hoje-count span { font-size: 16px; color: var(--muted); font-weight: 600; }
+.hoje-progress-bar {
+  height: 8px;
+  background: rgba(255,255,255,.07);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0 10px;
+}
+.hoje-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--sky), var(--purple));
+  transition: width .5s ease;
+}
+.hoje-progress-fill.completo {
+  background: linear-gradient(90deg, var(--green), var(--sky));
+}
+.proxima-missao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.04);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+.proxima-missao-icon { font-size: 20px; flex-shrink: 0; }
+.proxima-missao-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.proxima-missao-stars { font-size: 12px; color: var(--gold); font-weight: 700; }
+.hoje-vazia {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  padding: 8px 0 4px;
+}
+.hoje-completo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(34,217,138,.07);
+  border-radius: 10px;
+  border: 1px solid rgba(34,217,138,.2);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+/* ── CARD SEMANA ── */
+.semana-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.semana-total {
+  font-family: 'Baloo 2', cursive;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gold);
+}
+.semana-label { font-size: 13px; color: var(--muted); }
+.semana-pct {
+  margin-left: auto;
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+}
+.semana-progress-bar {
+  height: 6px;
+  background: rgba(255,255,255,.07);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 8px 0 12px;
+}
+.semana-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+  transition: width .5s ease;
+}
+/* Grade de dias */
+.semana-dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.semana-dia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.semana-dia-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.semana-dia-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: all .2s;
+}
+.semana-dia-dot.tem-missao {
+  background: rgba(245,200,66,.1);
+  border-color: var(--gold);
+}
+.semana-dia-dot.hoje-marker {
+  border-color: var(--sky);
+  background: rgba(34,211,238,.08);
+}
+.semana-dia-dot.hoje-marker.tem-missao {
+  background: rgba(34,211,238,.15);
+  border-color: var(--sky);
+  box-shadow: 0 0 0 2px rgba(34,211,238,.2);
+}
+.semana-dia-count {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  min-height: 14px;
+}
+
+/* Barras por dia — layout em lista */
+.semana-dias-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+.semana-dia-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.semana-dia-row-label {
+  width: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+.semana-dia-row-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,.07);
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+}
+.semana-dia-row-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--gold);
+  transition: width .4s ease;
+}
+.semana-dia-row-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  flex-shrink: 0;
+  min-width: 30px;
+  text-align: right;
+}
+.semana-streak-row {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.semana-streak-row strong {
+  color: #ff6a00;
+}
+
+/* Streak badge */
+.streak-badge-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,100,0,.1);
+  border: 1px solid rgba(255,100,0,.25);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #ff6a00;
+  margin-top: 10px;
+}
+.streak-badge-home.frio {
+  background: rgba(100,100,120,.08);
+  border-color: rgba(100,100,120,.2);
+  color: var(--muted);
+}
+
+/* ── CARD META ── */
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.meta-icon { font-size: 28px; flex-shrink: 0; }
+.meta-info { flex: 1; }
+.meta-title { font-size: 14px; font-weight: 800; color: var(--text); }
+.meta-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.meta-progress-bar {
+  height: 6px;
+  background: rgba(255,255,255,.07);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.meta-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--green), var(--sky));
+  transition: width .5s ease;
+}
+.meta-falta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  text-align: right;
+}
+.meta-recompensa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(34,217,138,.06);
+  border: 1px solid rgba(34,217,138,.15);
+  border-radius: 10px;
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+/* ── PREVIEW DE RECOMPENSA no modal de missão ── */
+.reward-preview {
+  background: linear-gradient(135deg, rgba(109,40,217,.12), rgba(34,211,238,.08));
+  border: 1.5px solid rgba(109,40,217,.3);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  transition: all .3s ease;
+}
+.reward-preview-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 8px;
+}
+.reward-preview-value {
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.reward-preview-stars { color: var(--gold); }
+.reward-preview-reward{
+  font-size: 13px;
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  margin-top: 2px;
+}
+/* Seletor de tipo de recompensa */
+

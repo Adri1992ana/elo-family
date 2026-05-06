@@ -521,7 +521,7 @@ function renderChildHome() {
     arr.forEach(t => wrap.appendChild(renderTaskCard(t))); list.appendChild(wrap);
   }
   renderSection(rotina, '🔄', 'Rotina diária');
-  renderSection(unicas, '📋', 'Tarefas de hoje');
+  renderSection(unicas, '📋', 'Missões de hoje');
 }
 
 async function completeTask(task) {
@@ -610,18 +610,20 @@ function renderParentDashboard() {
   document.getElementById('stat-pending').textContent   = state.pendingApprovals.length;
   document.getElementById('stat-filhos').textContent    = state.profiles.length;
 
-  // FIX 6 — badge na aba Aprovar
+  // Badge na aba Aprovar
   const badge = document.querySelector('[data-tab="aprovar"] .tab-badge');
   if (badge) { badge.textContent = state.pendingApprovals.length; badge.classList.toggle('show', state.pendingApprovals.length > 0); }
 
   renderChildSwitchCards();
   renderParentGreeting();
-  renderResumoSemanal();
+  // Renderiza apenas a aba ativa do card de progresso
+  renderProgressoTabAtual();
+  renderHomeMeta();
   switchParentTab(_parentTabAtual);
 
   const hList = document.getElementById('history-list'); if (!hList) return; hList.innerHTML = '';
   if (!state.history.length) {
-    hList.innerHTML = '<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;">Nenhuma tarefa concluída ainda</div>';
+    hList.innerHTML = '<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;">Nenhuma missão concluída ainda hoje.</div>';
   } else {
     state.history.slice(0, 8).forEach(h => {
       const item = document.createElement('div'); item.className = 'history-item';
@@ -702,6 +704,8 @@ function abrirModalTarefas() {
     state.profiles.forEach((f, i) => { const o = document.createElement('option'); o.value = i; o.textContent = f.emoji + ' ' + f.name; sel.appendChild(o); });
   });
   renderBiblioteca('todos');
+  // Reset do preview ao abrir o modal
+  renderRewardPreview();
   document.getElementById('modal-tarefas').classList.add('show');
 }
 function fecharModalTarefas() {
@@ -739,7 +743,13 @@ function filterCat(el, cat) {
   el.classList.add('active'); catAtual = cat; renderBiblioteca(cat);
 }
 
-function selectStarsFab(el, val) { el.closest('.star-select').querySelectorAll('.star-option').forEach(e => e.classList.remove('selected')); el.classList.add('selected'); selectedStarsFabVal = val; }
+function selectStarsFab(el, val) {
+  el.closest('.star-select').querySelectorAll('.star-option').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedStarsFabVal = val;
+  // Atualiza o preview de recompensa em tempo real
+  renderRewardPreview();
+}
 function selectStarsLote(el, val) { el.closest('.star-select').querySelectorAll('.star-option').forEach(e => e.classList.remove('selected')); el.classList.add('selected'); selectedStarsLoteVal = val; }
 
 // FIX 8 — microcopy de recorrência
@@ -803,8 +813,8 @@ async function adicionarSelecionadas() {
   const childIdx = parseInt(document.getElementById('fab-bib-child').value);
   const child    = state.profiles[childIdx];
   if (!child) { showToast('Selecione uma criança!'); return; }
-  if (!selectedBibCards.length) { showToast('Selecione ao menos uma tarefa!'); return; }
-  showToast('Criando ' + selectedBibCards.length + ' tarefa(s)… ⏳');
+  if (!selectedBibCards.length) { showToast('Selecione ao menos uma missão!'); return; }
+  showToast('Criando ' + selectedBibCards.length + ' missão(ões)… ⏳');
   let criadas = 0;
   for (const nome of selectedBibCards) {
     const t = BIBLIOTECA.find(b => b.nome === nome); if (!t) continue;
@@ -821,9 +831,9 @@ async function criarEmLote() {
   const child    = state.profiles[childIdx];
   const texto    = document.getElementById('lote-text').value.trim();
   if (!child) { showToast('Selecione uma criança!'); return; }
-  if (!texto) { showToast('Digite ao menos uma tarefa!'); return; }
+  if (!texto) { showToast('Digite ao menos uma missão!'); return; }
   const linhas = texto.split('\n').map(l => l.trim()).filter(l => l);
-  showToast('Criando ' + linhas.length + ' tarefa(s)… ⏳');
+  showToast('Criando ' + linhas.length + ' missão(ões)… ⏳');
   let criadas = 0;
   for (const nome of linhas) {
     const { data, error } = await db.from('tasks').insert({ child_id: child.id, parent_id: state.currentUserId, name: nome, time: '08:00', stars: selectedStarsLoteVal, icon: iconParaTarefa(nome), done: false, recorrente: false, dias_semana: [] }).select().single();
@@ -1280,28 +1290,276 @@ async function convidarCriancaIdx(childIdx) {
 }
 
 // ── RESUMO SEMANAL ──
-async function renderResumoSemanal() {
-  const wrap = document.getElementById('weekly-summary-wrap'); if (!wrap || !state.profiles.length) return; wrap.innerHTML = '';
-  const dias  = ['dom','seg','ter','qua','qui','sex','sáb'];
+// ── HOME GAMIFICADA ───────────────────────────────────────────
+// Substitui renderResumoSemanal. Três funções independentes:
+// renderHomeHoje, renderHomeSemana, renderHomeMeta.
+// Chamadas por renderParentDashboard após qualquer atualização de estado.
+
+// ── UTILITÁRIOS DE CÁLCULO ────────────────────────────────────
+function calcularMissoesHoje() {
+  const allTasks  = state.tasks.flat();
+  const ativas    = allTasks.filter(tarefaAtivaHoje);
+  const concluidas= ativas.filter(tarefaDoneHoje);
+  const proxima   = ativas.find(t => !tarefaDoneHoje(t));
+  return { total: ativas.length, done: concluidas.length, proxima };
+}
+
+function calcularDadosSemana() {
   const hoje  = new Date();
+  const dias  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   const semana = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date(hoje); d.setDate(hoje.getDate() - i);
     const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    semana.push({ key, label: dias[d.getDay()], count: 0 });
+    semana.push({ key, label: dias[d.getDay()], count: 0, isHoje: i === 0, isFuturo: i < 0, esperadoDia: 0 });
   }
-  let totalSemana = 0, melhorDia = '', melhorCount = 0;
+  // isFuturo real: slots gerados vão de i=6 (mais antigo) até i=0 (hoje), nenhum é futuro
+  // mas a janela de 7 dias vai do passado até hoje. Dias após hoje não estão no array.
+  // Marcamos isFuturo como false para todos (correto: array só tem passado + hoje).
+
+  let totalSemana = 0;
   state.tasks.flat().forEach(t => {
-    (t.completion_dates || []).forEach(dt => { const slot = semana.find(s => s.key === dt); if (slot) { slot.count++; totalSemana++; } });
-    if (t.done_date) { const slot = semana.find(s => s.key === t.done_date); if (slot && !t.completion_dates?.includes(t.done_date)) { slot.count++; totalSemana++; } }
+    (t.completion_dates || []).forEach(dt => {
+      const slot = semana.find(s => s.key === dt);
+      if (slot) { slot.count++; totalSemana++; }
+    });
+    if (t.done_date) {
+      const slot = semana.find(s => s.key === t.done_date);
+      if (slot && !(t.completion_dates || []).includes(t.done_date)) { slot.count++; totalSemana++; }
+    }
   });
-  semana.forEach(s => { if (s.count > melhorCount) { melhorCount = s.count; melhorDia = s.label; } });
-  const maxCount = Math.max(...semana.map(s => s.count), 1);
-  const nomeCrianca = state.profiles.length === 1 ? state.profiles[0].name : 'as crianças';
-  const textoResumo = totalSemana === 0
-    ? 'Nenhuma missão concluída essa semana ainda.'
-    : `${nomeCrianca} ${totalSemana === 1 ? 'concluiu 1 missão' : 'concluiu ' + totalSemana + ' missões'} essa semana${melhorDia ? '. Melhor dia: ' + melhorDia : ''}! 🎉`;
-  wrap.innerHTML = `<div class="weekly-card"><div class="weekly-title">📊 Resumo da semana</div><div class="weekly-stat">${totalSemana} missão${totalSemana !== 1 ? 's' : ''}</div><div class="weekly-sub">${textoResumo}</div><div class="weekly-days">${semana.map(s => `<div class="weekly-day"><div class="weekly-day-lbl">${s.label}</div><div class="weekly-day-bar"><div class="weekly-day-fill" style="height:${s.count ? Math.max(20, Math.round(s.count / maxCount * 100)) + '%' : '0%'}"></div></div><div class="weekly-day-val">${s.count || ''}</div></div>`).join('')}</div></div>`;
+
+  // Streak: dias consecutivos com ao menos 1 missão (regressivo a partir de hoje)
+  let streak = 0;
+  for (let i = semana.length - 1; i >= 0; i--) {
+    if (semana[i].count > 0) streak++;
+    else break;
+  }
+
+  // Total esperado na semana + esperado por dia
+  const dayNames = ['dom','seg','ter','qua','qui','sex','sab'];
+  let esperado = 0;
+  state.tasks.flat().forEach(t => {
+    if (!t.recorrente) {
+      // Tarefa única: conta 1 no total e adiciona ao dia de hoje (estimativa)
+      esperado += 1;
+      const slotHoje = semana.find(s => s.isHoje);
+      if (slotHoje) slotHoje.esperadoDia += 1;
+      return;
+    }
+    semana.forEach(slot => {
+      const slotDay = dayNames[new Date(slot.key + 'T12:00:00').getDay()];
+      const previsto = !t.dias_semana || !t.dias_semana.length
+        ? true
+        : t.dias_semana.includes(slotDay);
+      if (previsto) { esperado++; slot.esperadoDia++; }
+    });
+  });
+
+  const pct = esperado > 0 ? Math.min(100, Math.round(totalSemana / esperado * 100)) : 0;
+  return { semana, totalSemana, esperado, pct, streak };
+}
+
+// ── ALTERNÂNCIA DIA / SEMANA no card de progresso ────────────
+let _progressoTab = 'dia'; // 'dia' | 'semana'
+
+function switchProgressoTab(tab) {
+  _progressoTab = tab;
+
+  // Atualiza estado visual dos botões
+  document.getElementById('ptab-dia')   ?.classList.toggle('active', tab === 'dia');
+  document.getElementById('ptab-semana')?.classList.toggle('active', tab === 'semana');
+
+  // Mostra / oculta os painéis
+  const hojeEl   = document.getElementById('hoje-body');
+  const semanaEl = document.getElementById('semana-body');
+  if (hojeEl)   hojeEl.style.display   = tab === 'dia'    ? '' : 'none';
+  if (semanaEl) semanaEl.style.display  = tab === 'semana' ? '' : 'none';
+
+  // Renderiza o conteúdo da aba selecionada
+  if (tab === 'dia')    renderHomeHoje();
+  if (tab === 'semana') renderHomeSemana();
+}
+
+// Renderiza a aba que estiver ativa (chamada pelo dashboard ao atualizar dados)
+function renderProgressoTabAtual() {
+  if (_progressoTab === 'semana') renderHomeSemana();
+  else renderHomeHoje();
+}
+
+// ── VER MISSÕES (botão do card Hoje) ─────────────────────────
+// Se há um filho: entra direto no modo criança.
+// Se há múltiplos: rola para a seção "Passar o celular para".
+function obVerMissoes() {
+  if (!state.profiles.length) return;
+  if (state.profiles.length === 1) {
+    passarParaCrianca(0);
+  } else {
+    // Rola suavemente até a seção de cards de filhos
+    const el = document.getElementById('label-passar-celular');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// ── CARD HOJE ─────────────────────────────────────────────────
+function renderHomeHoje() {
+  const el = document.getElementById('hoje-body');
+  if (!el) return;
+
+  if (!state.profiles.length) {
+    el.innerHTML = '<div class="hoje-vazia">Adicione um filho para ver o progresso de hoje.</div>';
+    return;
+  }
+
+  const { total, done, proxima } = calcularMissoesHoje();
+  const { streak } = calcularDadosSemana();
+
+  if (total === 0) {
+    el.innerHTML = `
+      <div class="hoje-vazia">Nenhuma missão programada para hoje.</div>
+      <button class="btn btn-primary" style="margin-top:10px;padding:9px 16px;font-size:13px" onclick="abrirModalTarefas()">
+        + Criar missão
+      </button>`;
+    return;
+  }
+
+  const pct      = Math.round(done / total * 100);
+  const completo = done === total;
+
+  // Próxima missão ou mensagem de conclusão
+  let proximaHtml = '';
+  if (completo) {
+    proximaHtml = `<div class="hoje-completo">🎉 Todas as missões de hoje concluídas!</div>`;
+  } else if (proxima) {
+    const icon = proxima.icon || iconParaTarefa(proxima.name);
+    proximaHtml = `
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Próxima missão</div>
+      <div class="proxima-missao">
+        <span class="proxima-missao-icon">${icon}</span>
+        <span class="proxima-missao-name">${proxima.name}</span>
+        <span class="proxima-missao-stars">${'⭐'.repeat(Math.min(proxima.stars,3))} ${proxima.stars}</span>
+      </div>`;
+  }
+
+  // Streak — mesmo dado exibido na visão Semana, aqui em formato compacto
+  const streakHtml = `<div class="semana-streak-row" style="margin-top:12px">
+    🔥 Sequência atual: <strong>${streak}</strong> dia${streak !== 1 ? 's' : ''}
+  </div>`;
+
+  el.innerHTML = `
+    <div class="hoje-count">${done} <span>de ${total} missões</span></div>
+    <div class="hoje-progress-bar">
+      <div class="hoje-progress-fill ${completo ? 'completo' : ''}" style="width:${pct}%"></div>
+    </div>
+    ${proximaHtml}
+    ${streakHtml}`;
+}
+
+// ── CARD SEMANA ───────────────────────────────────────────────
+function renderHomeSemana() {
+  const el = document.getElementById('semana-body');
+  if (!el) return;
+
+  // Estado vazio: sem filho
+  if (!state.profiles.length) {
+    el.innerHTML = '<div class="hoje-vazia">Adicione um filho para acompanhar o progresso.</div>';
+    return;
+  }
+
+  const { semana, totalSemana, esperado, pct, streak } = calcularDadosSemana();
+
+  // Estado vazio: sem missões criadas
+  if (esperado === 0) {
+    el.innerHTML = `
+      <div class="hoje-vazia">Nenhuma missão criada ainda. Crie a primeira missão para começar o progresso.</div>
+      <button class="btn btn-primary" style="margin-top:10px;padding:9px 16px;font-size:13px" onclick="abrirModalTarefas()">+ Criar missão</button>`;
+    return;
+  }
+
+  // 1. Barra geral da semana
+  const geralHtml = `
+    <div class="semana-header">
+      <span class="semana-total">${totalSemana}</span>
+      <span class="semana-label">de ${esperado} missões concluídas</span>
+      <span class="semana-pct">${pct}%</span>
+    </div>
+    <div class="semana-progress-bar" style="margin-bottom:14px">
+      <div class="semana-progress-fill" style="width:${pct}%"></div>
+    </div>`;
+
+  // 2. Barras por dia
+  // Todos os slots nessa janela são passados ou hoje (não há futuro no array de 7 dias).
+  // Usamos isHoje para identificar o dia atual; slots com index > todayIdx não existem nesse array.
+  const todayIdx = semana.findIndex(s => s.isHoje);
+
+  const diasHtml = semana.map((s, i) => {
+    const isFuturo = i > todayIdx; // não ocorre nessa lógica mas protege contra mudança futura
+
+    if (isFuturo || s.esperadoDia === 0) {
+      // Dia futuro ou sem missão prevista
+      const cor = 'color:var(--muted);opacity:.45';
+      return `<div class="semana-dia-row">
+        <span class="semana-dia-row-label" style="${s.isHoje ? 'color:var(--text);font-weight:800' : cor}">${s.label}</span>
+        <span class="semana-dia-row-bar-wrap" style="opacity:.3">
+          <span class="semana-dia-row-bar-fill" style="width:0%"></span>
+        </span>
+        <span class="semana-dia-row-count" style="${cor}">—</span>
+      </div>`;
+    }
+
+    const diaPct  = Math.min(100, Math.round(s.count / s.esperadoDia * 100));
+    const diaFill = s.count >= s.esperadoDia ? 'var(--green)' : s.count > 0 ? 'var(--gold)' : 'rgba(255,255,255,.12)';
+    const labelStyle = s.isHoje ? 'color:var(--text);font-weight:800' : 'color:var(--muted)';
+
+    return `<div class="semana-dia-row">
+      <span class="semana-dia-row-label" style="${labelStyle}">${s.label}</span>
+      <span class="semana-dia-row-bar-wrap">
+        <span class="semana-dia-row-bar-fill" style="width:${diaPct}%;background:${diaFill}"></span>
+      </span>
+      <span class="semana-dia-row-count" style="${s.isHoje ? 'color:var(--text);font-weight:800' : 'color:var(--muted)'}">${s.count}/${s.esperadoDia}</span>
+    </div>`;
+  }).join('');
+
+  // 3. Streak
+  const streakHtml = `<div class="semana-streak-row">
+    🔥 Sequência atual: <strong>${streak}</strong> dia${streak !== 1 ? 's' : ''}
+  </div>`;
+
+  // Mensagem de ação quando não há nada concluído ainda
+  const textoVazioHtml = totalSemana === 0
+    ? `<div style="font-size:12px;color:var(--muted);margin-bottom:10px">Nenhuma missão concluída ainda. Comece hoje para iniciar o progresso.</div>`
+    : '';
+
+  el.innerHTML = `${geralHtml}${textoVazioHtml}<div class="semana-dias-lista">${diasHtml}</div>${streakHtml}`;
+}
+
+// ── CARD META ─────────────────────────────────────────────────
+// Exibe apenas quando houver uma meta semanal configurada explicitamente.
+// Por enquanto, sem campo de meta configurável no app, o card fica oculto.
+// Quando state.weeklyGoal for implementado, este bloco será ativado.
+function renderHomeMeta() {
+  const cardEl = document.getElementById('card-meta');
+  if (!cardEl) return;
+  // Sem meta configurada → oculta o card para não exibir recompensa aleatória
+  cardEl.style.display = 'none';
+}
+
+// ── PREVIEW DE ESTRELAS no modal de missão ───────────────────
+// Mostra apenas as estrelas — tipos adicionais de recompensa
+// foram removidos pois não são persistidos no Supabase ainda.
+function renderRewardPreview() {
+  const starsEl = document.getElementById('rp-stars');
+  if (!starsEl) return;
+  const s = selectedStarsFabVal;
+  starsEl.textContent = s >= 5
+    ? '🌟 ' + s + ' estrelas'
+    : '⭐'.repeat(s) + ' ' + s + ' estrela' + (s > 1 ? 's' : '');
+}
+
+// ── STUB: renderResumoSemanal mantido para compatibilidade ────
+// Pode ser chamado por código antigo. Delega para renderHomeSemana.
+async function renderResumoSemanal() {
+  renderHomeSemana();
 }
 
 function devolverAoResponsavel() {
