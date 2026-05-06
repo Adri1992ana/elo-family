@@ -447,3 +447,266 @@ input,select,textarea,button{font-family:'Nunito',sans-serif;}
 }
 .rew-emoji-opt:hover { border-color: var(--purple); background: rgba(109,40,217,.1); }
 .rew-emoji-opt.selected { border-color: var(--sky); background: rgba(34,211,238,.1); }
+
+/* ═══════════════════════════════════════════
+   ELO Family — Correções de UX/UI
+═══════════════════════════════════════════ */
+
+/* ── 2. LOADING STATE ── */
+.btn:disabled { opacity: .55; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+.btn-loading { position: relative; pointer-events: none; }
+
+/* ── 3. VALIDAÇÃO DE CAMPO ── */
+.field-error { border-color: var(--red) !important; box-shadow: 0 0 0 3px rgba(239,68,68,.18) !important; }
+.field-msg { font-size: 11px; margin-top: 5px; font-weight: 700; display: none; }
+.field-msg.show { display: block; }
+.field-msg.err { color: var(--red); }
+.field-msg.ok  { color: var(--green); }
+
+/* ── 5. HIERARQUIA DE AÇÃO: CTA CRIAR MISSÃO ── */
+.create-mission-cta {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, #2a1060, #1e1b4b);
+  border: 1.5px solid var(--purple); border-radius: var(--radius);
+  padding: 18px 16px; margin-bottom: 16px; cursor: pointer;
+  box-shadow: 0 0 24px rgba(109,40,217,.35); transition: all .2s;
+}
+.create-mission-cta:hover { transform: translateY(-2px); box-shadow: 0 0 36px rgba(109,40,217,.55); }
+.cta-icon { font-size: 36px; flex-shrink: 0; }
+.cta-text h3 { font-family: 'Baloo 2', cursive; font-size: 16px; font-weight: 800; color: var(--text); }
+.cta-text p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.cta-arrow   { margin-left: auto; font-size: 22px; color: var(--purple); flex-shrink: 0; }
+/* Botão secundário na aba Missões */
+.btn-secondary-sm {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--sky); border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 13px;
+  cursor: pointer; transition: all .15s;
+}
+.btn-secondary-sm:hover { border-color: var(--sky); background: rgba(34,211,238,.06); }
+
+/* ── 6. ABAS RESPONSÁVEL — padrão unificado ── */
+.parent-tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--border); margin: 0 -16px 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.parent-tabs::-webkit-scrollbar { display: none; }
+.parent-tab { flex: 0 0 auto; padding: 10px 14px; font-size: 11px; font-weight: 800; color: var(--muted2); cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -1.5px; transition: all .18s; white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none; position: relative; }
+.parent-tab.active { color: var(--sky); border-bottom-color: var(--sky); }
+.parent-tab .tab-badge { position: absolute; top: 4px; right: 3px; background: var(--red); color: #fff; font-size: 9px; font-weight: 800; border-radius: 10px; padding: 1px 4px; min-width: 14px; text-align: center; display: none; }
+.parent-tab .tab-badge.show { display: inline-block; }
+
+/* ── 7. PIN MODAL ── */
+.pin-overlay { position: fixed; inset: 0; background: rgba(3,2,9,.88); display: none; align-items: center; justify-content: center; z-index: 2000; }
+.pin-overlay.show { display: flex; }
+.pin-box { background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; padding: 32px 28px; max-width: 300px; width: 92%; text-align: center; animation: popIn .3s cubic-bezier(.34,1.56,.64,1); }
+.pin-icon  { font-size: 48px; margin-bottom: 12px; }
+.pin-title { font-family: 'Baloo 2', cursive; font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.pin-sub   { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+.pin-dots  { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+.pin-dot   { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); transition: all .2s; }
+.pin-dot.filled { background: var(--sky); border-color: var(--sky); }
+.pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.pin-key { background: var(--card2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'Baloo 2', cursive; font-size: 22px; font-weight: 800; color: var(--text); padding: 14px; cursor: pointer; transition: all .12s; }
+.pin-key:hover  { border-color: var(--sky); background: rgba(34,211,238,.08); }
+.pin-key:active { transform: scale(.93); }
+.pin-key.del  { color: var(--red); font-size: 18px; }
+.pin-key.zero { grid-column: 2; }
+.pin-err { color: var(--red); font-size: 12px; font-weight: 700; margin-top: 8px; min-height: 18px; }
+.pin-cancel { background: none; border: none; color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 14px; display: block; width: 100%; }
+
+/* ── 8. RECORRÊNCIA — microcopy ── */
+.recurrence-hint { font-size: 11px; color: var(--muted); background: rgba(34,211,238,.05); border: 1px solid rgba(34,211,238,.15); border-radius: 8px; padding: 7px 10px; margin-top: 8px; line-height: 1.5; display: none; }
+.recurrence-hint.show { display: block; }
+
+/* ── 9. EMPTY STATES completos ── */
+.empty-v2 { text-align: center; padding: 36px 20px; }
+.empty-v2 .e2-art { font-size: 58px; display: inline-block; margin-bottom: 14px; animation: float-idle 3s ease-in-out infinite; }
+.empty-v2 .e2-title { font-family: 'Baloo 2', cursive; font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.empty-v2 .e2-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; max-width: 280px; margin-left: auto; margin-right: auto; }
+
+/* ── 12. BIBLIOTECA — header de valor ── */
+.library-header { background: linear-gradient(135deg, rgba(34,211,238,.08), rgba(109,40,217,.08)); border: 1px solid rgba(34,211,238,.2); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 14px; }
+.library-header-title { font-size: 13px; font-weight: 800; color: var(--sky); margin-bottom: 3px; }
+.library-header-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ── CONFIRM BOX (reutilizado de v10) ── */
+.confirm-overlay { position: fixed; inset: 0; background: rgba(3,2,9,.82); display: none; align-items: center; justify-content: center; z-index: 1500; }
+.confirm-overlay.show { display: flex; }
+.confirm-box { background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; padding: 28px 24px; max-width: 300px; width: 90%; text-align: center; animation: popIn .3s cubic-bezier(.34,1.56,.64,1); }
+.confirm-icon { font-size: 44px; margin-bottom: 12px; }
+.confirm-box-title { font-family: 'Baloo 2', cursive; font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.confirm-box-msg { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 20px; }
+.confirm-btns { display: flex; gap: 10px; }
+.confirm-btns button { flex: 1; }
+
+/* ══ CONFIRMAÇÃO INLINE DE BOTÃO ══
+   Substitui double-tap e confirm() nativo.
+   O botão muta seu próprio texto/cor para pedir confirmação explícita.
+   Uso: classe .btn-confirming aplicada via JS na primeira ação. */
+.btn-confirming {
+  background: var(--red) !important;
+  border-color: var(--red) !important;
+  color: #fff !important;
+  animation: pulse-confirm .6s ease-in-out 2;
+}
+@keyframes pulse-confirm {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+  50%       { box-shadow: 0 0 0 5px rgba(239,68,68,.3); }
+}
+
+/* ══════════════════════════════════════════
+   ONBOARDING POR AÇÃO
+   Banner contextual que guia o responsável
+   pelo fluxo real do produto, passo a passo.
+   Só avança quando a ação é executada.
+══════════════════════════════════════════ */
+
+/* Banner de passo — aparece no topo do dashboard */
+.ob-banner {
+  display: none; /* mostrado via JS quando onboarding ativo */
+  background: linear-gradient(135deg, #1a0a3e, #0f1a3a);
+  border: 1.5px solid var(--sky);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  animation: ob-fadein .35s ease;
+}
+@keyframes ob-fadein {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Linha de progresso colorida no topo */
+.ob-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--sky), var(--purple));
+}
+.ob-banner-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.ob-banner-step-badge {
+  background: rgba(34,211,238,.15);
+  border: 1px solid rgba(34,211,238,.3);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--sky);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ob-banner-progress {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.ob-banner-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sky), var(--purple));
+  border-radius: 2px;
+  transition: width .4s ease;
+}
+.ob-banner-skip {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  padding: 0;
+  flex-shrink: 0;
+}
+.ob-banner-skip:hover { color: var(--text); }
+.ob-banner-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ob-banner-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.ob-banner-content { flex: 1; }
+.ob-banner-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.ob-banner-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.ob-banner-cta {
+  background: linear-gradient(135deg, var(--sky), #0ea5c9);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all .15s;
+}
+.ob-banner-cta:hover { transform: scale(1.04); }
+
+/* Pulse no elemento alvo — destaca o elemento que o usuário deve clicar */
+.ob-highlight {
+  box-shadow: 0 0 0 3px rgba(34,211,238,.6) !important;
+  animation: ob-pulse 1.5s ease-in-out infinite;
+}
+@keyframes ob-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(34,211,238,.6) !important; }
+  50%       { box-shadow: 0 0 0 6px rgba(34,211,238,.15) !important; }
+}
+
+/* Tela de conclusão do onboarding */
+.ob-complete {
+  text-align: center;
+  padding: 20px 16px 8px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(34,211,238,.06), rgba(109,40,217,.06));
+  border: 1.5px solid rgba(34,211,238,.2);
+  border-radius: var(--radius);
+  animation: ob-fadein .4s ease;
+}
+.ob-complete-icon { font-size: 44px; margin-bottom: 10px; }
+.ob-complete-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.ob-complete-sub {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.ob-complete-dismiss {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}

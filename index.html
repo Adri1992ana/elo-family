@@ -11,104 +11,94 @@
 <link rel="stylesheet" href="css/style.css">
 <style>
 /* ══ TEMA AVENTURA (criança) ══ */
-body.child-mode {
-  --primary: #00f5d4;
-  --primary-glow: rgba(0,245,212,.18);
-  --gold: #ffe600;
-  --gold2: #ffb800;
-  --sky: #ff6ef7;
-  --sky-glow: rgba(255,110,247,.18);
-  --green: #00f5d4;
-  --green-glow: rgba(0,245,212,.2);
-  --purple: #c77dff;
-  --accent-action: #00f5d4;
-}
-body.child-mode .app-header { background: linear-gradient(135deg,#0d0d1a 0%,#0a1628 100%); border-bottom: 1.5px solid var(--primary); box-shadow: 0 2px 20px rgba(0,245,212,.12); }
-body.child-mode .btn-primary { background: linear-gradient(135deg,#00f5d4,#00c9b1); color:#000; box-shadow: 0 0 18px rgba(0,245,212,.35); }
-body.child-mode .task-card { border-color: rgba(0,245,212,.15); }
-body.child-mode .task-card:not(.done) { box-shadow: 0 2px 12px rgba(0,245,212,.06); }
-body.child-mode .task-card.done { border-color: var(--primary); box-shadow: 0 0 12px rgba(0,245,212,.2); }
-body.child-mode .progress-bar-fill { background: linear-gradient(90deg,#00f5d4,#c77dff); box-shadow: 0 0 10px rgba(0,245,212,.4); }
-body.child-mode .reward-card { border-color: rgba(255,230,0,.2); }
-body.child-mode .bottom-nav { border-top: 1.5px solid rgba(0,245,212,.2); }
-body.child-mode .nav-btn.active { color: var(--primary); }
-body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px solid rgba(255,230,0,.3); }
+body.child-mode { --primary:#00f5d4;--primary-glow:rgba(0,245,212,.18);--gold:#ffe600;--gold2:#ffb800;--sky:#ff6ef7;--sky-glow:rgba(255,110,247,.18);--green:#00f5d4;--green-glow:rgba(0,245,212,.2);--purple:#c77dff;--accent-action:#00f5d4; }
+body.child-mode .app-header{background:linear-gradient(135deg,#0d0d1a 0%,#0a1628 100%);border-bottom:1.5px solid var(--primary);box-shadow:0 2px 20px rgba(0,245,212,.12);}
+body.child-mode .btn-primary{background:linear-gradient(135deg,#00f5d4,#00c9b1);color:#000;box-shadow:0 0 18px rgba(0,245,212,.35);}
+body.child-mode .task-card:not(.done){box-shadow:0 2px 12px rgba(0,245,212,.06);}
+body.child-mode .task-card.done{border-color:var(--primary);box-shadow:0 0 12px rgba(0,245,212,.2);}
+body.child-mode .progress-bar-fill{background:linear-gradient(90deg,#00f5d4,#c77dff);box-shadow:0 0 10px rgba(0,245,212,.4);}
+body.child-mode .reward-card{border-color:rgba(255,230,0,.2);}
+body.child-mode .stars-badge{background:rgba(255,230,0,.12);border:1px solid rgba(255,230,0,.3);}
 
-/* ══ STREAK CHAMA ══ */
-.streak-flame-wrap { display:flex; align-items:center; gap:8px; padding:10px 14px; background:rgba(255,100,0,.08); border:1px solid rgba(255,100,0,.2); border-radius:12px; margin-bottom:14px; }
-.streak-flame { font-size:28px; line-height:1; animation: flicker 1.4s ease-in-out infinite; transform-origin: bottom center; }
-@keyframes flicker { 0%,100%{transform:scaleY(1) rotate(-1deg);} 25%{transform:scaleY(1.06) rotate(1deg);} 50%{transform:scaleY(.96) rotate(-1.5deg);} 75%{transform:scaleY(1.04) rotate(.5deg);} }
-.streak-info { flex:1; }
-.streak-count { font-family:'Baloo 2',cursive; font-size:20px; font-weight:800; color:#ff6a00; line-height:1; }
-.streak-label { font-size:11px; color:var(--muted); margin-top:2px; }
-.streak-danger { background:rgba(255,30,30,.08); border-color:rgba(255,30,30,.25); animation: pulse-danger 2s ease-in-out infinite; }
-@keyframes pulse-danger { 0%,100%{box-shadow:0 0 0 0 rgba(255,30,30,.0);} 50%{box-shadow:0 0 0 4px rgba(255,30,30,.15);} }
-.streak-danger .streak-flame { animation: flicker 0.6s ease-in-out infinite; }
-.streak-danger .streak-count { color:#ff3333; }
-.streak-warn-msg { font-size:11px; color:#ff4444; font-weight:700; margin-top:3px; }
+/* ══ STREAK ══ */
+.streak-flame-wrap{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,100,0,.08);border:1px solid rgba(255,100,0,.2);border-radius:12px;margin-bottom:14px;}
+.streak-flame{font-size:28px;line-height:1;animation:flicker 1.4s ease-in-out infinite;transform-origin:bottom center;}
+@keyframes flicker{0%,100%{transform:scaleY(1) rotate(-1deg);}25%{transform:scaleY(1.06) rotate(1deg);}50%{transform:scaleY(.96) rotate(-1.5deg);}75%{transform:scaleY(1.04) rotate(.5deg);}}
+.streak-info{flex:1;}.streak-count{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:#ff6a00;line-height:1;}.streak-label{font-size:11px;color:var(--muted);margin-top:2px;}
+.streak-danger{background:rgba(255,30,30,.08);border-color:rgba(255,30,30,.25);animation:pulse-danger 2s ease-in-out infinite;}
+@keyframes pulse-danger{0%,100%{box-shadow:0 0 0 0 rgba(255,30,30,.0);}50%{box-shadow:0 0 0 4px rgba(255,30,30,.15);}}
+.streak-danger .streak-flame{animation:flicker .6s ease-in-out infinite;}.streak-danger .streak-count{color:#ff3333;}.streak-warn-msg{font-size:11px;color:#ff4444;font-weight:700;margin-top:3px;}
 
 /* ══ CONFETE ══ */
-#confetti-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; }
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;}
 
-/* ══ REWARD OVERLAY melhorado ══ */
-.reward-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); display:flex; align-items:center; justify-content:center; z-index:3000; opacity:0; pointer-events:none; transition:opacity .3s; }
-.reward-overlay.active { opacity:1; pointer-events:all; }
-.reward-modal { background:var(--card); border-radius:24px; padding:32px 28px; text-align:center; max-width:320px; width:90%; border:1px solid rgba(255,215,0,.25); box-shadow:0 0 40px rgba(255,215,0,.12); transform:scale(.85); transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
-.reward-overlay.active .reward-modal { transform:scale(1); }
-.reward-stars { font-size:64px; animation: pop-star .6s ease forwards; }
-@keyframes pop-star { 0%{transform:scale(0) rotate(-20deg);} 70%{transform:scale(1.15) rotate(5deg);} 100%{transform:scale(1) rotate(0);} }
-.xp-rise { font-family:'Baloo 2',cursive; font-size:36px; font-weight:800; color:#ffd700; animation: xp-up .7s ease forwards .3s; opacity:0; display:inline-block; }
-@keyframes xp-up { 0%{opacity:0;transform:translateY(14px);} 100%{opacity:1;transform:translateY(0);} }
+/* ══ REWARD OVERLAY ══ */
+.reward-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;}
+.reward-overlay.show{opacity:1;pointer-events:all;}
+.reward-modal{background:var(--card);border-radius:24px;padding:32px 28px;text-align:center;max-width:320px;width:90%;border:1px solid rgba(255,215,0,.25);box-shadow:0 0 40px rgba(255,215,0,.12);transform:scale(.85);transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+.reward-overlay.show .reward-modal{transform:scale(1);}
+.reward-stars{font-size:64px;animation:pop-star .6s ease forwards;}
+@keyframes pop-star{0%{transform:scale(0) rotate(-20deg);}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0);}}
+.xp-rise{font-family:'Baloo 2',cursive;font-size:36px;font-weight:800;color:#ffd700;animation:xp-up .7s ease forwards .3s;opacity:0;display:inline-block;}
+@keyframes xp-up{0%{opacity:0;transform:translateY(14px);}100%{opacity:1;transform:translateY(0);}}
 
-/* ══ EMPTY STATE ══ */
-.empty-state { text-align:center; padding:40px 24px; }
-.empty-state-art { font-size:64px; margin-bottom:16px; animation: float-idle 3s ease-in-out infinite; display:inline-block; }
-@keyframes float-idle { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px); } }
-.empty-state-title { font-family:'Baloo 2',cursive; font-size:20px; font-weight:800; color:var(--text); margin-bottom:8px; }
-.empty-state-sub { font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6; }
+/* ══ EMPTY STATE CHILD ══ */
+.empty-state-art{font-size:64px;margin-bottom:16px;animation:float-idle 3s ease-in-out infinite;display:inline-block;}
+.empty-state-title{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px;}
+.empty-state-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+@keyframes float-idle{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
 
-/* ══ BETA TAG global ══ */
-.beta-corner { position:fixed; bottom:72px; right:12px; font-size:10px; font-weight:800; color:var(--muted); opacity:.45; pointer-events:none; letter-spacing:.5px; z-index:100; }
+/* ══ MISC ══ */
+.beta-corner{position:fixed;bottom:72px;right:12px;font-size:10px;font-weight:800;color:var(--muted);opacity:.45;pointer-events:none;letter-spacing:.5px;z-index:100;}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .25s;}
+.ob-dot.active{background:var(--sky);width:22px;border-radius:6px;}
+.child-hero .greeting-name,.progress-label,.section-title,.modal-title,.logo-title{font-family:'Baloo 2',cursive;}
+.task-name,label,.auth-sub,p,.modal-sub,.stat-label{font-family:'Nunito',sans-serif;}
 
-/* ══ ONBOARDING dots ══ */
-.ob-dot { width:8px; height:8px; border-radius:50%; background:var(--border); transition:all .25s; }
-.ob-dot.active { background:var(--sky); width:22px; border-radius:6px; }
-
-/* ══ ABAS DO PAINEL ══ */
-.parent-tabs { display:flex; gap:0; border-bottom:1.5px solid var(--border); margin:0 -16px 16px; padding:0 16px; }
-.parent-tab { flex:1; padding:10px 4px; text-align:center; font-size:11px; font-weight:800; color:var(--muted2); cursor:pointer; border-bottom:2.5px solid transparent; margin-bottom:-1.5px; transition:all .18s; white-space:nowrap; background:none; border-top:none; border-left:none; border-right:none; }
-.parent-tab.active { color:var(--sky); border-bottom-color:var(--sky); }
-.parent-tab-pane { display:none; }
-.parent-tab-pane.active { display:block; animation:fadeUp .2s ease; }
-
-/* ══ RESUMO SEMANAL ══ */
-.weekly-card { background:linear-gradient(135deg,rgba(34,211,238,.08),rgba(109,40,217,.08)); border:1.5px solid rgba(34,211,238,.2); border-radius:var(--radius); padding:14px 16px; margin-bottom:14px; }
-.weekly-title { font-size:11px; font-weight:800; color:var(--sky); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
-.weekly-stat { font-family:'Baloo 2',cursive; font-size:22px; font-weight:800; color:var(--text); }
-.weekly-sub { font-size:12px; color:var(--muted); margin-top:2px; line-height:1.5; }
-.weekly-days { display:flex; gap:4px; margin-top:10px; }
-.weekly-day { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; }
-.weekly-day-lbl { font-size:9px; color:var(--muted2); font-weight:700; }
-.weekly-day-bar { width:100%; border-radius:4px; background:var(--card2); position:relative; overflow:hidden; height:36px; }
-.weekly-day-fill { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top,var(--sky),var(--purple)); border-radius:4px; transition:height .5s ease; }
-.weekly-day-val { font-size:9px; color:var(--muted); font-weight:700; }
-
-/* ══ TIPOGRAFIA — Baloo só em títulos ══ */
-.child-hero .greeting-name, .progress-label, .section-title, .modal-title, .logo-title { font-family:'Baloo 2',cursive; }
-.task-name, .task-time, label, .auth-sub, p, .modal-sub, .stat-label { font-family:'Nunito',sans-serif; }
+/* ══ FIX 5 — CTA CRIAR MISSÃO no painel Hoje ══ */
+.btn-criar-missao-hoje{display:flex;align-items:center;gap:14px;width:100%;background:linear-gradient(135deg,#2a1060,#1e1b4b);border:1.5px solid var(--purple);border-radius:var(--radius);padding:18px 16px;margin-bottom:16px;cursor:pointer;box-shadow:0 0 24px rgba(109,40,217,.35);transition:all .2s;text-align:left;}
+.btn-criar-missao-hoje:hover{transform:translateY(-2px);box-shadow:0 0 36px rgba(109,40,217,.55);}
+.btn-criar-missao-hoje .cta-icon{font-size:34px;flex-shrink:0;}
+.btn-criar-missao-hoje .cta-text h3{font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;color:var(--text);margin:0;}
+.btn-criar-missao-hoje .cta-text p{font-size:12px;color:var(--muted);margin:3px 0 0;}
+.btn-criar-missao-hoje .cta-arrow{margin-left:auto;font-size:22px;color:var(--purple);flex-shrink:0;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
-<script type="text/javascript">
-  (function(c,l,a,r,i,t,y){
-    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-  })(window,document,"clarity","script","wiz445idtg");
-</script>
 </head>
 <body>
 <canvas id="confetti-canvas"></canvas>
-<div class="beta-corner">ELO FAMILY · BETA v3</div>
+<div class="beta-corner">ELO FAMILY · BETA v4</div>
+
+<!-- ══ FIX 7 — PIN MODAL ══ -->
+<div class="pin-overlay" id="pin-overlay">
+  <div class="pin-box">
+    <div class="pin-icon">🔒</div>
+    <div class="pin-title" id="pin-title">PIN do responsável</div>
+    <div class="pin-sub" id="pin-sub">Digite o PIN para voltar à área do responsável.</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key zero" onclick="pinKey('0')">0</button>
+      <button class="pin-key del" onclick="pinKey('del')">⌫</button>
+    </div>
+    <div class="pin-err" id="pin-error"></div>
+    <button class="pin-cancel" id="pin-cancel-btn" onclick="fecharPinModal()">Cancelar</button>
+  </div>
+</div>
+
 <div id="app-root">
 
 <!-- ═══ LOGIN ═══ -->
@@ -121,55 +111,56 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
         <div class="logo-sub">Rotina infantil gamificada <span class="badge badge-beta">Beta</span></div>
       </div>
 
-      <!-- TABS DE ACESSO -->
+      <!-- FIX 1: tab "Login" em vez de "Entrar" -->
       <div class="login-tabs">
-        <button class="login-tab active" id="ltab-resp" onclick="switchLoginTab('responsavel')">👨‍👩‍👧 Responsável</button>
+        <button class="login-tab active" id="ltab-resp" onclick="switchLoginTab('responsavel')">👨‍👩‍👧 Login</button>
         <button class="login-tab" id="ltab-child" onclick="switchLoginTab('crianca')">🎮 Sou criança</button>
       </div>
 
       <!-- PAINEL: RESPONSÁVEL -->
       <div id="login-panel-responsavel">
-        <div class="auth-sub" style="margin-bottom:16px;">Entre com seu e-mail e senha</div>
+        <div class="auth-sub" style="margin-bottom:16px">Entre com seu e-mail e senha</div>
         <div class="error-msg" id="login-error"></div>
+
+        <!-- FIX 3: mensagens inline por campo -->
         <div class="form-group">
           <label>E-mail</label>
-          <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email">
+          <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email"
+            oninput="clearFieldError('login-email','login-email-msg')">
+          <div class="field-msg err" id="login-email-msg"></div>
         </div>
         <div class="form-group">
           <label>Senha</label>
           <div class="input-icon-wrap">
-            <input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password">
+            <input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password"
+              oninput="clearFieldError('login-pass','login-pass-msg')">
             <button type="button" onclick="toggleSenha('login-pass',this)" class="eye-btn">👁️</button>
           </div>
+          <div class="field-msg err" id="login-pass-msg"></div>
         </div>
-        <button class="btn btn-primary" onclick="doLogin()">Entrar 🚀</button>
+
+        <!-- FIX 2: id no botão para loading state -->
+        <button class="btn btn-primary" id="btn-login" onclick="doLogin()">Entrar 🚀</button>
         <div class="auth-link"><a onclick="navTo('screen-forgot')">Esqueci minha senha</a></div>
         <div class="auth-link">Não tem conta? <a onclick="navTo('screen-register')">Criar conta</a></div>
       </div>
 
       <!-- PAINEL: CRIANÇA -->
-      <div id="login-panel-crianca" style="display:none;">
-        <div class="auth-sub" style="margin-bottom:16px;">Peça o código para seu responsável</div>
+      <div id="login-panel-crianca" style="display:none">
+        <div class="auth-sub" style="margin-bottom:16px">Peça o código para seu responsável</div>
         <div class="error-msg" id="child-code-error"></div>
         <div class="form-group">
           <label>Código de acesso</label>
-          <input type="text" id="child-invite-code"
-            placeholder="ELO-XXXXX"
-            maxlength="9"
-            style="font-size:22px;font-weight:800;letter-spacing:5px;text-align:center;text-transform:uppercase;"
+          <input type="text" id="child-invite-code" placeholder="ELO-XXXXX" maxlength="9"
+            style="font-size:22px;font-weight:800;letter-spacing:5px;text-align:center;text-transform:uppercase"
             oninput="this.value=this.value.toUpperCase()">
         </div>
         <button class="btn btn-gold" onclick="entrarComCodigo()">🎮 Entrar</button>
-        <div style="margin-top:20px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:14px 16px;">
-          <div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:8px;">Como conseguir o código?</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6;">
-            1. Peça ao seu responsável<br>
-            2. Ele abre o app → Painel → Convite<br>
-            3. Te passa o código gerado
-          </div>
+        <div style="margin-top:20px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:14px 16px">
+          <div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:8px">Como conseguir o código?</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">1. Peça ao seu responsável<br>2. Ele abre o app → Painel → Convite<br>3. Te passa o código gerado</div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -189,25 +180,44 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
         <p>Dados protegidos conforme LGPD. Nenhuma informação de crianças é compartilhada com terceiros.</p>
       </div>
       <div class="error-msg" id="reg-error"></div>
-      <div class="form-group"><label>Nome completo</label><input type="text" id="reg-name" placeholder="Seu nome completo" autocomplete="name"></div>
-      <div class="form-group"><label>E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com" autocomplete="email"></div>
+
+      <!-- FIX 3: campos com mensagens inline -->
       <div class="form-group">
-        <label>Senha <span class="label-hint">(mín. 8 chars, 1 número, 1 maiúscula)</span></label>
+        <label>Nome completo</label>
+        <input type="text" id="reg-name" placeholder="Seu nome completo" autocomplete="name"
+          oninput="clearFieldError('reg-name','reg-name-msg')">
+        <div class="field-msg err" id="reg-name-msg"></div>
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="reg-email" placeholder="seu@email.com" autocomplete="email"
+          oninput="clearFieldError('reg-email','reg-email-msg')">
+        <div class="field-msg err" id="reg-email-msg"></div>
+      </div>
+      <div class="form-group">
+        <!-- Ajuste 1: label alinhada com a validação real em doRegister (mínimo 6 caracteres) -->
+        <label>Senha <span class="label-hint">(mínimo 6 caracteres)</span></label>
         <div class="input-icon-wrap">
-          <input type="password" id="reg-pass" placeholder="Criar senha" autocomplete="new-password">
+          <input type="password" id="reg-pass" placeholder="Criar senha" autocomplete="new-password"
+            oninput="clearFieldError('reg-pass','reg-pass-msg')">
           <button type="button" onclick="toggleSenha('reg-pass',this)" class="eye-btn">👁️</button>
         </div>
+        <div class="field-msg err" id="reg-pass-msg"></div>
       </div>
       <div class="form-group">
         <label>Confirmar senha</label>
         <div class="input-icon-wrap">
-          <input type="password" id="reg-pass2" placeholder="Repita a senha" autocomplete="new-password">
+          <input type="password" id="reg-pass2" placeholder="Repita a senha" autocomplete="new-password"
+            oninput="clearFieldError('reg-pass2','reg-pass2-msg')">
           <button type="button" onclick="toggleSenha('reg-pass2',this)" class="eye-btn">👁️</button>
         </div>
+        <div class="field-msg err" id="reg-pass2-msg"></div>
       </div>
       <div class="checkbox-row"><input type="checkbox" id="chk-terms"><label for="chk-terms">Li e aceito os <a href="#" onclick="return false">Termos de Uso</a> e a <a href="#" onclick="return false">Política de Privacidade</a>.</label></div>
       <div class="checkbox-row"><input type="checkbox" id="chk-lgpd"><label for="chk-lgpd">Consinto com o tratamento de dados das crianças vinculadas, conforme o art. 14 da LGPD.</label></div>
-      <button class="btn btn-primary" onclick="doRegister()">Criar conta 🎮</button>
+
+      <!-- FIX 2: id no botão -->
+      <button class="btn btn-primary" id="btn-register" onclick="doRegister()">Criar conta 🎮</button>
       <div class="auth-link">Já tenho conta. <a onclick="navTo('screen-login')">Fazer login</a></div>
     </div>
   </div>
@@ -217,29 +227,35 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
 <div id="screen-forgot" class="screen">
   <div class="auth-wrap">
     <div class="auth-card">
-      <div style="text-align:center;font-size:52px;margin-bottom:16px;">📧</div>
+      <div style="text-align:center;font-size:52px;margin-bottom:16px">📧</div>
       <div class="auth-title">Recuperar senha</div>
       <div class="auth-sub">Enviaremos um link para o seu e-mail.</div>
-      <div class="form-group"><label>E-mail cadastrado</label><input type="email" id="forgot-email" placeholder="seu@email.com"></div>
-      <button class="btn btn-primary" onclick="doForgot()">Enviar link</button>
+      <div class="form-group">
+        <label>E-mail cadastrado</label>
+        <input type="email" id="forgot-email" placeholder="seu@email.com"
+          oninput="clearFieldError('forgot-email','forgot-email-msg')">
+        <div class="field-msg err" id="forgot-email-msg"></div>
+      </div>
+      <!-- Ajuste 2: id adicionado para permitir loading state em doForgot -->
+      <button class="btn btn-primary" id="btn-forgot" onclick="doForgot()">Enviar link</button>
       <div class="auth-link"><a onclick="navTo('screen-login')">← Voltar ao login</a></div>
     </div>
   </div>
 </div>
 
-<!-- ═══ PROFILES (agora é tela de "Passar para criança" — acessada pelo painel) ═══ -->
+<!-- ═══ PROFILES ═══ -->
 <div id="screen-profiles" class="screen">
   <div class="profiles-wrap">
     <div class="profiles-header">
-      <div style="font-size:48px;margin-bottom:10px;">🎮</div>
+      <div style="font-size:48px;margin-bottom:10px">🎮</div>
       <div class="profiles-title">Passar para criança</div>
       <div class="profiles-sub">Selecione quem vai usar agora</div>
     </div>
     <div class="role-strip" id="role-strip"></div>
     <div class="profiles-grid" id="profiles-grid"></div>
     <div class="profiles-actions" id="profiles-actions">
-      <button class="btn btn-ghost" onclick="navParent()" style="margin-top:4px;">← Voltar ao painel</button>
-      <button class="btn btn-secondary master-only" id="btn-admin" onclick="navAdmin()" style="display:none;color:var(--gold);border-color:var(--gold2);background:rgba(245,158,11,.08);">📊 Master · Métricas</button>
+      <button class="btn btn-ghost" onclick="navParent()" style="margin-top:4px">← Voltar ao painel</button>
+      <button class="btn btn-secondary master-only" id="btn-admin" onclick="navAdmin()" style="display:none;color:var(--gold);border-color:var(--gold2);background:rgba(245,158,11,.08)">📊 Master · Métricas</button>
       <button class="btn btn-ghost" id="btn-logout-resp" onclick="doLogout()">Sair da conta ↪</button>
     </div>
   </div>
@@ -249,7 +265,8 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
 <div id="screen-child-home" class="screen">
   <div class="app-header">
     <div class="header-row">
-      <button class="header-back" onclick="confirmarSaidaCrianca()" title="Sair">←</button>
+      <!-- FIX 7: botão abre PIN antes de sair -->
+      <button class="header-back" onclick="confirmarSaidaCrianca()" title="Responsável">🔒</button>
       <div class="header-logo">🔗 ELO Family</div>
       <div class="stars-badge"><span>⭐</span><span id="header-stars">0</span></div>
     </div>
@@ -259,7 +276,32 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
       <div class="greeting">Olá,</div>
       <div class="greeting-name" id="child-greeting">...</div>
     </div>
-    <div id="streak-wrap" style="padding:0 16px;margin-top:4px;display:none;"></div>
+    <div id="streak-wrap" style="padding:0 16px;margin-top:4px;display:none"></div>
+
+    <!--
+      Banner de onboarding no modo criança.
+      Reutiliza o mesmo CSS do ob-banner do painel do responsável.
+      Controlado por obRenderBannerChild() em onboarding.js.
+      Cobre passos 4 (concluir missão) e 5 (voltar para responsável).
+    -->
+    <div id="ob-banner-child" class="ob-banner" style="margin:12px 16px 0">
+      <div class="ob-banner-header">
+        <span class="ob-banner-step-badge" id="ob-child-badge">Passo 4 de 6</span>
+        <div class="ob-banner-progress">
+          <div class="ob-banner-progress-fill" id="ob-child-progress-fill" style="width:55%"></div>
+        </div>
+      </div>
+      <div class="ob-banner-body">
+        <span class="ob-banner-icon" id="ob-child-icon">⭐</span>
+        <div class="ob-banner-content">
+          <div class="ob-banner-title" id="ob-child-title">Conclua a missão</div>
+          <div class="ob-banner-desc"  id="ob-child-desc">Toque na missão abaixo para completar e ganhar estrelas.</div>
+        </div>
+        <!-- ob-child-cta-wrap: injetado dinamicamente pelo JS no passo 5 -->
+        <div id="ob-child-cta-wrap"></div>
+      </div>
+    </div>
+
     <div class="progress-banner">
       <div class="progress-top">
         <div>
@@ -270,20 +312,22 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
       </div>
       <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar" style="width:0%"></div></div>
     </div>
-    <div id="empty-tasks-state" style="display:none;">
-      <div class="empty-state">
+    <!-- FIX 9 — empty state completo -->
+    <div id="empty-tasks-state" style="display:none">
+      <div class="empty-state" style="padding:40px 24px;text-align:center">
         <div class="empty-state-art">⚔️</div>
         <div class="empty-state-title">Nenhuma missão hoje!</div>
-        <div class="empty-state-sub">Seu responsável ainda não adicionou tarefas.<br>Fique de olho, novas missões chegam em breve!</div>
+        <div class="empty-state-sub">Seu responsável ainda não adicionou missões.<br>Fique de olho, novas missões chegam em breve!</div>
       </div>
     </div>
     <div id="child-tasks-list"></div>
-    <div style="height:24px;"></div>
+    <div style="height:24px"></div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn active" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
     <button class="nav-btn" onclick="switchChildTab('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">Recompensas</span></button>
-    <button class="nav-btn" onclick="devolverAoResponsavel()" style="opacity:.75;"><span class="nav-icon" style="font-size:15px;">👩</span><span class="nav-label" style="font-size:9px;">Responsável</span></button>
+    <!-- FIX 7: abre PIN antes de devolver -->
+    <button class="nav-btn" onclick="confirmarSaidaCrianca()" style="opacity:.75"><span class="nav-icon" style="font-size:15px">🔒</span><span class="nav-label" style="font-size:9px">Responsável</span></button>
   </div>
 </div>
 
@@ -299,20 +343,17 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
   <div class="scroll-content">
     <div class="stars-banner">
       <div class="stars-icon">⭐</div>
-      <div>
-        <div class="stars-label">Saldo disponível</div>
-        <div class="stars-value" id="reward-stars-val">0</div>
-      </div>
+      <div><div class="stars-label">Saldo disponível</div><div class="stars-value" id="reward-stars-val">0</div></div>
     </div>
-    <div id="pending-notice" class="pending-notice" style="display:none;"></div>
+    <div id="pending-notice" class="pending-notice" style="display:none"></div>
     <div class="section-header"><div class="section-title">🎯 Disponíveis para trocar</div></div>
     <div class="rewards-grid" id="child-rewards-grid"></div>
-    <div style="height:24px;"></div>
+    <div style="height:24px"></div>
   </div>
   <div class="bottom-nav">
     <button class="nav-btn" onclick="switchChildTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></button>
     <button class="nav-btn active" onclick="switchChildTab('rewards')"><span class="nav-icon">🎁</span><span class="nav-label">Recompensas</span></button>
-    <button class="nav-btn" onclick="devolverAoResponsavel()" style="opacity:.75;"><span class="nav-icon" style="font-size:15px;">👩</span><span class="nav-label" style="font-size:9px;">Responsável</span></button>
+    <button class="nav-btn" onclick="confirmarSaidaCrianca()" style="opacity:.75"><span class="nav-icon" style="font-size:15px">🔒</span><span class="nav-label" style="font-size:9px">Responsável</span></button>
   </div>
 </div>
 
@@ -327,10 +368,34 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
   <div class="scroll-content">
     <div class="dashboard-wrap">
 
-      <!-- Saudação responsável -->
-      <div id="parent-greeting-wrap" style="padding:4px 0 12px;">
-        <div style="font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--text);" id="parent-greeting-name">Olá! 👋</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="parent-greeting-date"></div>
+      <!-- Saudação -->
+      <div id="parent-greeting-wrap" style="padding:4px 0 12px">
+        <div style="font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--text)" id="parent-greeting-name">Olá! 👋</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px" id="parent-greeting-date"></div>
+      </div>
+
+      <!--
+        ONBOARDING POR AÇÃO
+        Este banner é controlado inteiramente por JS (onboarding.js).
+        Ele aparece apenas para novos usuários e avança quando a ação real é executada.
+        Não bloqueia nenhum fluxo existente.
+      -->
+      <div id="ob-banner" class="ob-banner">
+        <div class="ob-banner-header">
+          <span class="ob-banner-step-badge" id="ob-step-badge">Passo 1 de 3</span>
+          <div class="ob-banner-progress">
+            <div class="ob-banner-progress-fill" id="ob-progress-fill" style="width:0%"></div>
+          </div>
+          <button class="ob-banner-skip" onclick="obSkip()">Pular</button>
+        </div>
+        <div class="ob-banner-body">
+          <span class="ob-banner-icon" id="ob-icon">👶</span>
+          <div class="ob-banner-content">
+            <div class="ob-banner-title" id="ob-title">Adicione seu primeiro filho</div>
+            <div class="ob-banner-desc"  id="ob-desc">Cadastre a criança que vai usar o app.</div>
+          </div>
+          <button class="ob-banner-cta" id="ob-cta" onclick="obAction()">Começar</button>
+        </div>
       </div>
 
       <!-- Stats -->
@@ -341,71 +406,77 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
         <div class="stat-card"><div class="stat-icon">👶</div><div class="stat-value" id="stat-filhos">0</div><div class="stat-label">Filhos</div></div>
       </div>
 
-      <!-- ABAS -->
+      <!-- FIX 6: abas unificadas com data-tab e badge -->
       <div class="parent-tabs">
-        <button class="parent-tab active" onclick="switchParentTab('hoje')">🏠 Hoje</button>
-        <button class="parent-tab" onclick="switchParentTab('aprovar')" id="tab-aprovar-btn">🎁 Aprovar</button>
-        <button class="parent-tab" onclick="switchParentTab('filhos')">👶 Filhos</button>
-        <button class="parent-tab" onclick="switchParentTab('recompensas')">🏆 Recompensas</button>
+        <button class="parent-tab active" data-tab="hoje"        onclick="switchParentTab('hoje')">🏠 Hoje</button>
+        <button class="parent-tab"        data-tab="aprovar"     onclick="switchParentTab('aprovar')" id="tab-aprovar-btn">🎁 Aprovar<span class="tab-badge">0</span></button>
+        <button class="parent-tab"        data-tab="filhos"      onclick="switchParentTab('filhos')">👶 Filhos</button>
+        <button class="parent-tab"        data-tab="recompensas" onclick="switchParentTab('recompensas')">🏆 Recompensas</button>
       </div>
 
       <!-- ABA: HOJE -->
       <div id="pane-hoje" class="parent-tab-pane active">
-        <!-- Resumo semanal -->
-        <div id="weekly-summary-wrap"></div>
 
-        <!-- Cards de filhos para passar o celular -->
-        <div class="section-sub" style="margin-top:4px;">👶 Passar o celular para</div>
-        <div id="child-switch-cards" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
-        <div id="parent-empty-state" style="display:none;">
-          <div class="empty-state">
-            <div class="empty-state-art">👨‍👩‍👧</div>
-            <div class="empty-state-title">Nenhum filho cadastrado</div>
-            <div class="empty-state-sub">Adicione seu primeiro filho e crie missões!</div>
-            <button class="btn btn-primary" onclick="abrirModalFilho()" style="margin-top:4px;">👶 Adicionar filho</button>
+        <!-- FIX 5 — CTA destacado, botão primário -->
+        <button class="btn-criar-missao-hoje" onclick="abrirModalTarefas()">
+          <span class="cta-icon">🚀</span>
+          <div class="cta-text">
+            <h3>Criar nova missão</h3>
+            <p>Adicione tarefas de rotina para os seus filhos</p>
+          </div>
+          <span class="cta-arrow">›</span>
+        </button>
+
+        <div id="weekly-summary-wrap"></div>
+        <div class="section-sub" style="margin-top:4px">👶 Passar o celular para</div>
+        <div id="child-switch-cards" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px"></div>
+        <!-- FIX 9 — empty state completo -->
+        <div id="parent-empty-state" style="display:none">
+          <div class="empty-v2">
+            <div class="e2-art">👨‍👩‍👧</div>
+            <div class="e2-title">Nenhum filho cadastrado</div>
+            <div class="e2-sub">Adicione seu primeiro filho e crie missões de rotina gamificadas!</div>
+            <button class="btn btn-primary" onclick="abrirModalFilho()" style="max-width:220px;margin:0 auto">👶 Adicionar filho</button>
           </div>
         </div>
 
-        <!-- Histórico do dia -->
         <div class="section-sub">📜 Histórico de hoje</div>
-        <div class="history-card">
-          <div id="history-list"></div>
-        </div>
-        <button class="reset-btn" onclick="resetTarefasRotina()" style="margin-top:12px;">🔄 Resetar rotina diária</button>
+        <div class="history-card"><div id="history-list"></div></div>
+        <!-- data-reset-rotina: permite que o JS encontre este botão para mutação inline de confirmação -->
+        <button class="reset-btn" data-reset-rotina onclick="resetTarefasRotina()" style="margin-top:12px">🔄 Resetar rotina diária</button>
       </div>
 
       <!-- ABA: APROVAR -->
       <div id="pane-aprovar" class="parent-tab-pane">
-        <div class="section-sub" style="margin-top:0;">⏳ Aguardando aprovação</div>
+        <div class="section-sub" style="margin-top:0">⏳ Aguardando aprovação</div>
         <div id="approval-list"></div>
       </div>
 
       <!-- ABA: FILHOS -->
       <div id="pane-filhos" class="parent-tab-pane">
-        <div class="panel-actions" style="margin-top:4px;">
+        <div class="panel-actions" style="margin-top:4px">
           <button class="panel-btn panel-btn-sky" onclick="abrirModalFilho()">👶 Novo filho</button>
           <button class="panel-btn panel-btn-sky" onclick="convidarCrianca()">✉️ Convite</button>
           <button class="panel-btn panel-btn-teal" onclick="abrirGerenciarFilhos()">✏️ Editar</button>
         </div>
-        <div id="filhos-lista-painel" style="margin-top:8px;"></div>
+        <div id="filhos-lista-painel" style="margin-top:8px"></div>
       </div>
 
       <!-- ABA: RECOMPENSAS -->
+      <!-- FIX 5: botão criar missão é secundário aqui -->
       <div id="pane-recompensas" class="parent-tab-pane">
-        <div class="panel-actions" style="margin-top:4px;">
-          <button class="panel-btn panel-btn-gold" onclick="abrirRewardsMgmt()" style="grid-column:1/-1;">🎁 Gerenciar recompensas</button>
-          <button class="panel-btn panel-btn-purple" onclick="abrirModalTarefas()" style="grid-column:1/-1;">➕ Nova tarefa</button>
+        <div class="panel-actions" style="margin-top:4px">
+          <button class="panel-btn panel-btn-gold" onclick="abrirRewardsMgmt()" style="grid-column:1/-1">🎁 Gerenciar recompensas</button>
+          <!-- FIX 5: botão secundário/ghost para criar missão nessa aba -->
+          <button class="panel-btn" onclick="abrirModalTarefas()" style="grid-column:1/-1;background:rgba(109,40,217,.08);border:1.5px solid rgba(109,40,217,.3);color:var(--purple)">➕ Nova tarefa</button>
         </div>
         <div class="section-sub">🎁 Recompensas ativas</div>
-        <div id="rewards-painel-lista" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <div id="rewards-painel-lista" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
 
     </div>
   </div>
-  <div class="bottom-nav">
-    <button class="nav-btn active"><span class="nav-icon">⚙️</span><span class="nav-label">Painel</span></button>
-    <button class="nav-btn master-only" id="btn-admin-nav" onclick="navAdmin()" style="display:none;"><span class="nav-icon">📊</span><span class="nav-label">Métricas</span></button>
-  </div>
+  <!-- FIX 4: bottom-nav removido do painel do responsável; usa só as tabs -->
   <button class="feedback-fab" onclick="openFeedback()">💬 Feedback</button>
 </div>
 
@@ -414,38 +485,27 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
   <div class="app-header">
     <div class="header-row">
       <button class="header-back" onclick="navParent()">←</button>
-      <div class="header-logo" style="color:var(--gold);">📊 Métricas</div>
-      <div style="width:36px;"></div>
+      <div class="header-logo" style="color:var(--gold)">📊 Métricas</div>
+      <div style="width:36px"></div>
     </div>
   </div>
-  <div class="scroll-content" style="padding:12px 16px 40px;">
+  <div class="scroll-content" style="padding:12px 16px 40px">
     <div class="admin-notice"><span>🔐 Acesso restrito — usuárias masters do produto</span></div>
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">Tarefas concluídas</div><div class="kpi-val" id="kpi-tasks" style="color:var(--green);">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Recompensas pedidas</div><div class="kpi-val" id="kpi-rewards" style="color:var(--gold);">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Tarefas criadas</div><div class="kpi-val" id="kpi-created" style="color:var(--sky);">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Beta testers</div><div class="kpi-val" style="color:var(--purple);">1/20</div></div>
+      <div class="kpi-card"><div class="kpi-label">Tarefas concluídas</div><div class="kpi-val" id="kpi-tasks" style="color:var(--green)">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Recompensas pedidas</div><div class="kpi-val" id="kpi-rewards" style="color:var(--gold)">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Tarefas criadas</div><div class="kpi-val" id="kpi-created" style="color:var(--sky)">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">Beta testers</div><div class="kpi-val" style="color:var(--purple)">1/20</div></div>
     </div>
     <div class="metrics-card">
-      <div class="metrics-title">📈 Eventos PostHog (simulado)</div>
-      <div class="metric-row"><div><div class="metric-key">sessao_iniciada</div><div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div></div><div class="metric-val">17 sessões</div></div>
+      <div class="metrics-title">📈 Eventos registrados</div>
       <div class="metric-row"><div><div class="metric-key">tarefa_concluida</div><div class="progress-bar"><div class="progress-fill" id="m-tasks-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-tasks">0 conclusões</div></div>
       <div class="metric-row"><div><div class="metric-key">recompensa_solicitada</div><div class="progress-bar"><div class="progress-fill" id="m-rewards-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-rewards">0 pedidos</div></div>
-      <div class="metric-row"><div><div class="metric-key">retencao_d7</div><div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div></div><div class="metric-val">60%</div></div>
       <div class="metric-row"><div><div class="metric-key">tarefa_criada</div><div class="progress-bar"><div class="progress-fill" id="m-created-bar" style="width:0%"></div></div></div><div class="metric-val" id="m-created">0 criadas</div></div>
     </div>
     <div class="metrics-card">
-      <div class="metrics-title">🧪 Usuários Beta</div>
-      <div class="metric-row"><div class="metric-key">DAU hoje</div><div class="metric-val">1</div></div>
-      <div class="metric-row"><div class="metric-key">Plataforma</div><div class="metric-val">Web / PWA</div></div>
-      <div class="metric-row"><div class="metric-key">Versão</div><div class="metric-val">Beta 1.0</div></div>
-      <div class="metric-row"><div class="metric-key">Retenção D7</div><div class="metric-val">60%</div></div>
-    </div>
-    <div class="metrics-card">
       <div class="metrics-title">💬 Feedbacks recebidos</div>
-      <div id="feedbacks-list">
-        <div class="empty-state" style="padding:20px 0;"><div class="empty-icon">🗂️</div><p>Nenhum feedback ainda.</p></div>
-      </div>
+      <div id="feedbacks-list"><div class="empty-state" style="padding:20px 0"><div class="empty-icon">🗂️</div><p>Nenhum feedback ainda.</p></div></div>
     </div>
   </div>
   <div class="bottom-nav">
@@ -500,7 +560,7 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
       <div class="success-icon">🎉</div>
       <div class="success-text">Feedback enviado!</div>
       <div class="success-sub">Obrigado por ajudar a melhorar o ELO Family. 💙</div>
-      <button class="btn btn-ghost" onclick="closeFeedback()" style="margin-top:16px;">Fechar</button>
+      <button class="btn btn-ghost" onclick="closeFeedback()" style="margin-top:16px">Fechar</button>
     </div>
   </div>
 </div>
@@ -527,10 +587,10 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
         <span onclick="selectEmoji(this,'👧🏿')" class="emoji-pick">👧🏿</span>
         <span onclick="selectEmoji(this,'👦🏿')" class="emoji-pick">👦🏿</span>
       </div>
-      <div id="selected-emoji" style="font-size:13px;color:var(--muted);margin-top:6px;">Selecionado: 👧</div>
+      <div id="selected-emoji" style="font-size:13px;color:var(--muted);margin-top:6px">Selecionado: 👧</div>
     </div>
     <button class="btn btn-primary" onclick="salvarFilho()">Salvar filho</button>
-    <button class="btn btn-ghost" onclick="fecharModalFilho()" style="margin-top:8px;">Cancelar</button>
+    <button class="btn btn-ghost" onclick="fecharModalFilho()" style="margin-top:8px">Cancelar</button>
   </div>
 </div>
 
@@ -541,9 +601,9 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
     <div class="modal-title">➕ Nova Tarefa</div>
     <div class="modal-sub">Manual, biblioteca ou em lote</div>
     <div class="tab-row">
-      <button class="tab-btn active" id="tab-manual" onclick="switchTab('manual')">✏️ Manual</button>
-      <button class="tab-btn" id="tab-biblioteca" onclick="switchTab('biblioteca')">📚 Biblioteca</button>
-      <button class="tab-btn" id="tab-lote" onclick="switchTab('lote')">📋 Lote</button>
+      <button class="tab-btn active" id="tab-manual"     onclick="switchTab('manual')">✏️ Manual</button>
+      <button class="tab-btn"        id="tab-biblioteca" onclick="switchTab('biblioteca')">📚 Biblioteca</button>
+      <button class="tab-btn"        id="tab-lote"       onclick="switchTab('lote')">📋 Lote</button>
     </div>
 
     <!-- MANUAL -->
@@ -563,10 +623,13 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
       <div class="form-group">
         <label class="recorrente-label">
           <input type="checkbox" id="fab-recorrente" onchange="toggleDiasSemana()">
-          <span>Tarefa recorrente (rotina diária)</span>
+          <!-- Ajuste 3: texto explica o impacto da recorrência antes de o usuário marcar -->
+          <span>Missão recorrente — define quando ela aparece na rotina</span>
         </label>
+        <!-- Microcopy: explica o impacto antes de o usuário marcar -->
+        <div class="recurrence-hint" id="rec-hint">Define em quais dias essa missão aparecerá na rotina. O histórico de conclusões é sempre preservado.</div>
       </div>
-      <div id="dias-semana-wrap" style="display:none;margin-bottom:16px;">
+      <div id="dias-semana-wrap" style="display:none;margin-bottom:16px">
         <label class="elo-lbl-sm">Dias da semana</label>
         <div class="dias-row">
           <button class="dia-btn selected" data-dia="seg" onclick="toggleDia(this)">Seg</button>
@@ -582,7 +645,12 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
     </div>
 
     <!-- BIBLIOTECA -->
-    <div id="tab-content-biblioteca" style="display:none;">
+    <div id="tab-content-biblioteca" style="display:none">
+      <!-- FIX 12: header de contexto de valor -->
+      <div class="library-header">
+        <div class="library-header-title">📚 Use modelos prontos</div>
+        <div class="library-header-sub">Acelere a montagem da rotina. Selecione as missões e adicione para o filho escolhido abaixo.</div>
+      </div>
       <div class="form-group"><label>Para qual criança?</label><select id="fab-bib-child"></select></div>
       <div class="cat-scroll">
         <button class="cat-btn active" onclick="filterCat(this,'todos')">Todos</button>
@@ -592,11 +660,11 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
         <button class="cat-btn" onclick="filterCat(this,'saude')">💪 Saúde</button>
       </div>
       <div id="biblioteca-grid" class="bib-grid"></div>
-      <button class="btn btn-primary" style="margin-top:14px;" onclick="adicionarSelecionadas()">Adicionar selecionadas</button>
+      <button class="btn btn-primary" style="margin-top:14px" onclick="adicionarSelecionadas()">Adicionar selecionadas</button>
     </div>
 
     <!-- LOTE -->
-    <div id="tab-content-lote" style="display:none;">
+    <div id="tab-content-lote" style="display:none">
       <div class="form-group"><label>Para qual criança?</label><select id="fab-lote-child"></select></div>
       <div class="form-group">
         <label>Cole uma tarefa por linha</label>
@@ -614,10 +682,9 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
       <button class="btn btn-primary" onclick="criarEmLote()">Criar todas as tarefas</button>
     </div>
 
-    <button class="btn btn-ghost" onclick="fecharModalTarefas()" style="margin-top:10px;">Cancelar</button>
+    <button class="btn btn-ghost" onclick="fecharModalTarefas()" style="margin-top:10px">Cancelar</button>
   </div>
 </div>
-
 
 <!-- ═══ MODAL: CONVITE ═══ -->
 <div class="modal-overlay" id="modal-convite" onclick="fecharConvite()">
@@ -625,17 +692,17 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
     <div class="modal-handle"></div>
     <div class="modal-title">✉️ Código de acesso</div>
     <div class="modal-sub">Compartilhe com a criança para ela entrar</div>
-    <div style="text-align:center;margin:20px 0 24px;">
-      <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Código gerado</div>
-      <div id="convite-code-display" style="font-family:'Baloo 2',cursive;font-size:38px;font-weight:800;letter-spacing:8px;color:var(--sky);background:var(--card2);border:2px solid var(--sky);border-radius:16px;padding:20px 16px;">ELO-????</div>
-      <div id="convite-child-name" style="font-size:13px;color:var(--muted);margin-top:10px;"></div>
+    <div style="text-align:center;margin:20px 0 24px">
+      <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Código gerado</div>
+      <div id="convite-code-display" style="font-family:'Baloo 2',cursive;font-size:38px;font-weight:800;letter-spacing:8px;color:var(--sky);background:var(--card2);border:2px solid var(--sky);border-radius:16px;padding:20px 16px">ELO-????</div>
+      <div id="convite-child-name" style="font-size:13px;color:var(--muted);margin-top:10px"></div>
     </div>
-    <button onclick="copiarCodigo()" class="btn btn-secondary" style="margin-bottom:10px;">📋 Copiar código</button>
-    <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.2);border-radius:12px;padding:14px 16px;margin-bottom:20px;">
-      <div style="font-size:12px;font-weight:800;color:var(--sky);margin-bottom:8px;">📱 Instruções para a criança:</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.7;">
+    <button onclick="copiarCodigo()" class="btn btn-secondary" style="margin-bottom:10px">📋 Copiar código</button>
+    <div style="background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.2);border-radius:12px;padding:14px 16px;margin-bottom:20px">
+      <div style="font-size:12px;font-weight:800;color:var(--sky);margin-bottom:8px">📱 Instruções para a criança:</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7">
         1. Abra o app ELO Family<br>
-        2. Toque em <strong style="color:var(--gold);">🎮 Sou criança</strong><br>
+        2. Toque em <strong style="color:var(--gold)">🎮 Sou criança</strong><br>
         3. Digite o código acima<br>
         4. Pronto! Tarefas liberadas ✅
       </div>
@@ -644,28 +711,21 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
   </div>
 </div>
 
-
 <!-- ═══ MODAL: RECOMPENSAS ═══ -->
 <div class="modal-overlay" id="modal-rewards-mgmt" onclick="fecharRewardsMgmt()">
   <div class="modal-sheet modal-sheet-tall" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title">🎁 Recompensas</div>
     <div class="modal-sub">Gerencie o que as crianças podem trocar</div>
-    <div id="rewards-mgmt-list" style="margin-bottom:16px;"></div>
-    <div style="border-top:1px solid var(--border);padding-top:16px;">
-      <div style="font-size:13px;font-weight:800;color:var(--sky);margin-bottom:12px;">✨ Adicionar nova</div>
-      <div class="form-group">
-        <label>Nome da recompensa</label>
-        <input type="text" id="new-reward-name" placeholder="Ex: Sorvete especial">
-      </div>
-      <div style="display:flex;gap:10px;">
-        <div class="form-group" style="flex:1;">
-          <label>Custo (estrelas)</label>
-          <input type="number" id="new-reward-cost" value="10" min="1" max="999">
-        </div>
-        <div class="form-group" style="flex:1;">
+    <div id="rewards-mgmt-list" style="margin-bottom:16px"></div>
+    <div style="border-top:1px solid var(--border);padding-top:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--sky);margin-bottom:12px">✨ Adicionar nova</div>
+      <div class="form-group"><label>Nome da recompensa</label><input type="text" id="new-reward-name" placeholder="Ex: Sorvete especial"></div>
+      <div style="display:flex;gap:10px">
+        <div class="form-group" style="flex:1"><label>Custo (estrelas)</label><input type="number" id="new-reward-cost" value="10" min="1" max="999"></div>
+        <div class="form-group" style="flex:1">
           <label>Emoji</label>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;" id="reward-emoji-picker">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px" id="reward-emoji-picker">
             <span class="rew-emoji-opt selected" onclick="selecionarEmojiRecompensa(this,'🎁')">🎁</span>
             <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🍦')">🍦</span>
             <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🎮')">🎮</span>
@@ -674,7 +734,6 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
             <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🌙')">🌙</span>
             <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'⭐')">⭐</span>
             <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🏆')">🏆</span>
-            <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🎠')">🎠</span>
             <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🎉')">🎉</span>
             <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🍫')">🍫</span>
             <span class="rew-emoji-opt" onclick="selecionarEmojiRecompensa(this,'🧸')">🧸</span>
@@ -683,10 +742,9 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
       </div>
       <button class="btn btn-primary" onclick="adicionarRecompensa()">✨ Adicionar recompensa</button>
     </div>
-    <button class="btn btn-ghost" onclick="fecharRewardsMgmt()" style="margin-top:8px;">Fechar</button>
+    <button class="btn btn-ghost" onclick="fecharRewardsMgmt()" style="margin-top:8px">Fechar</button>
   </div>
 </div>
-
 
 <!-- ═══ MODAL: GERENCIAR FILHOS ═══ -->
 <div class="modal-overlay" id="modal-filhos-mgmt" onclick="fecharGerenciarFilhos()">
@@ -695,7 +753,7 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
     <div class="modal-title">✏️ Gerenciar filhos</div>
     <div class="modal-sub">Edite ou remova perfis de crianças</div>
     <div id="filhos-mgmt-list"></div>
-    <button class="btn btn-ghost" onclick="fecharGerenciarFilhos()" style="margin-top:12px;">Fechar</button>
+    <button class="btn btn-ghost" onclick="fecharGerenciarFilhos()" style="margin-top:12px">Fechar</button>
   </div>
 </div>
 
@@ -721,219 +779,87 @@ body.child-mode .stars-badge { background: rgba(255,230,0,.12); border: 1px soli
         <span onclick="selectEmojiEdit(this,'👧🏿')" class="emoji-pick">👧🏿</span>
         <span onclick="selectEmojiEdit(this,'👦🏿')" class="emoji-pick">👦🏿</span>
       </div>
-      <div id="edit-selected-emoji" style="font-size:13px;color:var(--muted);margin-top:6px;">Selecionado: 👧</div>
+      <div id="edit-selected-emoji" style="font-size:13px;color:var(--muted);margin-top:6px">Selecionado: 👧</div>
     </div>
     <button class="btn btn-primary" onclick="salvarEdicaoFilho()">Salvar alterações</button>
-    <button class="btn btn-ghost" onclick="fecharEditarFilho()" style="margin-top:8px;">Cancelar</button>
+    <button class="btn btn-ghost" onclick="fecharEditarFilho()" style="margin-top:8px">Cancelar</button>
   </div>
 </div>
 
-<!-- ═══ MODAL: ONBOARDING ═══ -->
-<div class="modal-overlay" id="modal-onboarding">
-  <div class="modal-sheet" onclick="event.stopPropagation()" style="padding-bottom:32px;">
-    <div class="modal-handle"></div>
-    <!-- Indicador de passo -->
-    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:20px;">
-      <div class="ob-dot active" id="ob-dot-0"></div>
-      <div class="ob-dot" id="ob-dot-1"></div>
-      <div class="ob-dot" id="ob-dot-2"></div>
-    </div>
-    <!-- Passo 0 -->
-    <div id="ob-step-0" class="ob-step">
-      <div style="text-align:center;margin-bottom:20px;">
-        <div style="font-size:56px;margin-bottom:12px;">👶</div>
-        <div class="modal-title" style="justify-content:center;">Adicione seu filho</div>
-        <div class="modal-sub">Comece cadastrando a criança que vai usar o app. Você pode adicionar mais depois.</div>
-      </div>
-      <button class="btn btn-primary" onclick="onboardingNext(0,true)">👶 Adicionar agora</button>
-      <button class="btn btn-ghost" onclick="onboardingNext(0,false)" style="margin-top:8px;">Pular por agora</button>
-    </div>
-    <!-- Passo 1 -->
-    <div id="ob-step-1" class="ob-step" style="display:none;">
-      <div style="text-align:center;margin-bottom:20px;">
-        <div style="font-size:56px;margin-bottom:12px;">⚔️</div>
-        <div class="modal-title" style="justify-content:center;">Crie a primeira missão</div>
-        <div class="modal-sub">Tarefas viram missões gamificadas. Cada missão concluída vale estrelas que a criança pode trocar por recompensas.</div>
-      </div>
-      <button class="btn btn-primary" onclick="onboardingNext(1,true)">➕ Criar missão</button>
-      <button class="btn btn-ghost" onclick="onboardingNext(1,false)" style="margin-top:8px;">Pular por agora</button>
-    </div>
-    <!-- Passo 2 -->
-    <div id="ob-step-2" class="ob-step" style="display:none;">
-      <div style="text-align:center;margin-bottom:20px;">
-        <div style="font-size:56px;margin-bottom:12px;">🎁</div>
-        <div class="modal-title" style="justify-content:center;">Defina uma recompensa</div>
-        <div class="modal-sub">Escolha o que a criança pode ganhar com as estrelas — sorvete, tempo de jogo, passeio. Isso motiva demais!</div>
-      </div>
-      <button class="btn btn-primary" onclick="onboardingNext(2,true)">🎁 Definir recompensa</button>
-      <button class="btn btn-ghost" onclick="onboardingNext(2,false)" style="margin-top:8px;">Começar sem recompensas</button>
-    </div>
-  </div>
-</div>
+<!--
+  MODAL DE ONBOARDING (legado — mantido para não quebrar referências JS existentes)
+  O onboarding real agora é feito pelo banner ob-banner acima.
+  Este modal está vazio e não será exibido pelo fluxo novo.
+-->
+<div class="modal-overlay" id="modal-onboarding" style="display:none!important"></div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="js/supabase.js?v=32"></script>
-<script src="js/app.js?v=32"></script>
+<script src="js/supabase.js?v=40"></script>
+<script src="js/app.js?v=40"></script>
+<script src="js/onboarding.js?v=1"></script>
 </div>
-<script>
-/* ══ ELO FAMILY — MELHORIAS BETA v3.1 ══ */
 
-/* ── 1. TEMA AVENTURA (criança) ── */
-function ativarTemaAventura() { document.body.classList.add('child-mode'); }
+<script>
+/* ══ ELO FAMILY — melhorias inline Beta v4 ══ */
+
+/* Tema aventura */
+function ativarTemaAventura()    { document.body.classList.add('child-mode'); }
 function desativarTemaAventura() { document.body.classList.remove('child-mode'); }
 
-/* Patch nas funções de navegação existentes */
-const _origNavChild = window.navChild;
-if (typeof _origNavChild === 'function') {
-  window.navChild = function(...args) { ativarTemaAventura(); return _origNavChild.apply(this, args); };
-}
-/* Também ativa ao entrar com código */
-const _origEntrar = window.entrarComCodigo;
-if (typeof _origEntrar === 'function') {
-  window.entrarComCodigo = function(...args) { ativarTemaAventura(); return _origEntrar.apply(this, args); };
-}
-/* Desativa ao sair */
-const _origLogout = window.doLogout;
-if (typeof _origLogout === 'function') {
-  window.doLogout = function(...args) { desativarTemaAventura(); return _origLogout.apply(this, args); };
-}
-const _origSaida = window.confirmarSaidaCrianca;
-if (typeof _origSaida === 'function') {
-  window.confirmarSaidaCrianca = function(...args) { desativarTemaAventura(); return _origSaida.apply(this, args); };
-}
-
-/* ── 2. CONFETE ── */
-(function() {
+/* CONFETE */
+(function(){
   const canvas = document.getElementById('confetti-canvas');
-  const ctx = canvas.getContext('2d');
+  const ctx    = canvas.getContext('2d');
   let particles = [], running = false, raf;
   const COLORS = ['#00f5d4','#ff6ef7','#ffe600','#ff6a00','#c77dff','#00eaff'];
-
-  function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+  function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
   window.addEventListener('resize', resize); resize();
-
-  function makeParticle() {
-    return {
-      x: Math.random() * canvas.width,
-      y: -12,
-      r: Math.random() * 7 + 4,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      vx: (Math.random() - .5) * 4,
-      vy: Math.random() * 4 + 3,
-      rot: Math.random() * 360,
-      drot: (Math.random() - .5) * 8,
-      shape: Math.random() > .5 ? 'rect' : 'circle'
-    };
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
-      ctx.fillStyle = p.color;
-      if (p.shape === 'circle') { ctx.beginPath(); ctx.arc(0,0,p.r,0,Math.PI*2); ctx.fill(); }
-      else { ctx.fillRect(-p.r, -p.r/2, p.r*2, p.r); }
-      ctx.restore();
-      p.x += p.vx; p.y += p.vy; p.rot += p.drot; p.vy += .12;
-    });
-    particles = particles.filter(p => p.y < canvas.height + 20);
-    if (running || particles.length > 0) raf = requestAnimationFrame(draw);
-    else { ctx.clearRect(0,0,canvas.width,canvas.height); }
-  }
-
-  window.launchConfetti = function(duration = 2200) {
-    running = true; cancelAnimationFrame(raf);
-    const burst = () => { for(let i=0;i<6;i++) particles.push(makeParticle()); };
-    burst(); draw();
-    const iv = setInterval(burst, 60);
-    setTimeout(() => { running = false; clearInterval(iv); }, duration);
-  };
+  function makeParticle(){ return { x:Math.random()*canvas.width, y:-12, r:Math.random()*7+4, color:COLORS[Math.floor(Math.random()*COLORS.length)], vx:(Math.random()-.5)*4, vy:Math.random()*4+3, rot:Math.random()*360, drot:(Math.random()-.5)*8, shape:Math.random()>.5?'rect':'circle' }; }
+  function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{ ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180); ctx.fillStyle=p.color; if(p.shape==='circle'){ctx.beginPath();ctx.arc(0,0,p.r,0,Math.PI*2);ctx.fill();}else{ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);} ctx.restore(); p.x+=p.vx; p.y+=p.vy; p.rot+=p.drot; p.vy+=.12; }); particles=particles.filter(p=>p.y<canvas.height+20); if(running||particles.length>0) raf=requestAnimationFrame(draw); else ctx.clearRect(0,0,canvas.width,canvas.height); }
+  window.launchConfetti = function(duration=2200){ running=true; cancelAnimationFrame(raf); const burst=()=>{for(let i=0;i<6;i++) particles.push(makeParticle());}; burst(); draw(); const iv=setInterval(burst,60); setTimeout(()=>{running=false;clearInterval(iv);},duration); };
 })();
 
-/* ── 3. SONS (Web Audio API) ── */
-function playCompleteSound() {
-  try {
-    const ac = new (window.AudioContext || window.webkitAudioContext)();
-    const notes = [523, 659, 784, 1047];
-    notes.forEach((freq, i) => {
-      const osc = ac.createOscillator(), gain = ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.type = 'sine'; osc.frequency.value = freq;
-      gain.gain.setValueAtTime(.18, ac.currentTime + i*.09);
-      gain.gain.exponentialRampToValueAtTime(.001, ac.currentTime + i*.09 + .25);
-      osc.start(ac.currentTime + i*.09); osc.stop(ac.currentTime + i*.09 + .3);
-    });
-  } catch(e) {}
-}
+/* SONS */
+function playCompleteSound(){ try{ const ac=new(window.AudioContext||window.webkitAudioContext)(); [523,659,784,1047].forEach((freq,i)=>{ const osc=ac.createOscillator(),gain=ac.createGain(); osc.connect(gain); gain.connect(ac.destination); osc.type='sine'; osc.frequency.value=freq; gain.gain.setValueAtTime(.18,ac.currentTime+i*.09); gain.gain.exponentialRampToValueAtTime(.001,ac.currentTime+i*.09+.25); osc.start(ac.currentTime+i*.09); osc.stop(ac.currentTime+i*.09+.3); }); }catch(e){} }
 
-/* ── 4. PATCH showReward — confete + XP ── */
-window.showReward = function(stars, msg, title) {
+/* PATCH showReward */
+window.showReward = function(stars, msg, title){
   const overlay = document.getElementById('reward-overlay');
-  const xpEl = document.getElementById('reward-xp-rise');
-  const starsIcon = document.getElementById('reward-stars-icon');
-
-  if (starsIcon) starsIcon.textContent = stars >= 5 ? '🌟' : '⭐';
-  if (xpEl) {
-    xpEl.textContent = '+' + (stars || 2) + ' ⭐';
-    xpEl.style.animation = 'none';
-    void xpEl.offsetWidth;
-    xpEl.style.animation = '';
-  }
+  const xpEl    = document.getElementById('reward-xp-rise');
+  document.getElementById('reward-stars-icon').textContent = stars >= 5 ? '🌟' : '⭐';
+  if(xpEl){ xpEl.textContent='+'+stars+' ⭐'; xpEl.style.animation='none'; void xpEl.offsetWidth; xpEl.style.animation=''; }
   document.getElementById('reward-title').textContent = title || 'Missão completa! 🎉';
-  document.getElementById('reward-msg').textContent = msg || 'Você ganhou estrelas!';
-  if (overlay) overlay.classList.add('show');
-  launchConfetti(2500);
-  playCompleteSound();
+  document.getElementById('reward-msg').textContent   = msg   || 'Você ganhou estrelas!';
+  if(overlay) overlay.classList.add('show');
+  if(typeof launchConfetti==='function') launchConfetti(2500);
+  if(typeof playCompleteSound==='function') playCompleteSound();
+};
+window.closeReward = function(){ const o=document.getElementById('reward-overlay'); if(o) o.classList.remove('show'); };
+
+/* STREAK UI */
+window.renderStreakUI = function(streak){
+  const wrap = document.getElementById('streak-wrap'); if(!wrap) return;
+  if(!streak||streak<1){ wrap.style.display='none'; return; }
+  const hora=new Date().getHours(); const isNight=hora>=20||hora<7;
+  const emBreak=isNight&&streak>0;
+  const flameSize=streak>=14?'🔥🔥🔥':streak>=7?'🔥🔥':'🔥';
+  wrap.style.display='block';
+  wrap.innerHTML=`<div class="streak-flame-wrap ${emBreak?'streak-danger':''}"><div class="streak-flame">${flameSize}</div><div class="streak-info"><div class="streak-count">${streak} ${streak===1?'dia':'dias'} seguidos!</div><div class="streak-label">Sequência de missões concluídas</div>${emBreak?'<div class="streak-warn-msg">⚠️ Complete suas missões hoje para manter a chama!</div>':''}</div></div>`;
 };
 
-/* Patch closeReward */
-window.closeReward = function() {
-  const overlay = document.getElementById('reward-overlay');
-  if (overlay) overlay.classList.remove('show');
-};
-
-/* ── 5. STREAK com chama ── */
-window.renderStreakUI = function(streak) {
-  const wrap = document.getElementById('streak-wrap');
-  if (!wrap) return;
-  if (!streak || streak < 1) { wrap.style.display = 'none'; return; }
-
-  const hora = new Date().getHours();
-  const isNight = hora >= 20 || hora < 7;
-  const emBreak = isNight && streak > 0;
-  const flameSize = streak >= 14 ? '🔥🔥🔥' : streak >= 7 ? '🔥🔥' : '🔥';
-
-  wrap.style.display = 'block';
-  wrap.innerHTML = `
-    <div class="streak-flame-wrap ${emBreak ? 'streak-danger' : ''}">
-      <div class="streak-flame">${flameSize}</div>
-      <div class="streak-info">
-        <div class="streak-count">${streak} ${streak === 1 ? 'dia' : 'dias'} seguidos!</div>
-        <div class="streak-label">Sequência de missões concluídas</div>
-        ${emBreak ? '<div class="streak-warn-msg">⚠️ Complete suas missões hoje para manter a chama!</div>' : ''}
-      </div>
-    </div>`;
-};
-
-/* ── 6. EMPTY STATE de tarefas ── */
-const _origRenderTasks = window.renderChildTasks;
-if (typeof _origRenderTasks === 'function') {
-  window.renderChildTasks = function(tasks, ...rest) {
-    const result = _origRenderTasks.apply(this, [tasks, ...rest]);
-    const emptyEl = document.getElementById('empty-tasks-state');
-    const listEl = document.getElementById('child-tasks-list');
-    if (emptyEl) emptyEl.style.display = (!tasks || tasks.length === 0) ? 'block' : 'none';
-    if (listEl) listEl.style.display = (!tasks || tasks.length === 0) ? 'none' : '';
-    return result;
-  };
+/* ONBOARDING DOTS — legado, mantido como stub inerte.
+   O onboarding real agora é controlado por js/onboarding.js.
+   O modal-onboarding está desativado no HTML (display:none!important). */
+function onboardingNext(passo, acao) {
+  // Stub: delega para o sistema novo se disponível, senão não faz nada.
+  if (typeof obAction === 'function' && acao) obAction();
 }
 
-/* ── 7. Ativar tema ao detectar sessão de criança ── */
-document.addEventListener('DOMContentLoaded', () => {
-  const savedRole = sessionStorage.getItem('elo_role');
-  if (savedRole === 'child') ativarTemaAventura();
+/* Detectar sessão de criança ao carregar */
+document.addEventListener('DOMContentLoaded', ()=>{
+  if(sessionStorage.getItem('elo_role')==='child') ativarTemaAventura();
 });
 </script>
 </body>
